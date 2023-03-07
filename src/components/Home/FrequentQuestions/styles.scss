@@ -1,0 +1,19 @@
+@import '../../../theme/colors';
+#frequent-questions{
+    max-width: 900px;
+    margin: auto;
+    background-color: $color-white;
+    padding: 6rem 0;
+    .accordion-list{
+        border: none;
+        h3{
+            font-size: 1rem!important;
+            cursor: pointer;
+        }
+        p{
+            font-size: 14px;
+            padding: 1rem;
+            background-color: $color-paleGrey2;
+        }
+    }
+}

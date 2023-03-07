@@ -1,0 +1,37 @@
+@import './variables';
+
+/* Segoe UI */
+// Light
+@font-face {
+    font-family: $font-family-primary;
+    src: url(./fonts/segoeuil.ttf) format('truetype');
+    font-weight: $font-weight-light;
+}
+
+// Semi-Light
+@font-face {
+    font-family: $font-family-primary;
+    src: url(./fonts/segoeuisl.ttf) format('truetype');
+    font-weight: $font-weight-semiLight;
+}
+
+// Regular
+@font-face {
+    font-family: $font-family-primary;
+    src: url(./fonts/segoeui.ttf) format('truetype');
+    font-weight: $font-weight-regular;
+}
+
+// Medium
+@font-face {
+    font-family: $font-family-primary;
+    src: url(./fonts/seguisb.ttf) format('truetype');
+    font-weight: $font-weight-semibold;
+    }
+
+// Bold
+@font-face {
+    font-family: $font-family-primary;
+    src: url(./fonts/segoeuib.ttf) format('truetype');
+    font-weight: $font-weight-bold;
+}

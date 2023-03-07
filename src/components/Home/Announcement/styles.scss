@@ -1,0 +1,53 @@
+@import '../../../theme/colors';
+#announcement{
+    background-color: $color-ethicsBlue;
+    #announcement-block{
+        max-width: 80%;
+        margin: auto;
+        .react-multi-carousel-list{
+            color: $color-white;
+            .item{
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-top: 3rem;
+                p{
+                    max-width: 500px;
+                }
+                .btn{
+                    border-width: 1px;
+                    border-color: $color-white!important;
+                    color: $color-white!important;
+                    &:hover{
+                        background-color: $color-white!important;
+                        color: $color-ethicsBlue!important;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #announcement #announcement-block{
+        max-width: 100%;
+        padding: 0 2rem;
+        .react-multi-carousel-list .item{
+            p{
+                max-width: 360px;
+            }
+            img{
+                width: 190px;
+                margin: auto;        
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 576px) {
+    #announcement #announcement-block .react-multi-carousel-list .item{
+        display: block;
+        text-align: center;
+        padding-bottom: 2rem;
+    }
+}

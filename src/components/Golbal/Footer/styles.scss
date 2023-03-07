@@ -1,0 +1,36 @@
+@import '../../../theme/colors';
+footer{
+    background-color: $color-ethicsBlue;
+    h4{
+        color: $color-white;
+    }
+    p{
+        color: $color-paleBlue2;
+    }
+    ul{
+        a{
+            display: block;
+            color: $color-paleBlue2!important;
+            padding: 0.5rem 0;
+        }
+    }
+}
+.copyright{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: $color-oxfordBlue;
+    padding: 3rem 10%;
+    color: $color-white;
+}
+
+@media screen and (max-width: 576px) {
+    footer{
+        text-align: center;
+    }
+    .copyright{
+        display: block;
+        text-align: center;
+        padding: 3rem 0;
+    }
+}

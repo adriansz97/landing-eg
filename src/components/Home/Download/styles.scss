@@ -1,0 +1,33 @@
+@import '../../../theme/colors';
+#download{
+    padding-top: 2rem;
+    background-color: $color-landing;
+    display: flex;
+    align-items: center;
+}
+
+@media screen and (max-width: 768px) {
+    #download{
+        #download-app{
+            width: 250px;
+        }
+        .content{
+            margin-top: 2rem;
+            text-align: center;
+            padding-bottom: 3rem;
+        }
+    }
+}
+
+@media screen and (max-width: 576px) {
+    #download{
+        #download-app{
+            width: 200px;
+        }
+    }
+    .content{
+        .btn{
+            width: 90%;
+        }
+    }
+}

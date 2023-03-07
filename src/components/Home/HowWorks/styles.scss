@@ -1,0 +1,22 @@
+@import '../../../theme/colors';
+#how-works{
+    background-color: $color-landing;
+    padding: 10rem 6%;
+    img{
+        height: 4rem;
+    }
+    h4{
+        color: $color-blueGray900;
+    }
+    p{
+        max-width: 250px;
+        margin: auto;
+        color: $color-slate2;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #how-works{
+        padding: 5rem 0;
+    }
+}

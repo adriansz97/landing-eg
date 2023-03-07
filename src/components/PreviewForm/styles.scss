@@ -1,0 +1,24 @@
+.form-preview {
+
+  .form-control {
+    margin-top: 4px;
+  }
+  // header del preview donde esta el steper y el titulo del step
+  .form-preview-header {
+    display: flex;
+    justify-content: space-between;
+  }
+  // contenedor que engloba a todos los inputs
+  .form-preview-inputs {
+    * {
+      color: #72909D;  
+    }
+  }
+  // contenedor de cada input
+  .preview-input-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 24px;
+  }
+
+}

@@ -1,0 +1,21 @@
+@import '../../../theme/colors';
+.CDB-container{
+    max-width: 80%;
+    margin: auto;
+}
+.top_navbar{
+    width: 100%;
+    background-color: #054394;
+    color: #fff;
+    font-size: 10px;
+    a{
+        color: $color-white;
+        cursor: pointer;
+        text-decoration: none;
+    }
+}
+@media screen and (max-width: 768px) {
+    .CDB-container{
+        max-width: 90%;
+    }
+}
