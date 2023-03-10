@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import _ from "lodash";
 import DatePicker from "react-datepicker";
 import { Col, Row, Button } from "react-bootstrap";
@@ -15,9 +14,21 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
 
   useEffect(() => {
     if (isUniqueSelectionDefault && !scope.selected) {
-      setSelectedKey(scope.children[0].key);
+      // setSelectedKey(scope.children[0].key);
       if (Array.isArray(scope.children[0].childs)) {
         hdlSchm({ action: "selection", children: scope.children[0].childs, selected: scope.children[0].key, path, idx });
+      } else {
+        hdlSchm({ action: "noNextPath", selected: scope.children[0].key, path, idx, });
+        const valueTemp = value ? value : "";
+        const splitedArr = valueTemp.split("::");
+        const slicedArr = splitedArr.slice(0,((2*(nestNum))));
+        const joined = slicedArr.join("::");
+        // if (catalogue==="business_units") console.log(`type::${scope.children[0].key}`)
+        if (joined) {
+          hdlChg({target:{name: catalogue, value: `${joined}::type::${scope.children[0].key}`}},idx);
+        } else {
+          hdlChg({target:{name: catalogue, value: `type::${scope.children[0].key}`}},idx);
+        }
       }
     } else {
       setSelectedKey(scope.selected);
@@ -94,8 +105,19 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
         const splitedArr = valueTemp.split("::");
         const slicedArr = splitedArr.slice(0,((2*(nestNum))));
         const joined = slicedArr.join("::");
-        if (joined) {
-          hdlChg({target:{name: catalogue, value: `${joined}::type::${selectedKey}`}},idx);
+        if (valueTemp) {
+          hdlChg({target:{name: catalogue, value: `${valueTemp}::type::${selectedKey}`}},idx);
+        } else {
+          hdlChg({target:{name: catalogue, value: `type::${selectedKey}`}},idx);
+        }
+      } else {
+        const valueTemp = value ? value : "";
+        const splitedArr = valueTemp.split("::");
+        const slicedArr = splitedArr.slice(0,((2*(nestNum))));
+        const joined = slicedArr.join("::");
+        if (selectedKey==="nombre_0_0_0") console.log({ selectedKey, key: scope.selected, value: `${joined}::type::${selectedKey}` })
+        if (valueTemp) {
+          hdlChg({target:{name: catalogue, value: `${valueTemp}::type::${selectedKey}`}},idx);
         } else {
           hdlChg({target:{name: catalogue, value: `type::${selectedKey}`}},idx);
         }
@@ -432,6 +454,17 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal }
 export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaState, setSchemaState, formData, setFormData, isValid, setIsValid, showButtons=true }) => {
 
   const [activeStep, setActiveStep] = useState(0);
+  const [rerender, setRerender] = useState(false);
+
+  useEffect(() => {
+    setRerender(true);
+  }, [activeStep]);
+
+  useEffect(() => {
+    if (rerender) {
+      setRerender(false);
+    }
+  }, [rerender]);
   
   const handleSubmit = async() => {
     let isValidForm = true;
@@ -605,28 +638,32 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
             </CDBStepper>
           </div>
         </div>
-        <div className="form-preview-inputs">
-          <Row>
-            {
-              schemaState[activeStep].map((sch,idx) => (
-                <RenderInput key={`form-input-${idx}`}
-                  schema={schemaState[activeStep][idx]}
-                  formData={formData[activeStep][idx]}
-                  valid={isValid[activeStep][idx]}
-                  hdlChg={(e)=>hdlChg(e,idx)}
-                  hdlSchm={hdlSchm}
-                  hdlIsVal={hdlIsVal}
-                  activeStep={activeStep}
-                  idx={idx}
-                />
-              ))
-            }
-          </Row>
-        </div>
+        {
+          !rerender &&
+          <div className="form-preview-inputs">
+            <Row>
+              {
+                schemaState[activeStep].map((sch,idx) => (
+                  <RenderInput key={`form-input-${idx}`}
+                    schema={schemaState[activeStep][idx]}
+                    formData={formData[activeStep][idx]}
+                    valid={isValid[activeStep][idx]}
+                    hdlChg={(e)=>hdlChg(e,idx)}
+                    hdlSchm={hdlSchm}
+                    hdlIsVal={hdlIsVal}
+                    activeStep={activeStep}
+                    idx={idx}
+                  />
+                ))
+              }
+            </Row>
+          </div>
+        }
+
       </div>
       <pre>
         {/* {JSON.stringify(schemaState,null,2)} */}
-        {/* {JSON.stringify(formData,null,2)} */}
+        {JSON.stringify(formData,null,2)}
         {/* {JSON.stringify(isValid,null,2)} */}
       </pre>
       {

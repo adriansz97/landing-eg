@@ -157,7 +157,7 @@ const BeAgent = () => {
         <p>Por medio de este sitio podrás denunciar aquellas conductas no éticas de manera sencilla, confidencial, segura y con la opción de hacerlo de forma anónima.
           El sistema es operado por un tercero independiente a Grupo Lala, líder en el país y especialista en la gestión de denuncias y reportes (EthicsGlobal).</p>
       </div>
-      <Container className="form-container mt-5">
+      <div className="form-container mt-5">
         <PreviewForm
           formIdentifier={formIdentifier}
           formDescription={formDescription}
@@ -169,7 +169,7 @@ const BeAgent = () => {
           isValid={isValid}
           setIsValid={setIsValid}
         />  
-      </Container>
+      </div>
     </div>
   )
 }
