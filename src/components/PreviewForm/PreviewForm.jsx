@@ -326,7 +326,6 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal }
       <Col md="6" className="preview-input-container fade-in-image">
           <label className="w-100">{schema.label}{schema.required?"*":""}</label>
           <input autoComplete="off" type="text" className="form-control w-100" name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} required={schema.required} />
-          {JSON.stringify(errors,null,2)}
       </Col>
     )
   }
@@ -446,6 +445,7 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
 
   const [activeStep, setActiveStep] = useState(0);
   const [rerender, setRerender] = useState(false);
+  const [allowStepClick, setAllowStepClick] = useState(false);
 
   useEffect(() => {
     setRerender(true);
@@ -495,6 +495,7 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
       }
     } else {
       console.log("El formulario no es válido");
+      setAllowStepClick(true);
     }
   }
 
@@ -623,7 +624,7 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
                   id={index}
                   icon={`stack-${index + 1}x`}
                   name={steps[index]?.title || "Sin Nombre"}
-                  handleClick={() => hdlActStp(index)}
+                  handleClick={allowStepClick?()=>hdlActStp(index):()=>{}}
                   active={activeStep}
                 />
               ))}
