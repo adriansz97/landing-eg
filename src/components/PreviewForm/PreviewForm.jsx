@@ -16,12 +16,17 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
   const [selectedKey, setSelectedKey] = useState(scope.selected||"");
   const isUniqueSelectionDefault = Array.isArray(scope.children) && scope.children.length===1;
 
+  // How did you realize - RD-1021010
+  // Business unit - business_units
+
   useEffect(() => {
     if (isUniqueSelectionDefault && !scope.selected) {
       if (Array.isArray(scope.children[0].childs)) {
         hdlSchm({ action: "selection", children: scope.children[0].childs, selected: scope.children[0].key, path, idx });
+        setIsValidCatalogue(false);
       } else {
         hdlSchm({ action: "noNextPath", selected: scope.children[0].key, path, idx, });
+        setIsValidCatalogue(true);
       }
       handleStartData();
     } else {
@@ -30,23 +35,21 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
   }, [scope]);
 
   const handleKeyChange = (newKey) => {
-    // Cuando la llave cambia a un string vacio o cuando se crea el componente
-    if (!newKey) {
-      // Cuando el selectedKey tiene valor y cambia a ""
-      if (scope.selected!==newKey) {
+    if (!newKey) { // Cuando la llave cambia a un string vacio o cuando se crea el componente
+      if (scope.selected!==newKey) { // Cuando el selectedKey tiene valor y cambia a ""
         hdlSchm({ action: "nullSelection", path, idx });
         handleDataNull();
+        setIsValidCatalogue(false);
       }
-    // Cuando la selectedKey es diferente a la seleccionada en el schema
-    } else if (scope.selected!==newKey) {
+    } else if (scope.selected!==newKey) { // Cuando la selectedKey es diferente a la seleccionada en el schema
       const actualScope = scope.children.find(obj=>obj.key===newKey);
       if (isUniqueSelectionDefault) {
         if (Array.isArray(scope.children[0].childs)) {
           if (!scope.next && !scope.selected) {
             hdlSchm({ action: "selection", children: scope.children[0].childs, selected: scope.children[0].key, path, idx });
+            setIsValidCatalogue(false);
           }
-        } else {
-          // Cuando el ultimo hijo es unico
+        } else { // Cuando el ultimo hijo es unico
           hdlSchm({ action: "noNextPath", selected: newKey, path, idx, });
           setIsValidCatalogue(true);
           handleDataNormal(newKey);
@@ -57,6 +60,7 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
           catalogByPart({ is_own: isOwn, catalogue, path: pathOnBack })
           .then( resp => {
             hdlSchm({ action: "selection", children: resp.data, selected: newKey, path, idx });
+            setIsValidCatalogue(false);
             handleDataEndpoint({ pathOnBack, scope: resp.data });
           })
           .catch(console.log);
@@ -66,12 +70,7 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
           handleDataNormal(newKey);
         }
       }
-    } 
-    // Solo para cambiar la data cuando los primeros selects sean uniqueSelection
-    // else if (scope.selected===newKey) {
-    //   console.log("entraaqui")
-    //   handleDataNormal(newKey);
-    // }
+    }
   }
 
   const handleDataEndpoint = ({ pathOnBack, scope, acumulatedPath }) => {
@@ -219,17 +218,25 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal }
   const [isValidCatalogue, setIsValidCatalogue] = useState(false);
   const [errors, setErrors] = useState([]);
 
-  // useEffect(() => {
-  //   setIsValidCatalogue(false);
-  //   const errors = doValidate();
-  //   setErrors(errors);
-  // }, [formData]);
-  
   useEffect(() => {
+    if ("business_units"===schema.catalogue) {
+      console.log(formData)
+    }
     setIsValidCatalogue(false);
     const errors = doValidate();
-    hdlIsVal(errors,idx);
-  }, [formData]);
+    setErrors(errors);
+  }, []);
+  
+  useEffect(() => {
+    const errors = doValidate();
+    // console.log(errors)
+    setErrors(errors);
+  }, [formData, isValidCatalogue]);
+
+  // useEffect(() => {
+  //   const errors = doValidate();
+  //   hdlIsVal(errors,idx);
+  // }, [isValidCatalogue]);
 
   const doValidate = () => {
     let errors = [];
@@ -326,6 +333,7 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal }
       <Col md="6" className="preview-input-container fade-in-image">
           <label className="w-100">{schema.label}{schema.required?"*":""}</label>
           <input autoComplete="off" type="text" className="form-control w-100" name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} required={schema.required} />
+          {JSON.stringify(errors,null,2)}
       </Col>
     )
   }
@@ -435,6 +443,7 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal }
             setIsValidCatalogue={setIsValidCatalogue}
           />
         </Row>
+        {JSON.stringify(errors,null,2)}
       </Col>
     )
   }
