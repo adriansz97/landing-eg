@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import _ from "lodash";
 import DatePicker from "react-datepicker";
-import { Col, Row, Button } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import { CDBStep, CDBStepper } from "cdbreact";
+import Button from "react-bootstrap/Button";
 import { catalogByPart, createReport } from "../../apis";
 import './styles.scss'
+
+// tengo que hacer todavia la validacion de los catalogos cuando esten completos
+// tengo que hacer que el formulario se renderize con las repuestas
 
 // Render de un input asociado a un catalogo
 const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, idx, type, required, catalogue, isOwn, hdlChg, hdlSchm, doValidate, isValidCatalogue, setIsValidCatalogue }) => {
@@ -14,46 +18,28 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
 
   useEffect(() => {
     if (isUniqueSelectionDefault && !scope.selected) {
-      // setSelectedKey(scope.children[0].key);
       if (Array.isArray(scope.children[0].childs)) {
         hdlSchm({ action: "selection", children: scope.children[0].childs, selected: scope.children[0].key, path, idx });
       } else {
         hdlSchm({ action: "noNextPath", selected: scope.children[0].key, path, idx, });
-        const valueTemp = value ? value : "";
-        const splitedArr = valueTemp.split("::");
-        const slicedArr = splitedArr.slice(0,((2*(nestNum))));
-        const joined = slicedArr.join("::");
-        // if (catalogue==="business_units") console.log(`type::${scope.children[0].key}`)
-        if (joined) {
-          hdlChg({target:{name: catalogue, value: `${joined}::type::${scope.children[0].key}`}},idx);
-        } else {
-          hdlChg({target:{name: catalogue, value: `type::${scope.children[0].key}`}},idx);
-        }
       }
+      handleStartData();
     } else {
       setSelectedKey(scope.selected);
     }
   }, [scope]);
 
-  useEffect(() => {
+  const handleKeyChange = (newKey) => {
     // Cuando la llave cambia a un string vacio o cuando se crea el componente
-    if (!selectedKey) {
+    if (!newKey) {
       // Cuando el selectedKey tiene valor y cambia a ""
-      if (scope.selected!==selectedKey) {
+      if (scope.selected!==newKey) {
         hdlSchm({ action: "nullSelection", path, idx });
-        const valueTemp = value ? value : "";
-        const splitedArr = valueTemp.split("::");
-        const slicedArr = splitedArr.slice(0,((2*(nestNum))));
-        const joined = slicedArr.join("::");
-        if (joined) {
-          hdlChg({target:{name: catalogue, value: `${joined}`}},idx);
-        } else {
-          hdlChg({target:{name: catalogue, value: ``}},idx);
-        }
+        handleDataNull();
       }
     // Cuando la selectedKey es diferente a la seleccionada en el schema
-    } else if (scope.selected!==selectedKey) {
-      const actualScope = scope.children.find(obj=>obj.key===selectedKey);
+    } else if (scope.selected!==newKey) {
+      const actualScope = scope.children.find(obj=>obj.key===newKey);
       if (isUniqueSelectionDefault) {
         if (Array.isArray(scope.children[0].childs)) {
           if (!scope.next && !scope.selected) {
@@ -61,74 +47,37 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
           }
         } else {
           // Cuando el ultimo hijo es unico
-          hdlSchm({ action: "noNextPath", selected: selectedKey, path, idx, });
+          hdlSchm({ action: "noNextPath", selected: newKey, path, idx, });
           setIsValidCatalogue(true);
-          const valueTemp = value ? value : "";
-          const splitedArr = valueTemp.split("::");
-          const slicedArr = splitedArr.slice(0,((2*(nestNum))));
-          const joined = slicedArr.join("::");
-          if (joined) {
-            hdlChg({target:{name: catalogue, value: `${joined}::type::${selectedKey}`}},idx);
-          } else {
-            hdlChg({target:{name: catalogue, value: `type::${selectedKey}`}},idx);
-          }
+          handleDataNormal(newKey);
         }
       } else {
         const pathOnBack = actualScope?.path;
         if (pathOnBack) {
           catalogByPart({ is_own: isOwn, catalogue, path: pathOnBack })
           .then( resp => {
-            hdlSchm({ action: "selection", children: resp.data, selected: selectedKey, path, idx });
-            handleDataChange({ pathOnBack, scope: resp.data });
+            hdlSchm({ action: "selection", children: resp.data, selected: newKey, path, idx });
+            handleDataEndpoint({ pathOnBack, scope: resp.data });
           })
           .catch(console.log);
         } else {
-          hdlSchm({ action: "noNextPath", selected: selectedKey, path, idx, });
+          hdlSchm({ action: "noNextPath", selected: newKey, path, idx, });
           setIsValidCatalogue(true);
-          if (!isUniqueSelectionDefault) {
-            const valueTemp = value ? value : "";
-            const splitedArr = valueTemp.split("::");
-            const slicedArr = splitedArr.slice(0,((2*(nestNum))));
-            const joined = slicedArr.join("::");
-            if (joined) {
-              hdlChg({target:{name: catalogue, value: `${joined}::type::${selectedKey}`}},idx);
-            } else {
-              hdlChg({target:{name: catalogue, value: `type::${selectedKey}`}},idx);
-            }
-          }
+          handleDataNormal(newKey);
         }
       }
+    } 
     // Solo para cambiar la data cuando los primeros selects sean uniqueSelection
-    } else if (scope.selected===selectedKey) {
-      if (isUniqueSelectionDefault) {
-        const valueTemp = value ? value : "";
-        const splitedArr = valueTemp.split("::");
-        const slicedArr = splitedArr.slice(0,((2*(nestNum))));
-        const joined = slicedArr.join("::");
-        if (valueTemp) {
-          hdlChg({target:{name: catalogue, value: `${valueTemp}::type::${selectedKey}`}},idx);
-        } else {
-          hdlChg({target:{name: catalogue, value: `type::${selectedKey}`}},idx);
-        }
-      } else {
-        const valueTemp = value ? value : "";
-        const splitedArr = valueTemp.split("::");
-        const slicedArr = splitedArr.slice(0,((2*(nestNum))));
-        const joined = slicedArr.join("::");
-        if (selectedKey==="nombre_0_0_0") console.log({ selectedKey, key: scope.selected, value: `${joined}::type::${selectedKey}` })
-        if (valueTemp) {
-          hdlChg({target:{name: catalogue, value: `${valueTemp}::type::${selectedKey}`}},idx);
-        } else {
-          hdlChg({target:{name: catalogue, value: `type::${selectedKey}`}},idx);
-        }
-      }
-    }
-  }, [selectedKey]);
+    // else if (scope.selected===newKey) {
+    //   console.log("entraaqui")
+    //   handleDataNormal(newKey);
+    // }
+  }
 
-  const handleDataChange = ({ pathOnBack, scope, acumulatedPath }) => {
+  const handleDataEndpoint = ({ pathOnBack, scope, acumulatedPath }) => {
     if (scope.length===1) {  // una sola opcion
       if (Array.isArray(scope[0].childs) || Array.isArray(scope.children)) { // una sola opcion y tiene hijo o hijos
-        handleDataChange({
+        handleDataEndpoint({
           scope: scope[0].childs,
           acumulatedPath: scope[0].path
         })
@@ -148,13 +97,49 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
     }
   }
 
+  const handleDataNormal = (newKey) => {
+    const valueTemp = value ? value : "";
+    const splitedArr = valueTemp.split("::");
+    const slicedArr = splitedArr.slice(0,((2*(nestNum))));
+    const joined = slicedArr.join("::");
+    if (joined) {
+      hdlChg({target:{name: catalogue, value: `${joined}::type::${newKey}`}},idx);
+    } else {
+      hdlChg({target:{name: catalogue, value: `type::${newKey}`}},idx);
+    }
+  }
+
+  const handleDataNull = () => {
+    const valueTemp = value ? value : "";
+    const splitedArr = valueTemp.split("::");
+    const slicedArr = splitedArr.slice(0,((2*(nestNum))));
+    const joined = slicedArr.join("::");
+    if (joined) {
+      hdlChg({target:{name: catalogue, value: `${joined}`}},idx);
+    } else {
+      hdlChg({target:{name: catalogue, value: ``}},idx);
+    }
+  }
+
+  const handleStartData = () => {
+    const valueTemp = value ? value : "";
+    const splitedArr = valueTemp.split("::");
+    const slicedArr = splitedArr.slice(0,((2*(nestNum))));
+    const joined = slicedArr.join("::");
+    if (joined) {
+      hdlChg({target:{name: catalogue, value: `${joined}::type::${scope.children[0].key}`}},idx);
+    } else {
+      hdlChg({target:{name: catalogue, value: `type::${scope.children[0].key}`}},idx);
+    }
+  }
+
   return (
     <>
       {
         type==="catalog-select"
           ? <>
               <Col md="4" className="fade-in-image preview-input-container" >
-                <select className="form-control form-select-input w-100" onChange={(e)=>setSelectedKey(e.target.value)} name={scope.key} value={selectedKey} style={{margin: 0}}>
+                <select className="form-control form-select-input w-100" onChange={(e)=>handleKeyChange(e.target.value)} name={scope.key} value={selectedKey} style={{margin: 0}}>
                   {
                     !isUniqueSelectionDefault &&
                       <option value="">Seleccione una opción</option>
@@ -195,7 +180,7 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
                     scope.children &&
                     scope.children.map((item,idxx)=>(
                       <div key={item.key} className="form-check">
-                        <input className="form-check-input" id={`${item.path}-${item.key}-${nestNum}`} type="radio" value={item.key} name={item.path} checked={selectedKey===item.key} onChange={(e) => setSelectedKey(e.target.value)} />
+                        <input className="form-check-input" id={`${item.path}-${item.key}-${nestNum}`} type="radio" value={item.key} name={item.path} checked={selectedKey===item.key} onChange={(e) => handleKeyChange(e.target.value)} />
                         <label className="form-check-label" htmlFor={`${item.path}-${item.key}-${nestNum}`}>{item.label}</label>
                         <br />
                       </div>
@@ -232,11 +217,16 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
 const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal }) => {
 
   const [isValidCatalogue, setIsValidCatalogue] = useState(false);
+  const [errors, setErrors] = useState([]);
 
+  // useEffect(() => {
+  //   setIsValidCatalogue(false);
+  //   const errors = doValidate();
+  //   setErrors(errors);
+  // }, [formData]);
+  
   useEffect(() => {
-    if (isValidCatalogue) {
-      setIsValidCatalogue(false);
-    }
+    setIsValidCatalogue(false);
     const errors = doValidate();
     hdlIsVal(errors,idx);
   }, [formData]);
@@ -298,7 +288,7 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal }
     if (schema.type === "catalog-select" || schema.type === "catalog-radio") {
       if (schema.required) {
         if (!isValidCatalogue) {
-          errors = ["This catalogue is not completed"];
+          errors.push("This catalogue is not completed");
         }
       }
     }
@@ -336,6 +326,7 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal }
       <Col md="6" className="preview-input-container fade-in-image">
           <label className="w-100">{schema.label}{schema.required?"*":""}</label>
           <input autoComplete="off" type="text" className="form-control w-100" name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} required={schema.required} />
+          {JSON.stringify(errors,null,2)}
       </Col>
     )
   }
@@ -497,8 +488,8 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
       // Todo: Hacer la subida de los datos
       try {
         console.log(objToSend)
-        const resp = await createReport(objToSend);
-        console.log(resp);
+        // const resp = await createReport(objToSend);
+        // console.log(resp);
       } catch (error) {
         console.log(error)
       }
@@ -597,12 +588,13 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
   }
   
   const hdlIsVal = (valid,idx) => {
+    // console.log(valid,idx);
     setIsValid(isValid.map((item,index)=>index===activeStep
       ? item.map((item2,index2)=>index2===idx
           ? valid
           : item2
         )
-    : item))
+    : item));
   }
 
   const hdlActStp = (step) => {
@@ -659,16 +651,16 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
             </Row>
           </div>
         }
-
       </div>
-      <pre>
+      {/* <pre> */}
         {/* {JSON.stringify(schemaState,null,2)} */}
-        {JSON.stringify(formData,null,2)}
+        {/* {JSON.stringify(formData,null,2)} */}
         {/* {JSON.stringify(isValid,null,2)} */}
-      </pre>
+      {/* </pre> */}
       {
         showButtons &&
           <div>
+            <Button className='mt-4 mr-1' onClick={handlePrintFormData}>Print</Button>
             {
               activeStep!==0 && 
                 <Button className='mt-4 mr-1' onClick={()=>setActiveStep((active)=>active-1)}>Back</Button>
@@ -676,7 +668,6 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
             {
               activeStep===steps.length-1
               ? <>
-                  <Button className='mt-4 mr-1' onClick={handlePrintFormData}>Print form data</Button>
                   <Button className='mt-4 mr-1' variant="success" onClick={handleSubmit}>Send</Button>
                 </>
               : <Button className='mt-4' onClick={()=>setActiveStep((active)=>active+1)}>Next</Button>
