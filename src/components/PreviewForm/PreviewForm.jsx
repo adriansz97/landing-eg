@@ -6,6 +6,7 @@ import { CDBStep, CDBStepper } from "cdbreact";
 import Button from "react-bootstrap/Button";
 import { catalogByPart, createReport } from "../../apis";
 import './styles.scss'
+import { useNavigate } from "react-router";
 
 // Render de un input asociado a un catalogo
 const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, idx, type, required, catalogue, isOwn, hdlChg, hdlSchm, doValidate, handleValidate, returnValidClass }) => {
@@ -309,6 +310,20 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
         }
       }
     }
+    if (schema.type === "subject") {
+      if (schema.required===true) {
+        if (formData[schema.key].trim()==="") {
+          errors.push("This field may not be empty")
+        }
+      }
+    }
+    if (schema.type === "description") {
+      if (schema.required===true) {
+        if (formData[schema.key].trim()==="") {
+          errors.push("This field may not be empty")
+        }
+      }
+    }
     return errors;
   }
 
@@ -474,14 +489,39 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
       </Col>
     )
   }
+  if (schema.type === "catalog-error") {
+    return (
+      <></>
+    )
+  }
+  if (schema.type === "subject") {
+    return (
+      <Col md="6" className="preview-input-container fade-in-image">
+          <label className="w-100">{schema.label}{schema.required?"*":""}</label>
+          <input autoComplete="off" type="text" className={`form-control ${returnValidClass()} w-100`} name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} />
+          <ReturnErrorMesages />
+      </Col>
+    )
+  }
+  if (schema.type === "description") {
+    return (
+      <Col md="6" className="preview-input-container fade-in-image">
+        <label className="w-100" >{schema.label}{schema.required?"*":""}</label>
+        <textarea autoComplete="off" type="text" className={`form-control ${returnValidClass()} w-100`} name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} ></textarea>
+        <ReturnErrorMesages />
+      </Col>
+    )
+  }
 }
 
 // Vista previa del formulario
-export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaState, setSchemaState, formData, setFormData, isValid, setIsValid, showButtons=true }) => {
+export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaState, setSchemaState, formData, setFormData, isValid, setIsValid, showButtons=true, stepClick=false }) => {
+
+  const navigate = useNavigate();
 
   const [activeStep, setActiveStep] = useState(0);
   const [rerender, setRerender] = useState(false);
-  const [allowStepClick, setAllowStepClick] = useState(false);
+  const [allowStepClick, setAllowStepClick] = useState(stepClick);
   const [tryToSend, setTryToSend] = useState(false);
 
   useEffect(() => {
@@ -509,7 +549,6 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
       }
     }
     if (isValidForm) {
-      // Todo: Hacer la conversion a objeto de los steps
       let formAnswers = {};
       for (const [idx, step] of steps.entries()) {
         formAnswers[step.name] = formData[idx];
@@ -525,11 +564,10 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
           "AT03MR311094e104g01m0P6XOD29P222QP"
         ]
       };
-      
-      // Todo: Hacer la subida de los datos
       try {
         console.log(objToSend)
         const resp = await createReport(objToSend);
+        navigate('/reports/all');
         console.log(resp);
       } catch (error) {
         console.log(error)
@@ -702,18 +740,18 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
       {/* </pre> */}
       {
         showButtons &&
-          <div>
+          <div className="form-buttons">
             {/* <Button className='mt-4 mr-1' onClick={handlePrintFormData}>Print</Button> */}
             {
               activeStep!==0 && 
-                <Button className='mt-4 mr-1' onClick={()=>setActiveStep((active)=>active-1)}>Back</Button>
+                <Button className='btn-form mt-4 mr-1' onClick={()=>setActiveStep((active)=>active-1)}>Back</Button>
             }
             {
               activeStep===steps.length-1
               ? <>
-                  <Button className='mt-4 mr-1' variant="success" onClick={handleSubmit}>Send</Button>
+                  <Button className='btn-send mt-4 mr-1' variant="success" onClick={handleSubmit}>Send</Button>
                 </>
-              : <Button className='mt-4' onClick={()=>setActiveStep((active)=>active+1)}>Next</Button>
+              : <Button className='btn-form mt-4' onClick={()=>setActiveStep((active)=>active+1)}>Next</Button>
             }
           </div>
       }
