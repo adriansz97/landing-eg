@@ -37,7 +37,7 @@ const BeAgent = () => {
   ]);
   const [isValid, setIsValid] = useState([
     [
-      []
+      true
     ]
   ]);
 
@@ -140,7 +140,8 @@ const BeAgent = () => {
             }
           }
         }));
-        newIsValid.push(resp.map( input => [] ))
+        newIsValid.push(resp.map( input => input.required ? false : true ))
+        // newIsValid.push(resp.map( input => input.required ? false : true ))
       }
 
       setSteps(newSteps);

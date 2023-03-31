@@ -7,26 +7,22 @@ import Button from "react-bootstrap/Button";
 import { catalogByPart, createReport } from "../../apis";
 import './styles.scss'
 
-// tengo que hacer todavia la validacion de los catalogos cuando esten completos
-// tengo que hacer que el formulario se renderize con las repuestas
-
 // Render de un input asociado a un catalogo
-const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, idx, type, required, catalogue, isOwn, hdlChg, hdlSchm, doValidate, isValidCatalogue, setIsValidCatalogue }) => {
+const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, idx, type, required, catalogue, isOwn, hdlChg, hdlSchm, doValidate, handleValidate, returnValidClass }) => {
 
   const [selectedKey, setSelectedKey] = useState(scope.selected||"");
   const isUniqueSelectionDefault = Array.isArray(scope.children) && scope.children.length===1;
-
-  // How did you realize - RD-1021010
-  // Business unit - business_units
 
   useEffect(() => {
     if (isUniqueSelectionDefault && !scope.selected) {
       if (Array.isArray(scope.children[0].childs)) {
         hdlSchm({ action: "selection", children: scope.children[0].childs, selected: scope.children[0].key, path, idx });
-        setIsValidCatalogue(false);
+        handleValidate(false);
       } else {
         hdlSchm({ action: "noNextPath", selected: scope.children[0].key, path, idx, });
-        setIsValidCatalogue(true);
+        setTimeout(() => {
+          handleValidate(true);
+        }, 100);
       }
       handleStartData();
     } else {
@@ -39,7 +35,7 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
       if (scope.selected!==newKey) { // Cuando el selectedKey tiene valor y cambia a ""
         hdlSchm({ action: "nullSelection", path, idx });
         handleDataNull();
-        setIsValidCatalogue(false);
+        handleValidate(false);
       }
     } else if (scope.selected!==newKey) { // Cuando la selectedKey es diferente a la seleccionada en el schema
       const actualScope = scope.children.find(obj=>obj.key===newKey);
@@ -47,11 +43,11 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
         if (Array.isArray(scope.children[0].childs)) {
           if (!scope.next && !scope.selected) {
             hdlSchm({ action: "selection", children: scope.children[0].childs, selected: scope.children[0].key, path, idx });
-            setIsValidCatalogue(false);
+            handleValidate(false);
           }
         } else { // Cuando el ultimo hijo es unico
           hdlSchm({ action: "noNextPath", selected: newKey, path, idx, });
-          setIsValidCatalogue(true);
+          handleValidate(true);
           handleDataNormal(newKey);
         }
       } else {
@@ -60,13 +56,13 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
           catalogByPart({ is_own: isOwn, catalogue, path: pathOnBack })
           .then( resp => {
             hdlSchm({ action: "selection", children: resp.data, selected: newKey, path, idx });
-            setIsValidCatalogue(false);
+            handleValidate(false);
             handleDataEndpoint({ pathOnBack, scope: resp.data });
           })
           .catch(console.log);
         } else {
           hdlSchm({ action: "noNextPath", selected: newKey, path, idx, });
-          setIsValidCatalogue(true);
+          handleValidate(true);
           handleDataNormal(newKey);
         }
       }
@@ -138,7 +134,7 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
         type==="catalog-select"
           ? <>
               <Col md="4" className="fade-in-image preview-input-container" >
-                <select className="form-control form-select-input w-100" onChange={(e)=>handleKeyChange(e.target.value)} name={scope.key} value={selectedKey} style={{margin: 0}}>
+                <select className={`form-control form-select-input ${returnValidClass()}  w-100`} onChange={(e)=>handleKeyChange(e.target.value)} name={scope.key} value={selectedKey} style={{margin: 0}}>
                   {
                     !isUniqueSelectionDefault &&
                       <option value="">Seleccione una opción</option>
@@ -168,8 +164,8 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
                     isOwn={isOwn} 
                     hdlChg={hdlChg}
                     hdlSchm={hdlSchm}
-                    isValidCatalogue={isValidCatalogue}
-                    setIsValidCatalogue={setIsValidCatalogue}
+                    handleValidate={handleValidate}
+                    returnValidClass={returnValidClass}
                   />
               }
             </>
@@ -179,7 +175,7 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
                     scope.children &&
                     scope.children.map((item,idxx)=>(
                       <div key={item.key} className="form-check">
-                        <input className="form-check-input" id={`${item.path}-${item.key}-${nestNum}`} type="radio" value={item.key} name={item.path} checked={selectedKey===item.key} onChange={(e) => handleKeyChange(e.target.value)} />
+                        <input className={`form-check-input ${returnValidClass()}`} id={`${item.path}-${item.key}-${nestNum}`} type="radio" value={item.key} name={item.path} checked={selectedKey===item.key} onChange={(e) => handleKeyChange(e.target.value)} />
                         <label className="form-check-label" htmlFor={`${item.path}-${item.key}-${nestNum}`}>{item.label}</label>
                         <br />
                       </div>
@@ -202,8 +198,8 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
                     isOwn={isOwn} 
                     hdlChg={hdlChg}
                     hdlSchm={hdlSchm}
-                    isValidCatalogue={isValidCatalogue}
-                    setIsValidCatalogue={setIsValidCatalogue}
+                    handleValidate={handleValidate}
+                    returnValidClass={returnValidClass}
                   />
               }
             </>
@@ -213,30 +209,39 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
 }
 
 // Render de cada uno de los inputs en el schema
-const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal }) => {
+const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, tryToSend }) => {
 
-  const [isValidCatalogue, setIsValidCatalogue] = useState(false);
   const [errors, setErrors] = useState([]);
-
-  useEffect(() => {
-    if ("business_units"===schema.catalogue) {
-      console.log(formData)
-    }
-    setIsValidCatalogue(false);
-    const errors = doValidate();
-    setErrors(errors);
-  }, []);
   
   useEffect(() => {
     const errors = doValidate();
-    // console.log(errors)
     setErrors(errors);
-  }, [formData, isValidCatalogue]);
+    if (!(schema.type.includes('catalog'))) {
+      if (errors.length>0) {
+        handleValidateNormal(false);
+      } else {
+        handleValidateNormal(true);
+      }
+      setErrors(errors);
+    }
+  }, [formData]);
 
-  // useEffect(() => {
-  //   const errors = doValidate();
-  //   hdlIsVal(errors,idx);
-  // }, [isValidCatalogue]);
+  const handleValidate = (validCat) => {
+    if (schema.required) {
+      hdlIsVal(validCat,idx);
+    }
+  }
+
+  const handleValidateNormal = (valid) => {
+    hdlIsVal(valid,idx);
+  }
+
+  const returnValidClass = () => {
+    if (!valid && tryToSend) {
+      return "is-invalid"
+    }
+    return ""
+  }
 
   const doValidate = () => {
     let errors = [];
@@ -248,10 +253,15 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal }
       }
     }
     if (schema.type === "number") {
+      const tempNum = Number(formData[schema.key]);
       if (schema.required===true) {
-        if (isNaN(formData[schema.key])) {
-          errors.push("This field only accept numbers");
+        if (formData[schema.key]==="") {
+          errors.push("Not valid number")
+          console.log(formData[schema.key])
         }
+      }
+      if (tempNum<0) {
+        errors.push("Less than zero is not supported");
       }
     }
     if (schema.type === "textarea") {
@@ -289,17 +299,30 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal }
           errors.push("End date is not valid")
         }
       } else {
-        errors.push("This is not valid date (dont have two dates)")
+        errors.push("This is not valid date (dont have correct format)")
       }
     }
     if (schema.type === "catalog-select" || schema.type === "catalog-radio") {
       if (schema.required) {
-        if (!isValidCatalogue) {
+        if (!valid) {
           errors.push("This catalogue is not completed");
         }
       }
     }
     return errors;
+  }
+
+  const ReturnErrorMesages = () => {
+    return (
+      <>
+        { tryToSend && Array.isArray(errors) && errors.length>0 && !valid &&
+          errors.map((err,idx)=>(
+          <div key={idx} className="invalid-msg">
+            {err} <br />
+          </div>
+        ))}
+      </>
+    )
   }
 
   // FOR DATES
@@ -332,8 +355,8 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal }
     return (
       <Col md="6" className="preview-input-container fade-in-image">
           <label className="w-100">{schema.label}{schema.required?"*":""}</label>
-          <input autoComplete="off" type="text" className="form-control w-100" name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} required={schema.required} />
-          {JSON.stringify(errors,null,2)}
+          <input autoComplete="off" type="text" className={`form-control ${returnValidClass()} w-100`} name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} />
+          <ReturnErrorMesages />
       </Col>
     )
   }
@@ -341,7 +364,8 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal }
     return (
       <Col md="6" className="preview-input-container fade-in-image">
         <label className="w-100">{schema.label}{schema.required?"*":""}</label>
-        <input autoComplete="off" type="number" className="form-control w-100" name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} required={schema.required} />
+        <input autoComplete="off" type="number" className={`form-control ${returnValidClass()} w-100`} name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} />
+        <ReturnErrorMesages />
       </Col>
     )
   }
@@ -349,7 +373,8 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal }
     return (
       <Col md="6" className="preview-input-container fade-in-image">
         <label className="w-100" >{schema.label}{schema.required?"*":""}</label>
-        <textarea autoComplete="off" type="text" className="form-control w-100" name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} required={schema.required} ></textarea>
+        <textarea autoComplete="off" type="text" className={`form-control ${returnValidClass()} w-100`} name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} ></textarea>
+        <ReturnErrorMesages />
       </Col>
     )
   }
@@ -357,7 +382,7 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal }
     return (
       <Col md="12" className="preview-input-container fade-in-image">
         <div className="form-check">
-          <input className="form-check-input" type="checkbox" name={schema.key} defaultChecked={formData[schema.key]} id={schema.key} onChange={(e)=>hdlChg(e,idx,"checkbox")} required={schema.required} />
+          <input className="form-check-input" type="checkbox" name={schema.key} defaultChecked={formData[schema.key]} id={schema.key} onChange={(e)=>hdlChg(e,idx,"checkbox")} />
           <label className="form-check-label" htmlFor={schema.key}>
             {schema.label}{schema.required?"*":""}
           </label>
@@ -372,8 +397,9 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal }
           <label>
             {schema.label}{schema.required?"*":""}
           </label>
-          <input className="form-control" name={schema.key} type="file" onChange={(e)=>hdlChg(e,idx)} required={schema.required} />
+          <input className="form-control" name={schema.key} type="file" onChange={(e)=>hdlChg(e,idx)} />
         </div>
+        <ReturnErrorMesages />
       </Col>
     )
   }
@@ -390,6 +416,7 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal }
             onChange={(value)=>hdlChg({target:{name: schema.key, value, type: "date"}},idx)} 
           />
         </div>
+        <ReturnErrorMesages />
       </Col>
     )
   }
@@ -439,11 +466,11 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal }
             hdlChg={hdlChg} 
             hdlSchm={hdlSchm} 
             doValidate={doValidate}
-            isValidCatalogue={isValidCatalogue}
-            setIsValidCatalogue={setIsValidCatalogue}
+            handleValidate={handleValidate}
+            returnValidClass={returnValidClass}
           />
+          <ReturnErrorMesages />
         </Row>
-        {JSON.stringify(errors,null,2)}
       </Col>
     )
   }
@@ -455,6 +482,7 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
   const [activeStep, setActiveStep] = useState(0);
   const [rerender, setRerender] = useState(false);
   const [allowStepClick, setAllowStepClick] = useState(false);
+  const [tryToSend, setTryToSend] = useState(false);
 
   useEffect(() => {
     setRerender(true);
@@ -467,11 +495,15 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
   }, [rerender]);
   
   const handleSubmit = async() => {
+    setTryToSend(true);
     let isValidForm = true;
-    for (const step of isValid) {
-      for (const inp of step) {
-        if (Array.isArray(inp) && inp.length>0) {
-          console.log(inp)
+    let firstStepWithErr = null;
+    for (const [indexStp, step] of isValid.entries()) {
+      for (const [indexInp, input] of step.entries()) {
+        if (!input) {
+          if (firstStepWithErr===null) {
+            firstStepWithErr = indexStp;
+          }
           isValidForm = false;
         }
       }
@@ -497,13 +529,14 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
       // Todo: Hacer la subida de los datos
       try {
         console.log(objToSend)
-        // const resp = await createReport(objToSend);
-        // console.log(resp);
+        const resp = await createReport(objToSend);
+        console.log(resp);
       } catch (error) {
         console.log(error)
       }
     } else {
       console.log("El formulario no es válido");
+      hdlActStp(firstStepWithErr);
       setAllowStepClick(true);
     }
   }
@@ -598,7 +631,6 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
   }
   
   const hdlIsVal = (valid,idx) => {
-    // console.log(valid,idx);
     setIsValid(isValid.map((item,index)=>index===activeStep
       ? item.map((item2,index2)=>index2===idx
           ? valid
@@ -654,6 +686,7 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
                     hdlSchm={hdlSchm}
                     hdlIsVal={hdlIsVal}
                     activeStep={activeStep}
+                    tryToSend={tryToSend}
                     idx={idx}
                   />
                 ))
@@ -670,7 +703,7 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
       {
         showButtons &&
           <div>
-            <Button className='mt-4 mr-1' onClick={handlePrintFormData}>Print</Button>
+            {/* <Button className='mt-4 mr-1' onClick={handlePrintFormData}>Print</Button> */}
             {
               activeStep!==0 && 
                 <Button className='mt-4 mr-1' onClick={()=>setActiveStep((active)=>active-1)}>Back</Button>
