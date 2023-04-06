@@ -10,7 +10,7 @@ function SearchBar ({placeholder}) {
                 </div>
                 <input 
                     type="text" 
-                    placeholder="Buscar recursos…" 
+                    placeholder="Consulta aquí tu denuncia" 
                     id="header-search"
                     autoComplete='off'
                 />

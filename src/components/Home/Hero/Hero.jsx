@@ -1,24 +1,35 @@
-import { Link } from "react-router-dom";
-import { CDBBtn} from "cdbreact";
-import HeroImg from "../../../assets/images/hero.png";
+import { useContext } from "react";
+import { CDBBtn } from "cdbreact";
+// import HeroImg from "../../../assets/images/hero.png";
+import HeroImg from "../../../assets/images/surdep-pp.jpg";
+import { ThemeContext } from "../../../context/AppContext";
 import "./styles.scss";
 
 const Hero = () => {
+
+    const { primaryColor, secondaryColor } = useContext(ThemeContext);
+
+    const clientName = "SURTIDORA DEPARTAMENTAL";
+
 	return(
 		<div className="home-hero">
+            <div className="bg-image"></div>
 			<div id="contents">
                 <div style={{maxWidth:"1320px", margin:"0 auto"}}>                        
                     <div id="main-text">
-                        <img src={HeroImg} alt="hero" />
+                        <div className="main-img-container">
+                            <img src={HeroImg} alt="hero" />
+                        </div>
                         <div className="ml-0 ml-md-5">
-                            <h1 className="my-4">LALA TE ESCUCHA</h1>
-                            <CDBBtn className="primary-white-outline-btn w-160" outline><Link to="/report/complaints">DENUNCIAR</Link></CDBBtn>
-                            <CDBBtn className="primary-white-outline-btn w-160" outline><Link to="/report/questions">PREGUNTAR</Link></CDBBtn>
-                            <CDBBtn className="primary-white-outline-btn w-160" outline><Link to="/report/suggestions">SUGERIR</Link></CDBBtn>
-                            <a className="text-white d-block mt-4" href="{() => false}">¿Como hacer una buena denuncia?</a>
+                            <h1 className="my-4 title">LÍNEA ÉTICA {clientName}</h1>
+                            <CDBBtn className="hero-btn" outline style={{ borderColor: "white", color: primaryColor }}>DENUNCIAR</CDBBtn>
+                            <CDBBtn className="hero-btn" outline style={{ borderColor: "white", color: primaryColor }}>PREGUNTAR</CDBBtn>
+                            <CDBBtn className="hero-btn" outline style={{ borderColor: "white", color: primaryColor }}>SUGERIR</CDBBtn>
+                            {/* <a className="text-white d-block mt-4" href="{() => false}">¿Como hacer una buena denuncia?</a> */}
                         </div>
                     </div>
                 </div>
+                <div id="noti-message">Si eres testigo de alguna falta a nuestro código de ética, no dudes en denunciarlo a través de nuestros canales de denuncia:</div>
             </div>
 		</div>
 	);

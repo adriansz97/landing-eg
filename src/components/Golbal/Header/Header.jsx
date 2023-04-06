@@ -1,11 +1,17 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { CDBNavbar, CDBNavBrand, CDBNavItem, CDBBtn, CDBNavToggle, CDBCollapse, CDBNavbarNav } from "cdbreact";
-import logo from "../../../assets/images/logo.png";
+// import logo from "../../../assets/images/logo.png";
+import logo from "../../../assets/images/surdep-logo.png";
 import SearchBar from '../../SearchBar/SearchBar';
 import "./styles.scss";
+import { useContext } from "react";
+import { ThemeContext } from "../../../context/AppContext";
 
 const ComplaintFormComponent = () => {
+
+    const { primaryColor, secondaryColor } = useContext(ThemeContext);
+
     const [collapse2, setCollapse2] = useState(false);
 
     return (
@@ -32,9 +38,9 @@ const ComplaintFormComponent = () => {
                         <CDBNavbarNav right>
                             <CDBNavItem>
                                 <SearchBar />
-                                <CDBBtn className="primary-outline-btn" color="primary" outline> CÓDIGO DE ÉTICA </CDBBtn>
-                                <CDBBtn className="primary-btn d-sm-none d-md-block d-lg-block" color="primary">
-                                    <Link to="/complaint">DENUNCIAR <span className="txt-hidden">AHORA</span></Link>
+                                <CDBBtn className="header-btn-outline" style={{ color: primaryColor, borderColor: primaryColor }} > CÓDIGO DE ÉTICA </CDBBtn>
+                                <CDBBtn className="header-btn d-sm-none d-md-block d-lg-block" style={{ backgroundColor: primaryColor, borderColor: secondaryColor }}>
+                                    DENUNCIAR <span className="txt-hidden">AHORA</span>
                                 </CDBBtn>
                             </CDBNavItem>
                         </CDBNavbarNav>

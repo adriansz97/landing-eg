@@ -565,9 +565,8 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
         ]
       };
       try {
-        console.log(objToSend)
+        console.log(objToSend);
         const resp = await createReport(objToSend);
-        navigate('/reports/all');
         console.log(resp);
       } catch (error) {
         console.log(error)

@@ -20,7 +20,6 @@ const ContactCarousel = () => {
     };
     return(
         <div id="contact-carousel">
-            <div id="noti-message">Si eres testigo de alguna falta a nuetro código de ética no dudes en denunciarlo a través de nuestros canales de denuncia:</div>
             <div id="carousel-block">
                 <Carousel responsive={responsive}>
                     <div className="item">
