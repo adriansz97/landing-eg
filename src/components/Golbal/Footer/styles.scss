@@ -1,5 +1,5 @@
 @import '../../../theme/colors';
-footer{
+.footer-container{
     background-color: $color-ethicsBlue;
     h4{
         color: $color-white;
@@ -12,6 +12,17 @@ footer{
             display: block;
             color: $color-paleBlue2!important;
             padding: 0.5rem 0;
+        }
+    }
+    hr {
+        border: 2px solid #000000;
+        width: 10%;
+    }
+    .footer-logo {
+        height: 35px;
+        
+        img {
+            height: 100%;
         }
     }
 }

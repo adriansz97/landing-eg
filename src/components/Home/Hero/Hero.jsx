@@ -1,16 +1,9 @@
-import { useContext } from "react";
 import { CDBBtn } from "cdbreact";
 // import HeroImg from "../../../assets/images/hero.png";
 import HeroImg from "../../../assets/images/surdep-pp.jpg";
-import { ThemeContext } from "../../../context/AppContext";
 import "./styles.scss";
 
-const Hero = () => {
-
-    const { primaryColor, secondaryColor } = useContext(ThemeContext);
-
-    const clientName = "SURTIDORA DEPARTAMENTAL";
-
+const Hero = ({ clientName, scrollToRef }) => {
 	return(
 		<div className="home-hero">
             <div className="bg-image"></div>
@@ -21,15 +14,16 @@ const Hero = () => {
                             <img src={HeroImg} alt="hero" />
                         </div>
                         <div className="ml-0 ml-md-5">
-                            <h1 className="my-4 title">LÍNEA ÉTICA {clientName}</h1>
-                            <CDBBtn className="hero-btn" outline style={{ borderColor: "white", color: primaryColor }}>DENUNCIAR</CDBBtn>
-                            <CDBBtn className="hero-btn" outline style={{ borderColor: "white", color: primaryColor }}>PREGUNTAR</CDBBtn>
-                            <CDBBtn className="hero-btn" outline style={{ borderColor: "white", color: primaryColor }}>SUGERIR</CDBBtn>
+                            <h1 className="my-4 title">LÍNEA ÉTICA <span className="text-uppercase">{clientName}</span></h1>
+                            {/* <CDBBtn className="hero-btn" outline style={{ borderColor: "white" }}>DENUNCIAR</CDBBtn>
+                            <CDBBtn className="hero-btn" outline style={{ borderColor: "white" }}>PREGUNTAR</CDBBtn>
+                            <CDBBtn className="hero-btn" outline style={{ borderColor: "white" }}>SUGERIR</CDBBtn> */}
+                            <CDBBtn className="hero-btn" outline style={{ borderColor: "white" }} onClick={()=>scrollToRef("HowItWorks")}>SEGUIMIENTO DE LA DENUNCIA</CDBBtn>
+                            <CDBBtn className="hero-btn" outline style={{ borderColor: "white" }} onClick={()=>scrollToRef("FollowUp")}>DENUNCIAR AHORA</CDBBtn>
                             {/* <a className="text-white d-block mt-4" href="{() => false}">¿Como hacer una buena denuncia?</a> */}
                         </div>
                     </div>
                 </div>
-                <div id="noti-message">Si eres testigo de alguna falta a nuestro código de ética, no dudes en denunciarlo a través de nuestros canales de denuncia:</div>
             </div>
 		</div>
 	);

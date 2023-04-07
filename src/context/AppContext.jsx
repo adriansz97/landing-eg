@@ -1,8 +1,24 @@
 import { createContext, useState } from "react";
 
+export const AppContext = createContext();
 export const ThemeContext = createContext();
 
-export const ThemeProviderCst = ({ children }) => {
+export const AppProvider = ({ children }) => {
+
+  const [clientName, setClientName] = useState("Surtidora Departamental");
+
+  return (
+    <AppContext.Provider value={
+      {
+        clientName
+      }
+    }>
+      { children }
+    </AppContext.Provider>
+  )
+}
+
+export const ThemeProvider = ({ children }) => {
 
   const [primaryColor, setPrimaryColorState] = useState("#00bbb4");
   const [secondaryColor, setSecondaryColorState] = useState("#383a35");

@@ -7,6 +7,7 @@ import Button from "react-bootstrap/Button";
 import { catalogByPart, createReport } from "../../apis";
 import './styles.scss'
 import { useNavigate } from "react-router";
+import Swal from "sweetalert2";
 
 // Render de un input asociado a un catalogo
 const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, idx, type, required, catalogue, isOwn, hdlChg, hdlSchm, doValidate, handleValidate, returnValidClass }) => {
@@ -565,14 +566,14 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
         ]
       };
       try {
-        console.log(objToSend);
         const resp = await createReport(objToSend);
+        Swal.fire( 'Form has been sent', `Your Tracking Code is: ${resp.tracking_code}`, 'success');
         console.log(resp);
       } catch (error) {
-        console.log(error)
+        Swal.fire( 'Error', 'An error has occurred while sending the form', 'error');
+        console.log(error);
       }
     } else {
-      console.log("El formulario no es válido");
       hdlActStp(firstStepWithErr);
       setAllowStepClick(true);
     }

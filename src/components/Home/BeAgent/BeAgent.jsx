@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import _ from "lodash";
+import { Container } from "react-bootstrap";
 import { CDBInput, CDBBtn, CDBStep, CDBContainer, CDBStepper } from "cdbreact";
+import { AppContext } from "../../../context/AppContext";
 import { getDetailCurrentReport, catalogByPart } from "../../../apis";
 import { PreviewForm } from "../../PreviewForm/PreviewForm";
 import "./styles.scss";
-import { Container } from "react-bootstrap";
 
-const BeAgent = () => {
+const BeAgent = ({ clientName, howItWorksRef }) => {
 
   const [form, setForm] = useState(null);
   const [formIdentifier, setFormIdentifier] = useState("");
@@ -154,9 +155,9 @@ const BeAgent = () => {
   return(
     <div id="be-agent" className="complaint-content">
       <div id="title">
-        <h3 className="mb-5">¿CÓMO FUNCIONA?</h3>
+        <h3 className="mb-5" ref={howItWorksRef} >¿CÓMO FUNCIONA?</h3>
         <p>Por medio de este sitio podrás denunciar aquellas conductas no éticas de manera sencilla, confidencial, segura y con la opción de hacerlo de forma anónima.
-          El sistema es operado por un tercero independiente a Grupo Lala, líder en el país y especialista en la gestión de denuncias y reportes (EthicsGlobal).</p>
+          El sistema es operado por un tercero independiente a {clientName}, líder en el país y especialista en la gestión de denuncias y reportes (EthicsGlobal).</p>
       </div>
       <div className="form-container mt-5">
         <PreviewForm

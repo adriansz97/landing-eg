@@ -1,7 +1,7 @@
 import Icon from '../Icon/Icon';
 import './styles.scss';
 
-function SearchBar ({placeholder}) {
+function SearchBar ({ value, onChange, placeholder}) {
     return (
         <div className="search">
             <form className="searchsInputs w-100">
@@ -9,6 +9,8 @@ function SearchBar ({placeholder}) {
                     <Icon name="search2" />
                 </div>
                 <input 
+                    value={value}
+                    onChange={onChange}
                     type="text" 
                     placeholder="Consulta aquí tu denuncia" 
                     id="header-search"

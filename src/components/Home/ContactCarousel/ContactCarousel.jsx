@@ -34,7 +34,7 @@ const ContactCarousel = () => {
                         </div>                    
                         <h6>Sitio Web</h6>
                     </div>
-                    <div className="item">
+                    {/* <div className="item">
                         <div className="social-contact">
                             <Icon name="outgoing_call" />
                         </div>                    
@@ -45,9 +45,9 @@ const ContactCarousel = () => {
                             <Icon name="outline_messages_3" />
                         </div>                    
                         <h6>Chat</h6>
-                    </div>
+                    </div> */}
                     <div className="item">
-                        <div className="social-contact">
+                        <div className="social-contact app">
                             <Icon name="mobile_bold" />
                         </div>                    
                         <h6>App</h6>
@@ -64,7 +64,7 @@ const ContactCarousel = () => {
                         </div>                    
                         <h6>Sitio Web</h6>
                     </div>
-                    <div className="item">
+                    {/*<div className="item">
                         <div className="social-contact">
                             <Icon name="outgoing_call" />
                         </div>                    
@@ -75,18 +75,19 @@ const ContactCarousel = () => {
                             <Icon name="outline_messages_3" />
                         </div>                    
                         <h6>Chat</h6>
-                    </div>
+                    </div> */}
                     <div className="item">
-                        <div className="social-contact">
+                        <div className="social-contact app">
                             <Icon name="mobile_bold" />
                         </div>                    
                         <h6>App</h6>
                     </div>
                 </Carousel>
-                <div id="message-noti">
+                {/* <div id="message-noti">
                     <Icon name="bold_message_notif" />
-                </div>                
+                </div>                 */}
             </div>
+            <div id="noti-message">Si eres testigo de alguna falta a nuestro Código de Ética, no dudes en denunciarlo a través de nuestros canales de denuncia:</div>
         </div>
     )
 }

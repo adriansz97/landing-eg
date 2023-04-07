@@ -1,7 +1,7 @@
 import axios from 'axios';
 const host = "https://djaguar.herokuapp.com";
-// const tenant = "ethicsglobal.com";
-const tenant = "sd.lineaetica.com.mx";
+const tenant = "ethicsglobal.com";
+// const tenant = "sd.lineaetica.com.mx";
 const baseURL = `${host}/${tenant}/api`;
 
 const apiCall = axios.create({ baseURL });
@@ -30,6 +30,18 @@ export const getDetailCurrentReport = async () => {
     return resp.data;
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const getReportStatus = async (tracking_code) => {
+  try {
+    const resp = await apiCall.post(`/report/status/get/`, { "tracking_code": "TKC-40QU320N111" })
+    return resp.data;
+  } catch (error) {
+    return {
+      error: true,
+      msg: error.response.data.report
+    }
   }
 };
 

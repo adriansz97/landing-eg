@@ -1,32 +1,49 @@
 @import '../../../theme/colors';
-#download{
+// download-methods d-flex align-items-center justify-content-center justify-content-lg-start mb-3
+.download{
     padding-top: 2rem;
     background-color: $color-landing;
     display: flex;
     align-items: center;
+    .download-info-container {
+        display: flex;
+        align-items: center;
+        padding: 0;
+    }
+    .download-info {
+        // padding: 30px;
+    }
+    .download-methods {
+        display: flex;
+        align-items: center;
+        justify-content: start;
+    }
 }
 
 @media screen and (max-width: 768px) {
-    #download{
-        #download-app{
+    .download{
+        .download-app-img {
             width: 250px;
         }
-        .content{
+        .download-info {
             margin-top: 2rem;
             text-align: center;
             padding-bottom: 3rem;
+        }
+        .download-methods {
+            justify-content: center;
         }
     }
 }
 
 @media screen and (max-width: 576px) {
-    #download{
-        #download-app{
+    .download {
+        .download-app-img {
             width: 200px;
         }
     }
-    .content{
-        .btn{
+    .download-info {
+        .btn {
             width: 90%;
         }
     }

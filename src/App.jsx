@@ -1,10 +1,12 @@
-import { ThemeProviderCst } from './context/AppContext'
+import { AppProvider, ThemeProvider } from './context/AppContext'
 import { AppRouter } from './routes/AppRouter'
 
 export const App = () => {
   return (
-    <ThemeProviderCst>
-      <AppRouter />
-    </ThemeProviderCst>
+    <AppProvider>
+      <ThemeProvider>
+        <AppRouter />
+      </ThemeProvider>
+    </AppProvider>
   )
 }
