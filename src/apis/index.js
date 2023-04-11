@@ -35,7 +35,7 @@ export const getDetailCurrentReport = async () => {
 
 export const getReportStatus = async (tracking_code) => {
   try {
-    const resp = await apiCall.post(`/report/status/get/`, { "tracking_code": "TKC-40QU320N111" })
+    const resp = await apiCall.post(`/report/status/get/`, { tracking_code })
     return resp.data;
   } catch (error) {
     return {

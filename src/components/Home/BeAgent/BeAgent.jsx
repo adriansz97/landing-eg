@@ -7,7 +7,7 @@ import { getDetailCurrentReport, catalogByPart } from "../../../apis";
 import { PreviewForm } from "../../PreviewForm/PreviewForm";
 import "./styles.scss";
 
-const BeAgent = ({ clientName, howItWorksRef }) => {
+const BeAgent = ({ clientName, beAgentRef }) => {
 
   const [form, setForm] = useState(null);
   const [formIdentifier, setFormIdentifier] = useState("");
@@ -155,7 +155,7 @@ const BeAgent = ({ clientName, howItWorksRef }) => {
   return(
     <div id="be-agent" className="complaint-content">
       <div id="title">
-        <h3 className="mb-5" ref={howItWorksRef} >¿CÓMO FUNCIONA?</h3>
+        <h3 ref={beAgentRef} >SEAMOS AGENTES DE CAMBIO</h3>
         <p>Por medio de este sitio podrás denunciar aquellas conductas no éticas de manera sencilla, confidencial, segura y con la opción de hacerlo de forma anónima.
           El sistema es operado por un tercero independiente a {clientName}, líder en el país y especialista en la gestión de denuncias y reportes (EthicsGlobal).</p>
       </div>

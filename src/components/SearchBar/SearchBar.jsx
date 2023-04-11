@@ -1,22 +1,35 @@
+import { CDBBtn } from 'cdbreact';
 import Icon from '../Icon/Icon';
 import './styles.scss';
+import { useIsHovering } from '../../hooks/useIsHovering';
 
-function SearchBar ({ value, onChange, placeholder}) {
+function SearchBar ({ value, onChange, onClick, placeholder, primaryColor, secondaryColor }) {
+
+    const { isHovering, handleMouseOver, handleMouseOut } = useIsHovering();
+
     return (
-        <div className="search">
-            <form className="searchsInputs w-100">
-                <div className="searchIcon">
-                    <Icon name="search2" />
-                </div>
-                <input 
-                    value={value}
-                    onChange={onChange}
-                    type="text" 
-                    placeholder="Consulta aquí tu denuncia" 
-                    id="header-search"
-                    autoComplete='off'
-                />
-            </form>
+        <div className="search-bar-container">
+            <div className="search-icon">
+                <Icon name="search2" />
+            </div>
+            <input
+                className="search-input" 
+                value={value}
+                onChange={onChange}
+                type="text" 
+                placeholder={placeholder}
+                id="header-search"
+                autoComplete='off'
+            />
+            <CDBBtn
+                className="search-button"
+                style={{ backgroundColor: isHovering ? primaryColor : secondaryColor, border: 'none' }} 
+                onMouseOver={handleMouseOver} 
+                onMouseOut={handleMouseOut}
+                onClick={onClick}    
+            > 
+                CONTINUAR 
+            </CDBBtn>
         </div>
   );
 }

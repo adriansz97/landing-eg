@@ -1,5 +1,4 @@
 @import '../../../theme/colors';
-// download-methods d-flex align-items-center justify-content-center justify-content-lg-start mb-3
 .download{
     padding-top: 2rem;
     background-color: $color-landing;
@@ -17,6 +16,22 @@
         display: flex;
         align-items: center;
         justify-content: start;
+    }
+    .download-app-img {
+        img {
+            width: 100%;
+        }
+    }
+
+    
+    
+}
+.modal-video-container {
+    .modal-video {
+        padding: 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 }
 

@@ -1,5 +1,5 @@
 @import '../../../theme/colors';
-.home-hero{
+.home-hero {
     // height: calc(100vh - 116px);
     display: flex;
     align-items: center;
@@ -53,7 +53,7 @@
         font-weight: bold;
     }
     .hero-btn {
-        color: white !important;
+        // color: white !important;
         border-radius: 4px;
         &:hover {
             color: initial !important;

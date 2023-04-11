@@ -10,13 +10,13 @@ import "./styles.scss";
 import { useIsHovering } from "../../../hooks/useIsHovering";
 import { getReportStatus } from "../../../apis";
 import Swal from "sweetalert2";
-// import { ModalTracking } from "./ModalTracking";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const FollowUp = ({ clientName, followUpRef, primaryColor, secondaryColor }) => {
 
+    const navigate = useNavigate();
     const { isHovering, handleMouseOver, handleMouseOut } = useIsHovering();
     const [tracking_code, setTracking_code] = useState("");
-    const [showModalTracking, setShowModalTracking] = useState(false);
 
     const searchReport = async() => {
         const resp = await getReportStatus(tracking_code);
@@ -27,35 +27,32 @@ const FollowUp = ({ clientName, followUpRef, primaryColor, secondaryColor }) => 
                 'error'
             )
         } else {
-            Swal.fire(
-                `${tracking_code}`,
-                `The report status is: ${resp.message}`,
-                'success'
-            )
+            navigate("/search_grievance", { state: { tracking_code, status: resp.message }});
+            // Swal.fire(
+            //     `${tracking_code}`,
+            //     `The report status is: ${resp.message}`,
+            //     'success'
+            // )
         }
     }
 
     return(
         <div id="follow-up">
             <div id="title">
-                <h3 className="mb-5" ref={followUpRef}>SEGUIMIENTO A TU DENUNCIA</h3>
+                <h3 ref={followUpRef}>SEGUIMIENTO A TU DENUNCIA</h3>
                 <p>Por medio de este sitio podrás denunciar aquellas conductas no éticas de manera sencilla, confidencial, segura y con la opción de hacerlo de forma anónima.
                     El sistema es operado por un tercero independiente a {clientName}, líder en el país y especialista en la gestión de denuncias y reportes (EthicsGlobal).</p>
                 <Row>
                     <Col lg="6" md="10" className="mt-20 p-0 mx-lg-0 mx-auto">
                         <div className="follow-btns">
                             <SearchBar 
+                                primaryColor={primaryColor}
+                                secondaryColor={secondaryColor}
                                 value={tracking_code}
                                 onChange={(e)=>setTracking_code(e.target.value)}
+                                placeholder="Escribe tu folio de seguimiento"
+                                onClick={searchReport}
                             />
-                            <CDBBtn className="w-160" 
-                                style={{ backgroundColor: isHovering ? primaryColor : secondaryColor }} 
-                                onMouseOver={handleMouseOver} 
-                                onMouseOut={handleMouseOut}
-                                onClick={searchReport}    
-                            > 
-                                CONTINUAR 
-                            </CDBBtn>
                         </div>                        
                     </Col>
                 </Row>
@@ -81,10 +78,6 @@ const FollowUp = ({ clientName, followUpRef, primaryColor, secondaryColor }) => 
                     </Col>
                 </Row>
             </div>
-            {/* <ModalTracking 
-                show={showModalTracking}
-                onHide={()=>setShowModalTracking(false)}
-            /> */}
         </div>
     )
 }

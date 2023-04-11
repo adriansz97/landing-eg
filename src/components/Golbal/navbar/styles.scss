@@ -1,23 +1,6 @@
 @import '../../../theme/colors';
-.CDB-container{
-    max-width: 80%;
-    margin: auto;
-}
 .top_navbar{
     height: 15px;
     width: 100%;
-    // background-color: $color-ethicsBlue;
     background-color: $color-ethicsBlue;
-    color: #fff;
-    font-size: 10px;
-    a{
-        color: $color-white;
-        cursor: pointer;
-        text-decoration: none;
-    }
-}
-@media screen and (max-width: 768px) {
-    .CDB-container{
-        max-width: 90%;
-    }
 }

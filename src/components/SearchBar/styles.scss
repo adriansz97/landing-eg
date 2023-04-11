@@ -1,135 +1,28 @@
 @import '../../theme/colors';
 
-.searchsInputs {
-  margin-top: 30px;
-  margin-left: 10px;
+.search-bar-container {
+  border-radius: 4px;
+  border: 1px solid gray;
   display: flex;
-}
-
-.search {
-  width: 220px;
-  height: 38px;
-  margin: 3px 20px 3px 10px;
-  padding: 7px 25px 7px 8px;
-  border-radius: 4px;
-  border: solid 1px #dee1e4;
-}
-
-.searchsInputs {
-  width: 100%;
-  height: 9px;
-  margin: 8px 0 7px 8px;
-  font-family: SegoeUI;
-  font-size: 12px;
-  font-weight: normal;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: 0.75;
-  letter-spacing: normal;
-  color: #6a6a6a;
-}
-
-.searchIcon {
-  width: 24px;
-  height: 24px;
-  margin: -9px 15px 5px -5px;
-  object-fit: contain;
-}
-
-.searchIcon input {
-  background: transparent !important;
-}
-
-#header-search {
-  width: 100%;
-  height: 20px;
-  padding: 5px;
-  margin: -5px 0 7px -5px;
-  font-family: SegoeUI;
-  font-size: 12px;
-  font-weight: normal;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: 0.75;
-  letter-spacing: normal;
-  color: #6a6a6a;
-  border: red;
-}
-
-.custom-search {
-  width: 100%;
-  max-width: 360px;
-  height: 38px;
-  margin: 3px 20px 3px 0;
-  padding: 7px 25px 7px 8px;
-  border-radius: 4px;
-  border: solid 1px #dee1e4;
-  .searchsInputs {
-    width: 100%;
-    height: 9px;
-    margin: 8px 0 7px 8px;
-    font-family: SegoeUI;
-    font-size: 12px;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: 0.75;
-    letter-spacing: normal;
-    color: #6a6a6a;
+  height: 45px;
+  width: 538px;
+  .search-icon {
+    padding: 10px;
+    svg {
+      height: 18px;
+    }
+  }
+  .search-input {
     border: none;
-    &:focus{
-        background-color: transparent;
-    }
-}
-
-.custom-search{
-    width: 100%;
-    max-width: 360px;
-    height: 38px;
-    margin: 3px 20px 3px 0;
-    padding: 7px 25px 7px 8px;
-    border-radius: 4px;
-    border: solid 1px #dee1e4;
-    .searchsInputs{
-        width: 100%;
-        height: 9px;
-        margin: 8px 0 7px 8px;
-        font-family: SegoeUI;
-        font-size: 12px;
-        font-weight: normal;
-        font-stretch: normal;
-        font-style: normal;
-        line-height: 0.75;
-        letter-spacing: normal;
-        color: #6a6a6a;
-    }
-    .searchIcon {
-        svg{
-            width: 1rem!important;
-            height: 1rem!important;
-            object-fit: contain;
-            margin-top: 0.3rem;
-        }
-    }
-    #header-search{
-        background-color: transparent!important;
-        color: inherit!important;
+    width: 300px;
+    padding: 8px;
+    &:focus {
+      border: none;
+      outline: none;
     }
   }
-  #header-search {
-    background-color: transparent !important;
-    color: inherit !important;
-  }
-}
-
-.info-border-form .custom-search{
-    max-width: 100%;
-    margin-bottom: 10px;
-}
-
-@media screen and (max-width: 768px) {
-  .search {
-    width: 100%;
-    margin: 3px 0;
+  .search-button {
+    flex-grow: 1;
+    margin: 0;
   }
 }

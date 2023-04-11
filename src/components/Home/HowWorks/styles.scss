@@ -1,22 +1,26 @@
 @import '../../../theme/colors';
-#how-works{
+.how-works-container {
     background-color: $color-landing;
     padding: 10rem 6%;
-    img{
+    font-family: 'Segoe UI';
+    img {
         height: 4rem;
     }
-    h4{
+    h4 {
         color: $color-blueGray900;
+        font-weight: bold;
+        font-size: 20px;
     }
-    p{
+    p {
+        font-size: 15px;
         max-width: 250px;
         margin: auto;
         color: $color-slate2;
     }
-}
-
-@media screen and (max-width: 768px) {
-    #how-works{
-        padding: 5rem 0;
+    .how-works-item {
+        text-align: center;
+        p {
+            text-align: justify;
+        }
     }
 }

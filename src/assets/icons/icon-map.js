@@ -1,4 +1,6 @@
 //MONEY (outline):
+import { ReactComponent as EGColor } from './EG_color.svg';
+import { ReactComponent as EGBlanco } from './EG_blanco.svg';
 import { ReactComponent as WalletAdd } from './vuesax-outline-wallet-add.svg';
 import { ReactComponent as ReceiptItem } from './vuesax-outline-receipt-item.svg';
 import { ReactComponent as EmptyWallet } from './vuesax-outline-empty-wallet.svg';
@@ -1985,6 +1987,8 @@ import { ReactComponent as Shape } from './shape.svg';
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
+   "eg_color": EGColor,
+   "eg_blanco": EGBlanco,
   //MONEY
   wallet_add: WalletAdd,
   receipt_item: ReceiptItem,

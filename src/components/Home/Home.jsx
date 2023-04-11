@@ -12,22 +12,25 @@ import Download from "./Download/Download";
 import FrequentQuestions from "./FrequentQuestions/FrequentQuestions";
 import Footer from "../Golbal/Footer/Footer";
 
-const Home = () =>{
+export const Home = () =>{
     
     const { clientName } = useContext(AppContext);
     const { primaryColor, secondaryColor } = useContext(ThemeContext);
-    const howItWorksRef = useRef(null);
+    const beAgentRef = useRef(null);
     const followUpRef = useRef(null);
+    const downloadRef = useRef(null);
 
     const scrollToRef = (scrollName) => {
-        let topPosition = 16;
-        if (scrollName==="HowItWorks") {
-            topPosition = howItWorksRef.current.offsetTop;
+        let topPosition = 0;
+        if (scrollName==="BeAgent") {
+            topPosition = beAgentRef.current.offsetTop - 16;
         } else if (scrollName==="FollowUp") { 
-            topPosition = followUpRef.current.offsetTop;
+            topPosition = followUpRef.current.offsetTop - 16;
+        } else if (scrollName==="Download") { 
+            topPosition = downloadRef.current.offsetTop;
         }
         window.scrollTo({
-            top: topPosition - 16,
+            top: topPosition,
             behavior: "smooth"
         });
     }
@@ -41,16 +44,22 @@ const Home = () =>{
 
             <Hero 
                 clientName={clientName} 
+                primaryColor={primaryColor}
+                secondaryColor={secondaryColor}
                 scrollToRef={scrollToRef} 
             />
 
-            <ContactCarousel />
+            <ContactCarousel 
+                scrollToRef={scrollToRef}
+            />
 
             <HowWorks />
 
+            <FrequentQuestions />
+
             <BeAgent 
                 clientName={clientName} 
-                howItWorksRef={howItWorksRef} 
+                beAgentRef={beAgentRef} 
             /> {/* Form */}
 
             <FollowUp
@@ -61,16 +70,16 @@ const Home = () =>{
             /> {/* <Announcement /> */}
 
             <Download 
+                clientName={clientName}
                 primaryColor={primaryColor}
                 secondaryColor={secondaryColor}
+                downloadRef={downloadRef}
             />
 
-            <FrequentQuestions />
-
-            <Footer />
+            <Footer 
+                scrollToRef={scrollToRef}
+            />
 
         </>
     );
 }
-
-export default Home;
