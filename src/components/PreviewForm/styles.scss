@@ -1,7 +1,7 @@
 @import '../../theme/colors';
 
 .form-preview {
-
+  position: relative;
   .form-control {
     margin-top: 4px;
   }
@@ -12,8 +12,27 @@
   }
   // contenedor que engloba a todos los inputs
   .form-preview-inputs {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 480px;
+    height: 480px;
+    padding-bottom: 16px;
+    position: relative;
     * {
       color: #72909D;  
+    }
+    .ps__rail-y {
+      &:hover {
+        background-color: transparent
+      }
+    }
+    .ps__thumb-y {
+      background-color: $color-ethicsBlue;
+      width: 4px;
+      border-radius: 5px;
+      &:hover {
+        background-color: $color-ethicsBlue;
+      }
     }
   }
   // contenedor de cada input

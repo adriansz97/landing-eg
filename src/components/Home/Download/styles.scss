@@ -1,8 +1,9 @@
 @import '../../../theme/colors';
 .download{
-    padding-top: 2rem;
+    padding: 88px;
     background-color: $color-landing;
     display: flex;
+    justify-content: center;
     align-items: center;
     .download-info-container {
         display: flex;

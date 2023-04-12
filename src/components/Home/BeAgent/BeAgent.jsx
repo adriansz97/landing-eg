@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
 import _ from "lodash";
-import { Container } from "react-bootstrap";
-import { CDBInput, CDBBtn, CDBStep, CDBContainer, CDBStepper } from "cdbreact";
-import { AppContext } from "../../../context/AppContext";
 import { getDetailCurrentReport, catalogByPart } from "../../../apis";
 import { PreviewForm } from "../../PreviewForm/PreviewForm";
 import "./styles.scss";

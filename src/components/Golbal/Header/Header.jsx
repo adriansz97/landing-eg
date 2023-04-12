@@ -23,10 +23,11 @@ const ComplaintFormComponent = () => {
                             <CDBNavItem>
                                 <div className="d-flex">
                                     <span className="mr-2">Powered by</span>
-                                    <div className="logo-ethicsglobal">
-                                        <Icon name="eg_color" />
-                                        {/* <img src={LogoEg} alt="logoeg" /> */}
-                                    </div>
+                                    <a href="https://www.ethicsglobal.com/es/index.html" target="_blank">
+                                        <div className="logo-ethicsglobal">
+                                            <Icon name="eg_color" />
+                                        </div>
+                                    </a>
                                 </div>
                             </CDBNavItem>
                         </CDBNavbarNav>

@@ -18,11 +18,11 @@ const Hero = ({ clientName, scrollToRef, primaryColor, secondaryColor }) => {
                             <img src={HeroImg} alt="hero" />
                         </div>
                         <div className="ml-0 ml-md-5">
-                            <h1 className="my-4 title">LÍNEA ÉTICA <span className="text-uppercase">{clientName}</span></h1>
+                            <h1 className="my-4 title">LÍNEA ÉTICA <br /> <span className="text-uppercase">{clientName}</span></h1>
                             <CDBBtn 
                                 className="hero-btn" 
                                 outline 
-                                style={{ border: "none", backgroundColor: isHovering ? primaryColor : "white", color: 'black' }}
+                                style={{ border: "none", backgroundColor: primaryColor, color: 'white' }}
                                 onMouseOver={handleMouseOver} 
                                 onMouseOut={handleMouseOut}
                                 onClick={()=>scrollToRef("BeAgent")}>

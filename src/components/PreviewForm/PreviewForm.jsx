@@ -1,13 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import _ from "lodash";
+import Swal from "sweetalert2";
+import PerfectScrollbar from 'perfect-scrollbar';
+import 'perfect-scrollbar/css/perfect-scrollbar.css';
 import DatePicker from "react-datepicker";
 import { Col, Row } from "react-bootstrap";
 import { CDBStep, CDBStepper } from "cdbreact";
 import Button from "react-bootstrap/Button";
 import { catalogByPart, createReport } from "../../apis";
 import './styles.scss'
-import { useNavigate } from "react-router";
-import Swal from "sweetalert2";
 
 // Render de un input asociado a un catalogo
 const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, idx, type, required, catalogue, isOwn, hdlChg, hdlSchm, doValidate, handleValidate, returnValidClass }) => {
@@ -422,18 +423,19 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
   if (schema.type === "date") {
     const initialDate = new Date();
     return (
-      <Col md="6" className="preview-input-container fade-in-image">
-        <div className="form-check">
-          <label>
-            {schema.label}{schema.required?"*":""}
-          </label>
-          <DatePicker 
-            selected={ isValidDate() ? formData[schema.key] : initialDate }
-            onChange={(value)=>hdlChg({target:{name: schema.key, value, type: "date"}},idx)} 
-          />
-        </div>
-        <ReturnErrorMesages />
-      </Col>
+      <></>
+      // <Col md="6" className="preview-input-container fade-in-image">
+      //   <div className="form-check">
+      //     <label>
+      //       {schema.label}{schema.required?"*":""}
+      //     </label>
+      //     <DatePicker 
+      //       selected={ isValidDate() ? formData[schema.key] : initialDate }
+      //       onChange={(value)=>hdlChg({target:{name: schema.key, value, type: "date"}},idx)} 
+      //     />
+      //   </div>
+      //   <ReturnErrorMesages />
+      // </Col>
     )
   }
   if (schema.type === "date-range") {
@@ -518,12 +520,23 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
 // Vista previa del formulario
 export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaState, setSchemaState, formData, setFormData, isValid, setIsValid, showButtons=true, stepClick=false }) => {
 
-  const navigate = useNavigate();
+  const refContainer = useRef(null);
 
   const [activeStep, setActiveStep] = useState(0);
   const [rerender, setRerender] = useState(false);
   const [allowStepClick, setAllowStepClick] = useState(stepClick);
   const [tryToSend, setTryToSend] = useState(false);
+
+  useEffect(() => {
+    if (refContainer.current) {
+      const ps = new PerfectScrollbar(refContainer.current, {
+        wheelSpeed: .4,
+        minScrollbarLength: 20,
+        suppressScrollX: true,
+        swipeEasing: 'ease-in-out'
+      });
+    }
+  }, [refContainer.current]);
 
   useEffect(() => {
     setRerender(true);
@@ -567,7 +580,23 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
       };
       try {
         const resp = await createReport(objToSend);
-        Swal.fire( 'Form has been sent', `Your Tracking Code is: ${resp.tracking_code}`, 'success');
+        Swal.fire({
+          title: 'Form has been sent',
+          text: `Your Tracking Code is: ${resp.tracking_code}`,
+          icon: 'success',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonText: 'Ok',
+          confirmButtonText: 'Send to my email'
+        }).then((result) => {
+          // if (result.isConfirmed) {
+          //   Swal.fire(
+          //     'Deleted!',
+          //     'Your file has been deleted.',
+          //     'success'
+          //   )
+          // }
+        })
         console.log(resp);
       } catch (error) {
         Swal.fire( 'Error', 'An error has occurred while sending the form', 'error');
@@ -712,8 +741,8 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
         </div>
         {
           !rerender &&
-          <div className="form-preview-inputs">
-            <Row>
+          <div className="form-preview-inputs" ref={refContainer}>
+            <Row className="pr-3">
               {
                 schemaState[activeStep].map((sch,idx) => (
                   <RenderInput key={`form-input-${idx}`}

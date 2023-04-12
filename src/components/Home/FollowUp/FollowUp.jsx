@@ -46,8 +46,8 @@ const FollowUp = ({ clientName, followUpRef, primaryColor, secondaryColor }) => 
                     <Col lg="6" md="10" className="mt-20 p-0 mx-lg-0 mx-auto">
                         <div className="follow-btns">
                             <SearchBar 
-                                primaryColor={primaryColor}
-                                secondaryColor={secondaryColor}
+                                primaryColor={secondaryColor}
+                                secondaryColor={primaryColor}
                                 value={tracking_code}
                                 onChange={(e)=>setTracking_code(e.target.value)}
                                 placeholder="Escribe tu folio de seguimiento"

@@ -1,7 +1,7 @@
 import axios from 'axios';
 const host = "https://djaguar.herokuapp.com";
-const tenant = "ethicsglobal.com";
-// const tenant = "sd.lineaetica.com.mx";
+// const tenant = "ethicsglobal.com";
+const tenant = "sd.lineaetica.com.mx";
 const baseURL = `${host}/${tenant}/api`;
 
 const apiCall = axios.create({ baseURL });

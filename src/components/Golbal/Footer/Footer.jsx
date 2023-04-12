@@ -8,14 +8,16 @@ const Footer = ({ scrollToRef }) => {
     return (
         <div className="footer-container">
             <CDBFooter className="footer">
-                <Row className="mx-auto py-5" style={{width:"90%"}}>
+                <Row className="mx-auto py-5 container" style={{width:"90%"}}>
                     <Col xs="12">
                         <div className="footer-logo">
-                            <Icon name="eg_blanco" />
+                            <a href="https://www.ethicsglobal.com/es/index.html" target="_blank">
+                                <Icon name="eg_blanco" />
+                            </a>
                         </div>
                     </Col>
                     <Col md="4">
-                        <h4 className="border-bottom-1 pt-5 pb-3">Denuncias o Sugerencias</h4>
+                        <h4 className="border-bottom-1 pt-5 pb-3">Denuncias</h4>
                         <hr />
                         <ul style={{listStyle:"none", cursor:"pointer", padding:"0"}}>
                             <a onClick={()=>scrollToRef("BeAgent")}>Nuevo reporte</a>
@@ -46,7 +48,7 @@ const Footer = ({ scrollToRef }) => {
                 </Row>
             </CDBFooter>
             <div className="copyright">
-                <p>© Copyright 1996-2022  <a href="https://www.ethicsglobal.com/es/index.html" target="_blank">ethicsglobal.com</a></p>
+                <p><a className="link" href="https://www.ethicsglobal.com/es/index.html" target="_blank">© Copyright 1996-2022 ethicsglobal.com</a></p>
                 <p>Todos los derechos reservados. Las distintas marcas comerciales pertenecen a sus respectivos propietarios.</p>
             </div>
         </div>
