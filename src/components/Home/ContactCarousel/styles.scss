@@ -38,7 +38,7 @@
                         cursor: pointer;
                         box-shadow: 0px 0px 16px rgba(43, 43, 43, 0.253);
                     }
-                    &:active svg {
+                    &.app:hover svg {
                         filter: invert(21%) sepia(59%) saturate(5438%) hue-rotate(94deg) brightness(101%) contrast(105%);
                     }
                 }        

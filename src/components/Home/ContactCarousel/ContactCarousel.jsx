@@ -2,6 +2,7 @@ import Carousel from "react-multi-carousel";
 import Icon from '../../Icon/Icon'
 import "react-multi-carousel/lib/styles.css";
 import "./styles.scss";
+import { useIsHovering } from "../../../hooks/useIsHovering";
 
 const CustomLeftArrow = () => {
   return (
@@ -15,6 +16,9 @@ const CustomRightArrow = () => {
 }
 
 const ContactCarousel = ({ scrollToRef }) => {
+
+    const { isHovering, handleMouseOver, handleMouseOut } = useIsHovering();
+
     const responsive = {
         desktop: {
             breakpoint: { max: 3000, min: 1024 },
@@ -52,9 +56,13 @@ const ContactCarousel = ({ scrollToRef }) => {
                         <h6>Sitio Web</h6>
                     </div>
                     <div className="item">
-                        <div className="social-contact" onClick={()=>scrollToRef("Download")}>
-                            <Icon name="mobile_bold" />
-                        </div>                    
+                        <div className="social-contact app" onClick={()=>scrollToRef("Download")} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} >
+                            {
+                                isHovering
+                                ?   <Icon name="mobile_bold" />
+                                :   <Icon name="mobile" />
+                            }
+                        </div>
                         <h6>App</h6>
                     </div>
                 </Carousel>

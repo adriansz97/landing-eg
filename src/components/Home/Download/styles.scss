@@ -1,5 +1,6 @@
 @import '../../../theme/colors';
-.download{
+
+.download {
     padding: 88px;
     background-color: $color-landing;
     display: flex;
@@ -22,10 +23,7 @@
         img {
             width: 100%;
         }
-    }
-
-    
-    
+    }    
 }
 .modal-video-container {
     .modal-video {
@@ -38,9 +36,6 @@
 
 @media screen and (max-width: 768px) {
     .download{
-        .download-app-img {
-            width: 250px;
-        }
         .download-info {
             margin-top: 2rem;
             text-align: center;
@@ -54,13 +49,10 @@
 
 @media screen and (max-width: 576px) {
     .download {
-        .download-app-img {
-            width: 200px;
-        }
-    }
-    .download-info {
-        .btn {
-            width: 90%;
+        .download-info {
+            .btn {
+                width: 90%;
+            }
         }
     }
 }

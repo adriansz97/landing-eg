@@ -1,0 +1,77 @@
+@import '../../theme/colors';
+
+.search-grievance-page {
+  
+  .header {
+    text-align: center;
+  }
+
+  .main-content {
+    padding: 0px 80px;
+    label {
+      display: block;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    input, textarea {
+      color: $color-blueGray;
+    }
+    .col-title {
+      font-size: 20px;
+      font-weight: 400;
+    }
+    .main-content-cols {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgb(207, 207, 207);
+      padding: 16px;
+    }
+    .additional-facts {
+      transition: all 200ms;
+      border-radius: 2px;
+      padding: 8px;
+    }
+    .additional-facts-input {
+      background-color: transparent;
+      resize: none;
+      border: none;
+      width: 100%;
+      &:focus {
+        outline: none;
+      }
+    }
+    .history-mail {
+      .chat-container {
+        padding: 16px;
+        border-radius: 2px;
+      }
+      .chat-msg {
+        padding-top: 8px;
+        padding-bottom: 8px;
+        div {
+          color: white;
+          padding: 10px;
+          border-radius: 15px;
+        }
+        &.sended {
+          padding-left: 64px;
+          div {
+            background-color: $color-blueGray;
+          }
+        }
+        &.recived {
+          padding-right: 64px;
+          div {
+            background-color: $color-ethicsBlue;
+          }
+        }
+      }
+    }
+  }
+
+
+
+
+
+
+}

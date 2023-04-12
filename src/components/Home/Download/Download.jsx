@@ -1,11 +1,12 @@
+import { useEffect, useRef, useState } from "react";
 import { Row, Col, Modal } from "react-bootstrap";
 import { CDBBtn, CDBIcon } from "cdbreact";
+import { useIsHovering } from "../../../hooks/useIsHovering";
 import App from "../../../assets/images/app.png";
+import Qr from "../../../assets/images/1-Surtidora.png";
 import AppStore from "../../../assets/images/app-store.png";
 import GooglePlay from "../../../assets/images/google-play.png";
-import { useIsHovering } from "../../../hooks/useIsHovering";
 import "./styles.scss";
-import { useEffect, useRef, useState } from "react";
 
 const ModalVideo = ({ clientName, show, onHide }) => {
     return (
@@ -57,6 +58,10 @@ const Download = ({ clientName, primaryColor, secondaryColor, downloadRef }) => 
                             <img src={GooglePlay} alt="Google-Play" />
                         </div>
                         <small className="d-block mt-4">* App operada por EthicsGlobal.</small>
+                        <b className="d-block mt-4">Entra a la App, escanea el QR o escribe el Código para utilizar la línea.</b>
+                        <div className="mt-4">
+                            <img src={Qr} alt="qr" />
+                        </div>
                     </div>
                 </Col>
             </Row>

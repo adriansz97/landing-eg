@@ -1,5 +1,5 @@
 import { CDBBtn } from "cdbreact";
-import HeroImg from "../../../assets/images/surdep-pp.jpg";
+import HeroImg from "../../../assets/images/surdep-pp.png";
 import "./styles.scss";
 import { useIsHovering } from "../../../hooks/useIsHovering";
 
