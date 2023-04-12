@@ -1,8 +1,8 @@
 import Carousel from "react-multi-carousel";
+import { useIsHovering } from "../../../hooks/useIsHovering";
 import Icon from '../../Icon/Icon'
 import "react-multi-carousel/lib/styles.css";
 import "./styles.scss";
-import { useIsHovering } from "../../../hooks/useIsHovering";
 
 const CustomLeftArrow = () => {
   return (
@@ -15,9 +15,11 @@ const CustomRightArrow = () => {
   )
 }
 
-const ContactCarousel = ({ scrollToRef }) => {
+const ContactCarousel = ({ primaryColor, secondaryColor, scrollToRef }) => {
 
-    const { isHovering, handleMouseOver, handleMouseOut } = useIsHovering();
+    const [ isHoveringTel, handleMouseOverTel, handleMouseOutTel ] = useIsHovering();
+    const [ isHoveringWeb, handleMouseOverWeb, handleMouseOutWeb ] = useIsHovering();
+    const [ isHoveringApp, handleMouseOverApp, handleMouseOutApp ] = useIsHovering();
 
     const responsive = {
         desktop: {
@@ -44,21 +46,34 @@ const ContactCarousel = ({ scrollToRef }) => {
                     customRightArrow={<CustomRightArrow />}
                 >
                     <div className="item">
-                        <div className="social-contact">
-                            <Icon name="call" />
-                        </div>                    
+                        <a href="tel:8000438422">
+                            <div className="social-contact" onMouseOver={handleMouseOverTel} onMouseOut={handleMouseOutTel}
+                                style={{ ...(isHoveringTel && { backgroundColor: primaryColor })  }}>
+                                {
+                                    isHoveringTel
+                                    ?   <Icon name="call_bold" />
+                                    :   <Icon name="call" />
+                                }
+                            </div>                    
+                        </a>
                         <h6>Teléfono</h6>
                     </div>
-                    <div className="item">
-                        <div className="social-contact" onClick={()=>scrollToRef("BeAgent")}>
-                            <Icon name="monitor_mobile" />
+                    <div className="item" >
+                        <div className="social-contact" onClick={()=>scrollToRef("BeAgent")} onMouseOver={handleMouseOverWeb} onMouseOut={handleMouseOutWeb}
+                            style={{ ...(isHoveringWeb && { backgroundColor: primaryColor })  }}>
+                            {
+                                isHoveringWeb
+                                ?   <Icon name="monitor_mobile_bold" />
+                                :   <Icon name="monitor_mobile" />
+                            }
                         </div>                    
                         <h6>Sitio Web</h6>
                     </div>
                     <div className="item">
-                        <div className="social-contact app" onClick={()=>scrollToRef("Download")} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} >
+                        <div className="social-contact" onClick={()=>scrollToRef("Download")} onMouseOver={handleMouseOverApp} onMouseOut={handleMouseOutApp}
+                            style={{ ...(isHoveringApp && { backgroundColor: primaryColor })  }}>
                             {
-                                isHovering
+                                isHoveringApp
                                 ?   <Icon name="mobile_bold" />
                                 :   <Icon name="mobile" />
                             }

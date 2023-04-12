@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { Col, Row } from "react-bootstrap";
-import { CDBBtn } from "cdbreact";
 import FollowUpIcon1 from "../../../assets/images/icon8.png";
 import FollowUpIcon2 from "../../../assets/images/icon9.png";
 import FollowUpIcon3 from "../../../assets/images/icon10.png";
 import FollowUpIcon4 from "../../../assets/images/icon11.png";
 import SearchBar from '../../SearchBar/SearchBar';
 import "./styles.scss";
-import { useIsHovering } from "../../../hooks/useIsHovering";
 import { getReportStatus } from "../../../apis";
 import Swal from "sweetalert2";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -15,7 +13,6 @@ import { Navigate, useNavigate } from "react-router-dom";
 const FollowUp = ({ clientName, followUpRef, primaryColor, secondaryColor }) => {
 
     const navigate = useNavigate();
-    const { isHovering, handleMouseOver, handleMouseOut } = useIsHovering();
     const [tracking_code, setTracking_code] = useState("");
 
     const searchReport = async() => {
@@ -43,8 +40,8 @@ const FollowUp = ({ clientName, followUpRef, primaryColor, secondaryColor }) => 
                 <p>Por medio de este sitio podrás denunciar aquellas conductas no éticas de manera sencilla, confidencial, segura y con la opción de hacerlo de forma anónima.
                     El sistema es operado por un tercero independiente a {clientName}, líder en el país y especialista en la gestión de denuncias y reportes (EthicsGlobal).</p>
                 <Row>
-                    <Col lg="6" md="10" className="mt-20 p-0 mx-lg-0 mx-auto">
-                        <div className="follow-btns">
+                    <Col lg="6" md="10" className="mt-20 p-0">
+                        <div className="follow-btns w-100">
                             <SearchBar 
                                 primaryColor={secondaryColor}
                                 secondaryColor={primaryColor}

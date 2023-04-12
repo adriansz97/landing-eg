@@ -5,8 +5,7 @@ import { useIsHovering } from "../../../hooks/useIsHovering";
 
 const Hero = ({ clientName, scrollToRef, primaryColor, secondaryColor }) => {
 
-    const { isHovering, handleMouseOver, handleMouseOut } = useIsHovering();
-    const { isHovering: isHovering2, handleMouseOver: handleMouseOver2, handleMouseOut: handleMouseOut2 } = useIsHovering();
+    const [ isHovering, handleMouseOver, handleMouseOut ] = useIsHovering();
 
 	return(
 		<div className="home-hero">
@@ -23,17 +22,15 @@ const Hero = ({ clientName, scrollToRef, primaryColor, secondaryColor }) => {
                                 className="hero-btn" 
                                 outline 
                                 style={{ border: "none", backgroundColor: primaryColor, color: 'white' }}
-                                onMouseOver={handleMouseOver} 
-                                onMouseOut={handleMouseOut}
                                 onClick={()=>scrollToRef("BeAgent")}>
                                 DENUNCIAR AHORA
                             </CDBBtn>
                             <CDBBtn 
                                 className="hero-btn" 
                                 outline 
-                                style={{ border: "none", backgroundColor: isHovering2 ? primaryColor : "white", color: 'black' }}
-                                onMouseOver={handleMouseOver2} 
-                                onMouseOut={handleMouseOut2}
+                                style={{ border: "none", backgroundColor: isHovering ? primaryColor : "white", color: isHovering ? "white" : "black" }}
+                                onMouseOver={handleMouseOver} 
+                                onMouseOut={handleMouseOut}
                                 onClick={()=>scrollToRef("FollowUp")}>
                                 SEGUIMIENTO DE LA DENUNCIA
                             </CDBBtn>

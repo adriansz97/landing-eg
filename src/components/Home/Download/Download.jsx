@@ -28,7 +28,7 @@ const ModalVideo = ({ clientName, show, onHide }) => {
 
 const Download = ({ clientName, primaryColor, secondaryColor, downloadRef }) => {
 
-    const { isHovering, handleMouseOver, handleMouseOut } = useIsHovering();
+    const [ isHovering, handleMouseOver, handleMouseOut ] = useIsHovering();
     const [showModalVideo, setShowModalVideo] = useState(false);
 
     return(

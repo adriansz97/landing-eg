@@ -1,11 +1,11 @@
 import { CDBBtn } from 'cdbreact';
 import Icon from '../Icon/Icon';
-import './styles.scss';
 import { useIsHovering } from '../../hooks/useIsHovering';
+import './styles.scss';
 
 function SearchBar ({ value, onChange, onClick, placeholder, primaryColor, secondaryColor }) {
 
-    const { isHovering, handleMouseOver, handleMouseOut } = useIsHovering();
+    const [ isHovering, handleMouseOver, handleMouseOut ] = useIsHovering();
 
     return (
         <div className="search-bar-container">

@@ -50,6 +50,8 @@ export const Home = () =>{
             />
 
             <ContactCarousel 
+                primaryColor={primaryColor}
+                secondaryColor={secondaryColor}
                 scrollToRef={scrollToRef}
             />
 

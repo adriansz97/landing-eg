@@ -23,7 +23,7 @@
                 .social-contact{
                     border: 1px solid $color-silver;
                     border-radius: 6px;
-                    background-image: linear-gradient(to bottom, $color-white, $color-blueGray50);
+                    // background-image: linear-gradient(to bottom, $color-white, $color-blueGray50);
                     margin: 0 auto 1rem;
                     text-align: center;
                     text-align: center;
@@ -38,8 +38,8 @@
                         cursor: pointer;
                         box-shadow: 0px 0px 16px rgba(43, 43, 43, 0.253);
                     }
-                    &.app:hover svg {
-                        filter: invert(21%) sepia(59%) saturate(5438%) hue-rotate(94deg) brightness(101%) contrast(105%);
+                    &:hover svg {
+                        filter: invert(97%) sepia(3%) saturate(0%) hue-rotate(287deg) brightness(200%) contrast(200%);;
                     }
                 }        
             }

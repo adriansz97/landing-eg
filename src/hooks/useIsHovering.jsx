@@ -12,9 +12,9 @@ export const useIsHovering = () => {
     setIsHovering(false);
   };
 
-  return {
+  return [
     isHovering,
     handleMouseOver,
     handleMouseOut
-  }
+  ]
 }
