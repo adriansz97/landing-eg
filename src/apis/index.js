@@ -33,9 +33,25 @@ export const getDetailCurrentReport = async () => {
   }
 };
 
-export const getReportStatus = async (tracking_code) => {
+// export const getReportStatus = async (tracking_code) => {
+//   try {
+//     const resp = await apiCall.post(`/report/status/get/`, { tracking_code })
+//     return resp.data;
+//   } catch (error) {
+//     return {
+//       error: true,
+//       msg: error.response.data.report
+//     }
+//   }
+// };
+
+// NEW ENDPOINTS FOR CHAT
+//{{host}}/{{tenant}}/api/report/TKC-30022wTjJ11/messages/
+
+export const getPublicStatusReport = async (tracking_code) => {
+  console.log(`/report/${tracking_code}/status/`)
   try {
-    const resp = await apiCall.post(`/report/status/get/`, { tracking_code })
+    const resp = await apiCall.get(`/report/${tracking_code}/status/`,)
     return resp.data;
   } catch (error) {
     return {
@@ -44,4 +60,27 @@ export const getReportStatus = async (tracking_code) => {
     }
   }
 };
+export const getPublicMessagesList = async (tracking_code) => {
+  try {
+    const resp = await apiCall.get(`/report/${tracking_code}/messages/`,)
+    return resp.data;
+  } catch (error) {
+    return {
+      error: true,
+      msg: error.response.data.report
+    }
+  }
+};
+export const createMessagePublic = async (tracking_code, content) => {
+  try {
+    const resp = await apiCall.post(`/report/${tracking_code}/messages/`, { content })
+    return resp.data;
+  } catch (error) {
+    return {
+      error: true,
+      msg: error.response.data.report
+    }
+  }
+};
+
 

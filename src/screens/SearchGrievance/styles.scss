@@ -40,6 +40,26 @@
         outline: none;
       }
     }
+    .attachments {
+      transition: all 200ms;
+      border-radius: 2px;
+      text-align: center;
+      padding: 8px;
+    }
+    .attachments-icon-container {
+      font-size: 50px;
+      i {
+        margin: 0px 4px;
+      }
+    }
+    .attachments-instructions {
+      p:nth-child(1) {
+        font-size: 30px;
+      }
+      p:nth-child(2) {
+        font-size: 18px;
+      }
+    }
     .history-mail {
       .chat-container {
         padding: 16px;

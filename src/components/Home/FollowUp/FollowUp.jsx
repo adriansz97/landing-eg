@@ -6,7 +6,7 @@ import FollowUpIcon3 from "../../../assets/images/icon10.png";
 import FollowUpIcon4 from "../../../assets/images/icon11.png";
 import SearchBar from '../../SearchBar/SearchBar';
 import "./styles.scss";
-import { getReportStatus } from "../../../apis";
+import { getPublicStatusReport } from "../../../apis";
 import Swal from "sweetalert2";
 import { Navigate, useNavigate } from "react-router-dom";
 
@@ -16,7 +16,7 @@ const FollowUp = ({ clientName, followUpRef, primaryColor, secondaryColor }) => 
     const [tracking_code, setTracking_code] = useState("");
 
     const searchReport = async() => {
-        const resp = await getReportStatus(tracking_code);
+        const resp = await getPublicStatusReport(tracking_code);
         if (resp.error) {
             Swal.fire(
                 'Error',
@@ -24,12 +24,7 @@ const FollowUp = ({ clientName, followUpRef, primaryColor, secondaryColor }) => 
                 'error'
             )
         } else {
-            navigate("/search_grievance", { state: { tracking_code, status: resp.message }});
-            // Swal.fire(
-            //     `${tracking_code}`,
-            //     `The report status is: ${resp.message}`,
-            //     'success'
-            // )
+            navigate("/search_grievance", { state: { tracking_code, status: resp.status, message: resp.message }});
         }
     }
 

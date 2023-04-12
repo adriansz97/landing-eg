@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Row, Col, Modal } from "react-bootstrap";
 import { CDBBtn, CDBIcon } from "cdbreact";
 import { useIsHovering } from "../../../hooks/useIsHovering";
