@@ -1,7 +1,7 @@
 import Carousel from "react-multi-carousel";
-import { useIsHovering } from "../../../hooks/useIsHovering";
-import Icon from '../../Icon/Icon'
 import "react-multi-carousel/lib/styles.css";
+import { useIsHovering } from "../../../hooks/useIsHovering";
+import { Icon } from '../../../components/Icon/Icon';
 import "./styles.scss";
 
 const CustomLeftArrow = () => {
@@ -15,7 +15,7 @@ const CustomRightArrow = () => {
   )
 }
 
-const ContactCarousel = ({ primaryColor, secondaryColor, scrollToRef }) => {
+export const ContactCarousel = ({ primaryColor, secondaryColor, scrollToRef }) => {
 
     const [ isHoveringTel, handleMouseOverTel, handleMouseOutTel ] = useIsHovering();
     const [ isHoveringWeb, handleMouseOverWeb, handleMouseOutWeb ] = useIsHovering();
@@ -23,20 +23,20 @@ const ContactCarousel = ({ primaryColor, secondaryColor, scrollToRef }) => {
 
     const responsive = {
         desktop: {
-            breakpoint: { max: 3000, min: 1024 },
+            breakpoint: { max: 4000, min: 992},
             items: 5
         },
         tablet: {
-            breakpoint: { max: 1024, min: 576 },
+            breakpoint: { max: 992, min: 768 },
             items: 4
         },
         mobile: {
-            breakpoint: { max: 576, min: 0 },
+            breakpoint: { max: 768, min: 0 },
             items: 2
         }
     };
     return(
-        <div id="contact-carousel">
+        <div className="contact-carousel">
             <div className="carousel-block">
                 <Carousel 
                     arrows={false}
@@ -58,7 +58,7 @@ const ContactCarousel = ({ primaryColor, secondaryColor, scrollToRef }) => {
                         </a>
                         <h6>Teléfono</h6>
                     </div>
-                    <div className="item" >
+                    <div className="item">
                         <div className="social-contact" onClick={()=>scrollToRef("BeAgent")} onMouseOver={handleMouseOverWeb} onMouseOut={handleMouseOutWeb}
                             style={{ ...(isHoveringWeb && { backgroundColor: primaryColor })  }}>
                             {
@@ -82,9 +82,8 @@ const ContactCarousel = ({ primaryColor, secondaryColor, scrollToRef }) => {
                     </div>
                 </Carousel>
             </div>
-            <div id="noti-message">Si eres testigo de alguna falta a nuestro Código de Ética, no dudes en denunciarlo a través de nuestros canales de denuncia:</div>
+            <div className="noti-message">Si eres testigo de alguna falta a nuestro Código de Ética, no dudes en denunciarlo a través de nuestros canales de denuncia:</div>
+            <br />
         </div>
     )
 }
-
-export default ContactCarousel;

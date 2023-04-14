@@ -1,12 +1,10 @@
 import { Link } from "react-router-dom";
 import { CDBNavbar, CDBNavBrand, CDBNavItem, CDBBtn, CDBNavToggle, CDBCollapse, CDBNavbarNav } from "cdbreact";
 import logo from "../../../assets/images/surdep-logo.png";
-// import LogoEg from "../../../assets/images/logotipo-ethics-copy.png";
-import LogoEg from "../../../assets/images/EG_color.svg";
+import { Icon } from "../../Icon/Icon";
 import "./styles.scss";
-import Icon from "../../Icon/Icon";
 
-const ComplaintFormComponent = () => {
+export const Header = () => {
 
 
     return (
@@ -38,4 +36,3 @@ const ComplaintFormComponent = () => {
         </div>
     );
 };
-export default  ComplaintFormComponent;

@@ -1,16 +1,16 @@
 import { useContext, useRef } from "react";
 import { AppContext, ThemeContext } from "../../context/AppContext";
-import Navbar from "../Golbal/navbar/Navbar";
-import Header from "../Golbal/Header/Header";
-import Hero from "./Hero/Hero";
-import ContactCarousel from "./ContactCarousel/ContactCarousel";
-import HowWorks from "./HowWorks/HowWorks";
-import BeAgent from "./BeAgent/BeAgent";
+import { Navbar } from "../../components/Golbal/navbar/Navbar";
+import { Header } from "../../components/Golbal/Header/Header";
+import { Footer } from "../../components/Golbal/Footer/Footer";
+import { Hero } from "./Hero/Hero";
+import { ContactCarousel } from "./ContactCarousel/ContactCarousel";
+import { HowWorks } from "./HowWorks/HowWorks";
+import { BeAgent } from "./BeAgent/BeAgent";
 // import Announcement from "./Announcement/Announcement";
-import FollowUp from "./FollowUp/FollowUp";
-import Download from "./Download/Download";
-import FrequentQuestions from "./FrequentQuestions/FrequentQuestions";
-import Footer from "../Golbal/Footer/Footer";
+import { FollowUp } from "./FollowUp/FollowUp";
+import { Download } from "./Download/Download";
+import { FrequentQuestions } from "./FrequentQuestions/FrequentQuestions";
 
 export const Home = () =>{
     
@@ -36,7 +36,7 @@ export const Home = () =>{
     }
 
     return (
-        <>
+        <div className="home-page">
 
             <Navbar />
 
@@ -62,6 +62,8 @@ export const Home = () =>{
             <BeAgent 
                 clientName={clientName} 
                 beAgentRef={beAgentRef} 
+                primaryColor={primaryColor}
+                secondaryColor={secondaryColor}
             /> {/* Form */}
 
             <FollowUp
@@ -82,6 +84,6 @@ export const Home = () =>{
                 scrollToRef={scrollToRef}
             />
 
-        </>
+        </div>
     );
 }

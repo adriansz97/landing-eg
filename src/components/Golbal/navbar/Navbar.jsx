@@ -1,7 +1,7 @@
 // import LanguageSelect from "./Language/Language"
 import "./styles.scss";
 
-const Navbar = () => {
+export const Navbar = () => {
     return (
         <div className="top_navbar">
             {/* <div className="d-flex align-items-center justify-content-end CDB-container" style={{"height": "40px"}}>
@@ -10,4 +10,3 @@ const Navbar = () => {
         </div>
     );
 };
-export default  Navbar;

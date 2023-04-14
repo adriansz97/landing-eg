@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import _ from "lodash";
 import { getDetailCurrentReport, catalogByPart } from "../../../apis";
-import { PreviewForm } from "../../PreviewForm/PreviewForm";
+import { PreviewForm } from "../../../components/PreviewForm/PreviewForm";
 import "./styles.scss";
 
-const BeAgent = ({ clientName, beAgentRef }) => {
+export const BeAgent = ({ clientName, beAgentRef, primaryColor, secondaryColor }) => {
 
   const [form, setForm] = useState(null);
   const [formIdentifier, setFormIdentifier] = useState("");
@@ -150,8 +150,8 @@ const BeAgent = ({ clientName, beAgentRef }) => {
   }
 
   return(
-    <div id="be-agent" className="complaint-content">
-      <div id="title">
+    <div className="be-agent">
+      <div className="title">
         <h3 ref={beAgentRef} >SEAMOS AGENTES DE CAMBIO</h3>
         <p>Por medio de este sitio podrás denunciar aquellas conductas no éticas de manera sencilla, confidencial, segura y con la opción de hacerlo de forma anónima.
           El sistema es operado por un tercero independiente a {clientName}, líder en el país y especialista en la gestión de denuncias y reportes (EthicsGlobal).</p>
@@ -167,10 +167,10 @@ const BeAgent = ({ clientName, beAgentRef }) => {
           setFormData={setFormData}
           isValid={isValid}
           setIsValid={setIsValid}
+          // btnColor={primaryColor}
+          // sendBtnColor={secondaryColor}
         />  
       </div>
     </div>
   )
 }
-
-export default BeAgent;

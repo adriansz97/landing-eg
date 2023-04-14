@@ -1,0 +1,106 @@
+@import '../../../theme/colors';
+
+.download {
+    padding: 5rem 16px;
+    background-color: $color-landing;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    h3 {
+        text-align: center;
+    }
+    small {
+        text-align: center;
+    }
+    .download-info-container {
+        display: flex;
+        align-items: center;
+        padding: 0;
+    }
+    .download-info {
+        text-align: center;
+    }
+    .download-methods {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .download-app-img {
+        display: none;
+        img {
+            width: 100%;
+        }
+    }
+    .download-app-img2 {
+        width: 100%;
+        img {
+            width: 100%;
+        }
+    }
+    .qr-container {
+        width: 100%;
+        padding: 0px 30px;
+        img {
+            width: 100%;
+        }
+    }
+}
+.modal-video-container {
+    .modal-video {
+        padding: 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+}
+
+@media (min-width: 768px) {
+    
+}
+
+@media (min-width: 992px) {
+    .download {
+        padding: 88px;
+        h3 {
+            text-align: start;
+        }
+        small {
+            text-align: start;
+        }
+        .download-app-img {
+            display: block;
+        }
+        .download-app-img2 {
+            display: none;
+        }
+        .download-info {
+            text-align: start;
+        }
+        .download-methods {
+            justify-content: start;
+        }
+    }
+}
+
+// @media screen and (max-width: 768px) {
+//     .download{
+//         .download-info {
+//             margin-top: 2rem;
+//             text-align: center;
+//             padding-bottom: 3rem;
+//         }
+//         .download-methods {
+//             justify-content: center;
+//         }
+//     }
+// }
+
+// @media screen and (max-width: 576px) {
+//     .download {
+//         .download-info {
+//             .btn {
+//                 width: 90%;
+//             }
+//         }
+//     }
+// }

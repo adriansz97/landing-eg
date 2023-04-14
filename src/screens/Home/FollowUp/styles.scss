@@ -1,0 +1,79 @@
+@import '../../../theme/colors';
+
+.follow-up{
+    background-color: $color-white;
+    padding: 10rem 16px;
+    .title {
+        text-align: center;
+    }   
+    p {
+        text-align: center;
+        color: $color-slate;
+        margin-bottom: 40px;
+    }
+    .insert {
+        font-size: 16px;
+        color: $color-blueGray900;
+    }
+    .searchbar-container {
+        display: flex;
+        justify-content: center;
+    }
+    // .d-flex align-items-center justify-xs-content-center justify-content-start mt-20
+
+    .feedback-item {
+        display: flex;
+        align-items: center;
+        justify-content: start;
+        margin-top: 30px;
+        small {
+            flex-grow: 1;
+        }
+        .complaint_icon {
+            margin-right: 12px;
+        }
+    }
+
+}
+
+
+@media (min-width: 768px) {
+    .follow-up{
+        padding: 5rem 2rem;
+        .title{
+            text-align: center;
+        }
+        .feedback-item {
+            justify-content: center;
+        }
+    }
+}
+
+@media (min-width: 992px) {
+    .follow-up{
+        .title {
+            text-align: start;
+        }
+        p {
+            text-align: start;
+        }
+        .searchbar-container {
+            justify-content: start;
+        }
+        .feedback-item {
+        }
+    }
+}
+
+
+// @media screen and (max-width: 576px) {
+//     .follow-up{
+//         padding: 10rem 10%;
+//         p{
+//             color: $color-slate;
+//         }
+//         .form-control{
+//             border-radius: 0!important;
+//         }
+//     }
+// }

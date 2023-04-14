@@ -26,7 +26,7 @@ const ModalVideo = ({ clientName, show, onHide }) => {
     )
 }
 
-const Download = ({ clientName, primaryColor, secondaryColor, downloadRef }) => {
+export const Download = ({ clientName, primaryColor, secondaryColor, downloadRef }) => {
 
     const [ isHovering, handleMouseOver, handleMouseOut ] = useIsHovering();
     const [showModalVideo, setShowModalVideo] = useState(false);
@@ -42,6 +42,9 @@ const Download = ({ clientName, primaryColor, secondaryColor, downloadRef }) => 
                 <Col lg="6" md="12" className="download-info-container">
                     <div className="download-info">
                         <h3>DESCARGA NUESTRA APP</h3>
+                        <div className="download-app-img2">
+                            <img src={App} alt="Download-App" />
+                        </div>
                         <CDBBtn 
                             style={{ backgroundColor: isHovering ? '#00bbff' : '#009ED7' }} 
                             onMouseOver={handleMouseOver} 
@@ -54,12 +57,12 @@ const Download = ({ clientName, primaryColor, secondaryColor, downloadRef }) => 
                             Nuestra App ReportChannel es única para que la puedas utilizar las 24 horas, los 365 días del año. Aquí podrás realizar llamadas o conversar en un chat, pero si lo deseas también puedes llenar el cuestionario que te llevará de la mano. Úsala, es el momento de escucharte.
                         </div>
                         <div className="download-methods mt-3">
-                            <img src={AppStore} alt="App-Store" className="mr-3" />
+                            <img src={AppStore} alt="App-Store" className="mr-5" />
                             <img src={GooglePlay} alt="Google-Play" />
                         </div>
                         <small className="d-block mt-4">* App operada por EthicsGlobal.</small>
-                        <b className="d-block mt-4">Entra a la App, escanea el QR o escribe el Código para utilizar la línea.</b>
-                        <div className="mt-4">
+                        <b className="d-block mt-4 mb-4">Entra a la App, escanea el QR o escribe el Código para utilizar la línea.</b>
+                        <div className="mt-4 qr-container">
                             <img src={Qr} alt="qr" />
                         </div>
                     </div>
@@ -69,4 +72,3 @@ const Download = ({ clientName, primaryColor, secondaryColor, downloadRef }) => 
         </div>
     )
 }
-export default Download;

@@ -10,7 +10,7 @@ import { catalogByPart, createReport } from "../../apis";
 import './styles.scss'
 
 // Render de un input asociado a un catalogo
-const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, idx, type, required, catalogue, isOwn, hdlChg, hdlSchm, doValidate, handleValidate, returnValidClass }) => {
+const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, idx, type, required, catalogue, isOwn, hdlChg, hdlSchm, doValidate, handleValidate, returnValidClass, ReturnErrorMesages  }) => {
 
   const [selectedKey, setSelectedKey] = useState(scope.selected||"");
   const isUniqueSelectionDefault = Array.isArray(scope.children) && scope.children.length===1;
@@ -135,7 +135,7 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
       {
         type==="catalog-select"
           ? <>
-              <Col md="4" className="fade-in-image preview-input-container" >
+              <Col lg="4" className="fade-in-image preview-input-container" >
               <div className="preview-input-container-inp">
                 <select className={`form-control form-select-input ${returnValidClass()}  w-100`} onChange={(e)=>handleKeyChange(e.target.value)} name={scope.key} value={selectedKey} style={{margin: 0}}>
                   {
@@ -154,6 +154,7 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
                     // <option key={item.key} value={item.key} name={item.path}>{item.label} {item.is_active?'si':'no'}</option>
                   }
                 </select>
+                <ReturnErrorMesages />
               </div>
               </Col>
               {
@@ -179,7 +180,7 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
               }
             </>
           : <>
-              <Col md="4" className="fade-in-image preview-input-container" >
+              <Col lg="4" className="fade-in-image preview-input-container" >
                 <div className="preview-input-container-inp">
                   {
                     scope.children &&
@@ -204,6 +205,7 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
                     //   </div>
                     // ))
                   }
+                  <ReturnErrorMesages />
                 </div>
               </Col>
               {
@@ -391,7 +393,7 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
 
   if (schema.type === "string") {
     return (
-      <Col md="6" className="preview-input-container fade-in-image">
+      <Col lg="6" className="preview-input-container fade-in-image">
           <label className="w-100">{schema.label}{schema.required?"*":""}</label>
           <div className="preview-input-container-inp">
             <input autoComplete="off" type="text" className={`form-control ${returnValidClass()} w-100`} name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} />
@@ -402,7 +404,7 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
   }
   if (schema.type === "number") {
     return (
-      <Col md="6" className="preview-input-container fade-in-image">
+      <Col lg="6" className="preview-input-container fade-in-image">
         <label className="w-100">{schema.label}{schema.required?"*":""}</label>
         <div className="preview-input-container-inp">
           <input autoComplete="off" type="number" className={`form-control ${returnValidClass()} w-100`} name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} />
@@ -413,7 +415,7 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
   }
   if (schema.type === "textarea") {
     return (
-      <Col md="6" className="preview-input-container fade-in-image">
+      <Col lg="6" className="preview-input-container fade-in-image">
         <label className="w-100" >{schema.label}{schema.required?"*":""}</label>
         <div className="preview-input-container-inp">
           <textarea autoComplete="off" type="text" className={`form-control ${returnValidClass()} w-100`} name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} ></textarea>
@@ -424,7 +426,7 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
   }
   if (schema.type === "checkbox") {
     return (
-      <Col md="12" className="preview-input-container fade-in-image">
+      <Col lg="12" className="preview-input-container fade-in-image">
         <div className="form-check">
           <input className="form-check-input" type="checkbox" name={schema.key} defaultChecked={formData[schema.key]} id={schema.key} onChange={(e)=>hdlChg(e,idx,"checkbox")} />
           <label className="form-check-label" htmlFor={schema.key}>
@@ -436,7 +438,7 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
   }
   if (schema.type === "file") {
     return (
-      <Col md="12" className="preview-input-container fade-in-image">
+      <Col lg="12" className="preview-input-container fade-in-image">
         <div className="form-check">
           <label>
             {schema.label}{schema.required?"*":""}
@@ -453,7 +455,7 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
     const initialDate = new Date();
     return (
       <></>
-      // <Col md="6" className="preview-input-container fade-in-image">
+      // <Col lg="6" className="preview-input-container fade-in-image">
       //   <div className="form-check">
       //     <label>
       //       {schema.label}{schema.required?"*":""}
@@ -471,7 +473,7 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
     const initialDate = new Date();
     return (
       <></>
-      // <Col md="12" className="preview-input-container fade-in-image">
+      // <Col lg="12" className="preview-input-container fade-in-image">
       //   <div>
       //     <label>
       //       {schema.label}{schema.required?"*":""}
@@ -498,7 +500,7 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
   }
   if (schema.type === "subject") {
     return (
-      <Col md="6" className="preview-input-container fade-in-image">
+      <Col lg="6" className="preview-input-container fade-in-image">
           <label className="w-100">{schema.label}{schema.required?"*":""}</label>
           <div className="preview-input-container-inp">
             <input autoComplete="off" type="text" className={`form-control ${returnValidClass()} w-100`} name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} />
@@ -509,7 +511,7 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
   }
   if (schema.type === "description") {
     return (
-      <Col md="6" className="preview-input-container fade-in-image">
+      <Col lg="6" className="preview-input-container fade-in-image">
         <label className="w-100" >{schema.label}{schema.required?"*":""}</label>
         <div className="preview-input-container-inp">
           <textarea autoComplete="off" type="text" className={`form-control ${returnValidClass()} w-100`} name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} ></textarea>
@@ -520,7 +522,7 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
   }
   if (schema.type === "catalog-select" || schema.type === "catalog-radio") {
     return (
-      <Col md="12" className="preview-input-container fade-in-image">
+      <Col md="12">
         <label>{schema.label}{schema.required?"*":""}</label>
         <Row md="12">
           <CatalogueInput 
@@ -538,8 +540,8 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
             doValidate={doValidate}
             handleValidate={handleValidate}
             returnValidClass={returnValidClass}
+            ReturnErrorMesages={ReturnErrorMesages}
           />
-          <ReturnErrorMesages />
         </Row>
       </Col>
     )
@@ -552,7 +554,7 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
 }
 
 // Vista previa del formulario
-export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaState, setSchemaState, formData, setFormData, isValid, setIsValid, showButtons=true, stepClick=false }) => {
+export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaState, setSchemaState, formData, setFormData, isValid, setIsValid, showButtons=true, stepClick=false, btnColor="#009ED7", sendBtnColor="#152235" }) => {
 
   const refContainer = useRef(null);
 
@@ -750,7 +752,7 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
         <div className="form-preview-header">
           <div className="form-preview-header-name">
             <h3>{steps[activeStep].title||"Step sin nombre"}</h3>
-            <p>Description</p>
+            {/* <p>Description</p> */}
           </div>
           <div className="form-preview-header-steper">
             <CDBStepper
@@ -807,14 +809,29 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
             {/* <Button className='mt-4 mr-1' onClick={handlePrintFormData}>Print</Button> */}
             {
               activeStep!==0 && 
-                <Button className='btn-form mt-4 mr-1' onClick={()=>setActiveStep((active)=>active-1)}>Back</Button>
+                <Button 
+                  style={{ backgroundColor: btnColor }}
+                  className='btn-form' 
+                  onClick={()=>setActiveStep((active)=>active-1)}>
+                  Back
+                </Button>
             }
             {
               activeStep===steps.length-1
               ? <>
-                  <Button className='btn-send mt-4 mr-1' variant="success" onClick={handleSubmit}>Send</Button>
+                  <Button 
+                    style={{ backgroundColor: sendBtnColor }}
+                    className='btn-send' 
+                    onClick={handleSubmit}>
+                    Send
+                  </Button>
                 </>
-              : <Button className='btn-form mt-4' onClick={()=>setActiveStep((active)=>active+1)}>Next</Button>
+              : <Button
+                  style={{ backgroundColor: btnColor }}
+                  className='btn-form' 
+                  onClick={()=>setActiveStep((active)=>active+1)}>
+                  Next
+                </Button>
             }
           </div>
       }

@@ -1,10 +1,9 @@
 import { Row, Col } from "react-bootstrap";
 import { CDBFooter, CDBIcon } from "cdbreact";
-// import Logo from "../../../assets/images/EthicsGlobal_Blanco.png";
+import { Icon } from "../../Icon/Icon";
 import "./styles.scss";
-import Icon from "../../Icon/Icon";
 
-const Footer = ({ scrollToRef }) => {
+export const Footer = ({ scrollToRef }) => {
     return (
         <div className="footer-container">
             <CDBFooter className="footer">
@@ -54,5 +53,3 @@ const Footer = ({ scrollToRef }) => {
         </div>
     );
 };
-
-export default Footer

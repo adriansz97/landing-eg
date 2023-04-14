@@ -1,8 +1,8 @@
 import { CDBBtn } from "cdbreact";
 import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 import announcement_desktop from "../../../assets/images/ilustracion.png";
 import announcement_tablet from "../../../assets/images/ilustracion-tablet.png";
-import "react-multi-carousel/lib/styles.css";
 import "./styles.scss";
 
 const Announcement = () => {

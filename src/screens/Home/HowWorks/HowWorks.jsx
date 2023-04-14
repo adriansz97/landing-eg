@@ -5,7 +5,7 @@ import Complaint from "../../../assets/images/complaint.png";
 import Person from "../../../assets/images/person.png";
 import "./styles.scss";
 
-const HowWorks = () => {
+export const HowWorks = () => {
     return(
         <div className="how-works-container">
             <h3 className="text-center mb-5">¿CÓMO FUNCIONA?</h3>
@@ -35,4 +35,3 @@ const HowWorks = () => {
         </div>
     )
 }
-export default HowWorks;

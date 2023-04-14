@@ -1,0 +1,106 @@
+@import '../../../theme/colors';
+
+.contact-carousel {
+    text-align: center;
+    margin-top: -10rem;
+    background-color: $color-landing;
+    padding: 0px 16px;
+    .noti-message {
+        text-align: center;
+        max-width: 550px;
+        margin: 3rem auto;
+        // color: $color-white;
+    }
+    .carousel-block {
+        z-index: 10;
+        border-radius: 6px;
+        max-width: 900px;
+        margin: auto;
+        height: 230px;
+        background-color: $color-white;
+        position: relative;
+        box-shadow: 0 0 20px 1px rgba(128, 128, 128, 0.2);
+        .react-multi-carousel-list {
+            //react-multi-carousel-track 
+            //react-multi-carousel-item
+            // justify-content: center;
+            height: 200px;
+            .item {
+                .social-contact{
+                    border: 1px solid $color-silver;
+                    border-radius: 6px;
+                    // background-image: linear-gradient(to bottom, $color-white, $color-blueGray50);
+                    margin: 0 auto 1rem;
+                    text-align: center;
+                    text-align: center;
+                    padding: 1rem;
+                    width: 5rem;
+                    height: 5rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 250ms ;
+                    &:hover {
+                        cursor: pointer;
+                        box-shadow: 0px 0px 16px rgba(43, 43, 43, 0.253);
+                    }
+                    &:hover svg {
+                        filter: invert(97%) sepia(3%) saturate(0%) hue-rotate(287deg) brightness(200%) contrast(200%);;
+                    }
+                }        
+            }
+        }
+    }
+    .noti-message {
+        text-align: center;
+        max-width: 550px;
+        margin: 3rem auto;
+        // color: $color-white;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .contact-carousel {
+        text-align: center;
+        margin-top: -10rem;
+        .carousel-block {
+            .react-multi-carousel-list {
+                justify-content: center;
+                //react-multi-carousel-track 
+                //react-multi-carousel-item
+                // justify-content: center;
+                height: 200px;
+                .item {
+                    .social-contact{
+                        border: 1px solid $color-silver;
+                        border-radius: 6px;
+                        // background-image: linear-gradient(to bottom, $color-white, $color-blueGray50);
+                        margin: 0 auto 1rem;
+                        text-align: center;
+                        text-align: center;
+                        padding: 1rem;
+                        width: 5rem;
+                        height: 5rem;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        transition: all 250ms ;
+                        &:hover {
+                            cursor: pointer;
+                            box-shadow: 0px 0px 16px rgba(43, 43, 43, 0.253);
+                        }
+                        &:hover svg {
+                            filter: invert(97%) sepia(3%) saturate(0%) hue-rotate(287deg) brightness(200%) contrast(200%);;
+                        }
+                    }        
+                }
+            }
+            .react-multi-carousel-track {
+            }
+        }    
+    }
+}
+
+@media screen and (min-width: 992px) {
+
+}
