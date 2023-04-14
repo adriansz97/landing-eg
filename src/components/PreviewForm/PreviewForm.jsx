@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import _ from "lodash";
+import DatePicker from "react-datepicker";
 import Swal from "sweetalert2";
 import PerfectScrollbar from 'perfect-scrollbar';
 import 'perfect-scrollbar/css/perfect-scrollbar.css';
-import DatePicker from "react-datepicker";
-import { Col, Row } from "react-bootstrap";
+import { Col, Row, Button } from "react-bootstrap";
 import { CDBStep, CDBStepper } from "cdbreact";
-import Button from "react-bootstrap/Button";
 import { catalogByPart, createReport } from "../../apis";
 import './styles.scss'
 
@@ -137,6 +136,7 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
         type==="catalog-select"
           ? <>
               <Col md="4" className="fade-in-image preview-input-container" >
+              <div className="preview-input-container-inp">
                 <select className={`form-control form-select-input ${returnValidClass()}  w-100`} onChange={(e)=>handleKeyChange(e.target.value)} name={scope.key} value={selectedKey} style={{margin: 0}}>
                   {
                     !isUniqueSelectionDefault &&
@@ -144,11 +144,17 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
                   }
                   {
                     scope.children &&
-                    scope.children.map(item=>(
-                      <option key={item.key} value={item.key} name={item.path}>{item.label}</option>
-                    ))
+                    scope.children.map(item=>{
+                      if (item.is_active) {
+                        return <option key={item.key} value={item.key} name={item.path}>{item.label}</option>
+                      } else {
+                        return <></>;
+                      }  
+                    })
+                    // <option key={item.key} value={item.key} name={item.path}>{item.label} {item.is_active?'si':'no'}</option>
                   }
                 </select>
+              </div>
               </Col>
               {
                 (scope?.next && selectedKey) &&
@@ -174,16 +180,31 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
             </>
           : <>
               <Col md="4" className="fade-in-image preview-input-container" >
+                <div className="preview-input-container-inp">
                   {
                     scope.children &&
-                    scope.children.map((item,idxx)=>(
-                      <div key={item.key} className="form-check">
-                        <input className={`form-check-input ${returnValidClass()}`} id={`${item.path}-${item.key}-${nestNum}`} type="radio" value={item.key} name={item.path} checked={selectedKey===item.key} onChange={(e) => handleKeyChange(e.target.value)} />
-                        <label className="form-check-label" htmlFor={`${item.path}-${item.key}-${nestNum}`}>{item.label}</label>
-                        <br />
-                      </div>
-                    ))
+                    scope.children.map((item,idxx)=>{
+                      if (item.is_active) {
+                        return (
+                          <div key={item.key} className="form-check">
+                            <input className={`form-check-input ${returnValidClass()}`} id={`${item.path}-${item.key}-${nestNum}`} type="radio" value={item.key} name={item.path} checked={selectedKey===item.key} onChange={(e) => handleKeyChange(e.target.value)} />
+                            <label className="form-check-label" htmlFor={`${item.path}-${item.key}-${nestNum}`}>{item.label}</label>
+                            <br />
+                          </div>
+                        )
+                      } else {
+                        return <></>;
+                      }
+                    })
+                    // scope.children.map((item,idxx)=>(
+                    //   <div key={item.key} className="form-check">
+                    //     <input className={`form-check-input ${returnValidClass()}`} id={`${item.path}-${item.key}-${nestNum}`} type="radio" value={item.key} name={item.path} checked={selectedKey===item.key} onChange={(e) => handleKeyChange(e.target.value)} />
+                    //     <label className="form-check-label" htmlFor={`${item.path}-${item.key}-${nestNum}`}>{item.label} {item.is_active?'si':'no'}</label>
+                    //     <br />
+                    //   </div>
+                    // ))
                   }
+                </div>
               </Col>
               {
                 (scope?.next && selectedKey) &&
@@ -305,13 +326,6 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
         errors.push("This is not valid date (dont have correct format)")
       }
     }
-    if (schema.type === "catalog-select" || schema.type === "catalog-radio") {
-      if (schema.required) {
-        if (!valid) {
-          errors.push("This catalogue is not completed");
-        }
-      }
-    }
     if (schema.type === "subject") {
       if (schema.required===true) {
         if (formData[schema.key].trim()==="") {
@@ -323,6 +337,13 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
       if (schema.required===true) {
         if (formData[schema.key].trim()==="") {
           errors.push("This field may not be empty")
+        }
+      }
+    }
+    if (schema.type === "catalog-select" || schema.type === "catalog-radio") {
+      if (schema.required) {
+        if (!valid) {
+          errors.push("This catalogue is not completed");
         }
       }
     }
@@ -372,7 +393,9 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
     return (
       <Col md="6" className="preview-input-container fade-in-image">
           <label className="w-100">{schema.label}{schema.required?"*":""}</label>
-          <input autoComplete="off" type="text" className={`form-control ${returnValidClass()} w-100`} name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} />
+          <div className="preview-input-container-inp">
+            <input autoComplete="off" type="text" className={`form-control ${returnValidClass()} w-100`} name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} />
+          </div>
           <ReturnErrorMesages />
       </Col>
     )
@@ -381,7 +404,9 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
     return (
       <Col md="6" className="preview-input-container fade-in-image">
         <label className="w-100">{schema.label}{schema.required?"*":""}</label>
-        <input autoComplete="off" type="number" className={`form-control ${returnValidClass()} w-100`} name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} />
+        <div className="preview-input-container-inp">
+          <input autoComplete="off" type="number" className={`form-control ${returnValidClass()} w-100`} name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} />
+        </div>
         <ReturnErrorMesages />
       </Col>
     )
@@ -390,7 +415,9 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
     return (
       <Col md="6" className="preview-input-container fade-in-image">
         <label className="w-100" >{schema.label}{schema.required?"*":""}</label>
-        <textarea autoComplete="off" type="text" className={`form-control ${returnValidClass()} w-100`} name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} ></textarea>
+        <div className="preview-input-container-inp">
+          <textarea autoComplete="off" type="text" className={`form-control ${returnValidClass()} w-100`} name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} ></textarea>
+        </div>
         <ReturnErrorMesages />
       </Col>
     )
@@ -414,7 +441,9 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
           <label>
             {schema.label}{schema.required?"*":""}
           </label>
-          <input className="form-control" name={schema.key} type="file" onChange={(e)=>hdlChg(e,idx)} />
+          <div className="preview-input-container-inp">
+            <input className="form-control" name={schema.key} type="file" onChange={(e)=>hdlChg(e,idx)} />
+          </div>
         </div>
         <ReturnErrorMesages />
       </Col>
@@ -441,28 +470,51 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
   if (schema.type === "date-range") {
     const initialDate = new Date();
     return (
-      <Col md="12" className="preview-input-container fade-in-image">
-        <div>
-          <label>
-            {schema.label}{schema.required?"*":""}
-          </label>
-          <Row md="12">
-            <Col md="6">
-              <label>Initial Date</label>
-              <DatePicker 
-                selected={ isValidDate("start")?returnDateRange("start"):initialDate}
-                onChange={(value)=>hdlChg({target:{name: schema.key, value, type: 'date-range-start'}},idx)}
-              />
-            </Col>
-            <Col md="6">
-              <label>Final Date</label>
-              <DatePicker 
-                selected={ isValidDate("end")?returnDateRange("end"):initialDate}
-                onChange={(value)=>hdlChg({target:{name: schema.key, value, type: 'date-range-end'}},idx)}
-              />
-            </Col>
-          </Row>
+      <></>
+      // <Col md="12" className="preview-input-container fade-in-image">
+      //   <div>
+      //     <label>
+      //       {schema.label}{schema.required?"*":""}
+      //     </label>
+      //     <Row md="12">
+      //       <Col md="6">
+      //         <label>Initial Date</label>
+      //         <DatePicker 
+      //           selected={ isValidDate("start")?returnDateRange("start"):initialDate}
+      //           onChange={(value)=>hdlChg({target:{name: schema.key, value, type: 'date-range-start'}},idx)}
+      //         />
+      //       </Col>
+      //       <Col md="6">
+      //         <label>Final Date</label>
+      //         <DatePicker 
+      //           selected={ isValidDate("end")?returnDateRange("end"):initialDate}
+      //           onChange={(value)=>hdlChg({target:{name: schema.key, value, type: 'date-range-end'}},idx)}
+      //         />
+      //       </Col>
+      //     </Row>
+      //   </div>
+      // </Col>
+    )
+  }
+  if (schema.type === "subject") {
+    return (
+      <Col md="6" className="preview-input-container fade-in-image">
+          <label className="w-100">{schema.label}{schema.required?"*":""}</label>
+          <div className="preview-input-container-inp">
+            <input autoComplete="off" type="text" className={`form-control ${returnValidClass()} w-100`} name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} />
+          </div>
+          <ReturnErrorMesages />
+      </Col>
+    )
+  }
+  if (schema.type === "description") {
+    return (
+      <Col md="6" className="preview-input-container fade-in-image">
+        <label className="w-100" >{schema.label}{schema.required?"*":""}</label>
+        <div className="preview-input-container-inp">
+          <textarea autoComplete="off" type="text" className={`form-control ${returnValidClass()} w-100`} name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} ></textarea>
         </div>
+        <ReturnErrorMesages />
       </Col>
     )
   }
@@ -495,24 +547,6 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
   if (schema.type === "catalog-error") {
     return (
       <></>
-    )
-  }
-  if (schema.type === "subject") {
-    return (
-      <Col md="6" className="preview-input-container fade-in-image">
-          <label className="w-100">{schema.label}{schema.required?"*":""}</label>
-          <input autoComplete="off" type="text" className={`form-control ${returnValidClass()} w-100`} name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} />
-          <ReturnErrorMesages />
-      </Col>
-    )
-  }
-  if (schema.type === "description") {
-    return (
-      <Col md="6" className="preview-input-container fade-in-image">
-        <label className="w-100" >{schema.label}{schema.required?"*":""}</label>
-        <textarea autoComplete="off" type="text" className={`form-control ${returnValidClass()} w-100`} name={schema.key} value={formData[schema.key]} onChange={(e)=>hdlChg(e,idx)} ></textarea>
-        <ReturnErrorMesages />
-      </Col>
     )
   }
 }
@@ -699,10 +733,10 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
   
   const hdlIsVal = (valid,idx) => {
     setIsValid(isValid.map((item,index)=>index===activeStep
-      ? item.map((item2,index2)=>index2===idx
-          ? valid
-          : item2
-        )
+    ? item.map((item2,index2)=>index2===idx
+        ? valid
+        : item2
+      )
     : item));
   }
 

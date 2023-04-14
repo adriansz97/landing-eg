@@ -9,17 +9,23 @@
   .form-preview-header {
     display: flex;
     justify-content: space-between;
+    .form-preview-header-name {
+      font-size: 16px !important;
+      font-weight: bold !important;
+    }
+    .form-preview-header-description {
+      font-size: 14px !important;
+      color: $color-Gray !important;
+    }
   }
   // contenedor que engloba a todos los inputs
   .form-preview-inputs {
-    overflow-y: scroll;
-    overflow-x: hidden;
     max-height: 480px;
     height: 480px;
     padding-bottom: 16px;
     position: relative;
     * {
-      color: #72909D;  
+      color: $color-Gray; 
     }
     .ps__rail-y {
       &:hover {
