@@ -144,6 +144,9 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
                   }
                   {
                     scope.children &&
+                    // scope.children.map(item=>(
+                    //   <option key={item.key} value={item.key} name={item.path}>{item.label} {item.is_active?'si':'no'}</option>
+                    // ))
                     scope.children.map(item=>{
                       if (item.is_active) {
                         return <option key={item.key} value={item.key} name={item.path}>{item.label}</option>
@@ -151,10 +154,9 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
                         return <></>;
                       }  
                     })
-                    // <option key={item.key} value={item.key} name={item.path}>{item.label} {item.is_active?'si':'no'}</option>
                   }
                 </select>
-                <ReturnErrorMesages />
+                {/* <ReturnErrorMesages /> */}
               </div>
               </Col>
               {
@@ -184,6 +186,13 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
                 <div className="preview-input-container-inp">
                   {
                     scope.children &&
+                    // scope.children.map((item,idxx)=>(
+                    //   <div key={item.key} className="form-check">
+                    //     <input className={`form-check-input ${returnValidClass()}`} id={`${item.path}-${item.key}-${nestNum}`} type="radio" value={item.key} name={item.path} checked={selectedKey===item.key} onChange={(e) => handleKeyChange(e.target.value)} />
+                    //     <label className="form-check-label" htmlFor={`${item.path}-${item.key}-${nestNum}`}>{item.label} {item.is_active?'si':'no'}</label>
+                    //     <br />
+                    //   </div>
+                    // ))
                     scope.children.map((item,idxx)=>{
                       if (item.is_active) {
                         return (
@@ -197,15 +206,8 @@ const CatalogueInput = ({ scope, value, valid, path = "", nestNum = 0, keyData, 
                         return <></>;
                       }
                     })
-                    // scope.children.map((item,idxx)=>(
-                    //   <div key={item.key} className="form-check">
-                    //     <input className={`form-check-input ${returnValidClass()}`} id={`${item.path}-${item.key}-${nestNum}`} type="radio" value={item.key} name={item.path} checked={selectedKey===item.key} onChange={(e) => handleKeyChange(e.target.value)} />
-                    //     <label className="form-check-label" htmlFor={`${item.path}-${item.key}-${nestNum}`}>{item.label} {item.is_active?'si':'no'}</label>
-                    //     <br />
-                    //   </div>
-                    // ))
                   }
-                  <ReturnErrorMesages />
+                  {/* <ReturnErrorMesages /> */}
                 </div>
               </Col>
               {
