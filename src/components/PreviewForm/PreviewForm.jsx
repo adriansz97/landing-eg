@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import Swal from "sweetalert2";
 import PerfectScrollbar from 'perfect-scrollbar';
 import 'perfect-scrollbar/css/perfect-scrollbar.css';
@@ -446,7 +447,7 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
             {schema.label}{schema.required?"*":""}
           </label>
           <div className="preview-input-container-inp">
-            <input className="form-control" name={schema.key} type="file" onChange={(e)=>hdlChg(e,idx)} />
+            <input className={`form-control ${returnValidClass()} w-100`} name={schema.key} type="file" onChange={(e)=>hdlChg(e,idx)}  />
           </div>
         </div>
         <ReturnErrorMesages />
@@ -456,48 +457,55 @@ const RenderInput = ({ schema, formData, valid, idx, hdlChg, hdlSchm, hdlIsVal, 
   if (schema.type === "date") {
     const initialDate = new Date();
     return (
-      <></>
-      // <Col lg="6" className="preview-input-container fade-in-image">
-      //   <div className="form-check">
-      //     <label>
-      //       {schema.label}{schema.required?"*":""}
-      //     </label>
-      //     <DatePicker 
-      //       selected={ isValidDate() ? formData[schema.key] : initialDate }
-      //       onChange={(value)=>hdlChg({target:{name: schema.key, value, type: "date"}},idx)} 
-      //     />
-      //   </div>
-      //   <ReturnErrorMesages />
-      // </Col>
+      <Col lg="6" className="preview-input-container fade-in-image">
+        <div>
+          <label>
+            {schema.label}{schema.required?"*":""}
+          </label>
+          <div className="preview-input-container-inp">
+            <DatePicker
+              className={`form-control ${returnValidClass()} w-100`}
+              selected={ isValidDate() ? formData[schema.key] : initialDate }
+              onChange={(value)=>hdlChg({target:{name: schema.key, value, type: "date"}},idx)} 
+            />
+          </div>
+        </div>
+        <ReturnErrorMesages />
+      </Col>
     )
   }
   if (schema.type === "date-range") {
     const initialDate = new Date();
     return (
-      <></>
-      // <Col lg="12" className="preview-input-container fade-in-image">
-      //   <div>
-      //     <label>
-      //       {schema.label}{schema.required?"*":""}
-      //     </label>
-      //     <Row md="12">
-      //       <Col md="6">
-      //         <label>Initial Date</label>
-      //         <DatePicker 
-      //           selected={ isValidDate("start")?returnDateRange("start"):initialDate}
-      //           onChange={(value)=>hdlChg({target:{name: schema.key, value, type: 'date-range-start'}},idx)}
-      //         />
-      //       </Col>
-      //       <Col md="6">
-      //         <label>Final Date</label>
-      //         <DatePicker 
-      //           selected={ isValidDate("end")?returnDateRange("end"):initialDate}
-      //           onChange={(value)=>hdlChg({target:{name: schema.key, value, type: 'date-range-end'}},idx)}
-      //         />
-      //       </Col>
-      //     </Row>
-      //   </div>
-      // </Col>
+      <Col lg="12" className="preview-input-container fade-in-image">
+        <div>
+          <label>
+            {schema.label}{schema.required?"*":""}
+          </label>
+          <Row md="12">
+            <Col md="6">
+              <label>Initial Date</label>
+              <div className="preview-input-container-inp">
+                <DatePicker
+                  className={`form-control ${returnValidClass()} w-100`}
+                  selected={ isValidDate("start")?returnDateRange("start"):initialDate}
+                  onChange={(value)=>hdlChg({target:{name: schema.key, value, type: 'date-range-start'}},idx)}
+                />
+              </div>
+            </Col>
+            <Col md="6">
+              <label>Final Date</label>
+              <div className="preview-input-container-inp">
+                <DatePicker 
+                  className={`form-control ${returnValidClass()} w-100`}
+                  selected={ isValidDate("end")?returnDateRange("end"):initialDate}
+                  onChange={(value)=>hdlChg({target:{name: schema.key, value, type: 'date-range-end'}},idx)}
+                />
+              </div>
+            </Col>
+          </Row>
+        </div>
+      </Col>
     )
   }
   if (schema.type === "subject") {
