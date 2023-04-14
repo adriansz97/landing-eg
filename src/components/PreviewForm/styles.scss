@@ -1,17 +1,32 @@
 @import '../../theme/colors';
 
 .form-preview {
-  position: relative;
+  textarea {
+    resize: none;
+  }
   .form-control {
-    margin-top: 4px;
+    transition: all 250ms;
+    border-radius: 2px;
+    margin-top: 0px;
+    font-size: 14px;
+    &:focus {
+      border-color: $color-ethicsBlue;
+      box-shadow: none;
+    }
   }
   // header del preview donde esta el steper y el titulo del step
   .form-preview-header {
     display: flex;
     justify-content: space-between;
     .form-preview-header-name {
-      font-size: 16px !important;
-      font-weight: bold !important;
+      h3 {
+        font-size: 16px;
+        font-weight: bold;
+      }
+      p {
+        font-size: 14px;
+        color: $color-blueGray;
+      }
     }
     .form-preview-header-description {
       font-size: 14px !important;
@@ -25,7 +40,7 @@
     padding-bottom: 16px;
     position: relative;
     * {
-      color: $color-Gray; 
+      color: $color-Gray;  
     }
     .ps__rail-y {
       &:hover {
@@ -46,6 +61,16 @@
     display: flex;
     flex-direction: column;
     margin-top: 24px;
+    label {
+      font-size: 12px;
+    }
+    .preview-input-container-inp {
+      margin-top: 8px;
+      padding: 0px;
+    }
+    .form-select-input {
+      width: 90% !important;
+    }
   }
 
   .invalid-msg {
@@ -53,6 +78,14 @@
   }
 
 
+  .date-range-input-start {
+    padding: 0px;
+    padding-right: 10px;
+  }
+  .date-range-input-end {
+    padding: 0px;
+    padding-left: 10px;
+  }
 
   .stepWrapper {
     .step-row-2 {
@@ -61,7 +94,7 @@
       }
     }
     .steps {
-      margin-right: 8px;
+      margin-right: 20px;
       &:first-child {
         i::before {
           content: "1";

@@ -750,7 +750,7 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
         <div className="form-preview-header">
           <div className="form-preview-header-name">
             <h3>{steps[activeStep].title||"Step sin nombre"}</h3>
-            <p>description</p>
+            <p>Description</p>
           </div>
           <div className="form-preview-header-steper">
             <CDBStepper
@@ -776,7 +776,7 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
         {
           !rerender &&
           <div className="form-preview-inputs" ref={refContainer}>
-            <Row className="pr-3">
+            <Row className="pr-3 pl-1">
               {
                 schemaState[activeStep].map((sch,idx) => (
                   <RenderInput key={`form-input-${idx}`}
