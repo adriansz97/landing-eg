@@ -20,16 +20,16 @@ export const Footer = ({ scrollToRef }) => {
                         <hr />
                         <ul style={{listStyle:"none", cursor:"pointer", padding:"0"}}>
                             <a onClick={()=>scrollToRef("BeAgent")}>Nuevo reporte</a>
-                            <a href="/">Código de Ética</a>
-                            <a href="/">Seguimiento del caso</a>
+                            <a>Código de Ética</a>
+                            <a onClick={()=>scrollToRef("FollowUp")}>Seguimiento del caso</a>
                         </ul>
                     </Col>
                     <Col md="4">
                         <h4 className="border-bottom-1 pt-5 pb-3">Ayuda</h4>
                         <hr />
                         <ul style={{listStyle:"none", cursor:"pointer", padding:"0"}}>
-                            <a href="/">¿Como informar?</a>
-                            <a href="/">Preguntas Frecuentes</a>
+                            <a onClick={()=>scrollToRef("HowWorks")}>¿Como informar?</a>
+                            <a onClick={()=>scrollToRef("FrequentQuestions")}>Preguntas Frecuentes</a>
                             <a target="_blank" href="https://www.ethicsglobal.com/es/registro-de-avisos-de-privacidad.html">Politica de Privacidad</a>
                         </ul>
                     </Col>

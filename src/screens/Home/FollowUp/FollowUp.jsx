@@ -29,9 +29,9 @@ export const FollowUp = ({ clientName, followUpRef, primaryColor, secondaryColor
     }
 
     return(
-        <div className="follow-up">
+        <div className="follow-up" ref={followUpRef}>
             <div className="title">
-                <h3 ref={followUpRef}>SEGUIMIENTO A TU DENUNCIA</h3>
+                <h3>SEGUIMIENTO A TU DENUNCIA</h3>
                 <p>Por medio de este sitio podrás denunciar aquellas conductas no éticas de manera sencilla, confidencial, segura y con la opción de hacerlo de forma anónima.
                     El sistema es operado por un tercero independiente a {clientName}, líder en el país y especialista en la gestión de denuncias y reportes (EthicsGlobal).</p>
             </div>

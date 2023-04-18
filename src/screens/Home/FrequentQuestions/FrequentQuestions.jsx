@@ -3,7 +3,7 @@ import { CDBAccordion } from "cdbreact";
 import { AppContext } from "../../../context/AppContext";
 import "./styles.scss";
 
-export const FrequentQuestions = () => {
+export const FrequentQuestions = ({ frequentQuestionsRef }) => {
 
     const {clientName} = useContext(AppContext);
     
@@ -34,7 +34,7 @@ export const FrequentQuestions = () => {
         }
     ];
     return (
-        <div id="frequent-questions">
+        <div id="frequent-questions" ref={frequentQuestionsRef}>
             <div className="text-center">
                 <h3 className="mb-5">PREGUNTAS FRECUENTES</h3>
             </div>

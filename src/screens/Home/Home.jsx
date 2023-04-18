@@ -16,16 +16,22 @@ export const Home = () =>{
     
     const { clientName } = useContext(AppContext);
     const { primaryColor, secondaryColor } = useContext(ThemeContext);
+    const howWorksRef = useRef(null);
+    const frequentQuestionsRef = useRef(null);
     const beAgentRef = useRef(null);
     const followUpRef = useRef(null);
     const downloadRef = useRef(null);
 
     const scrollToRef = (scrollName) => {
         let topPosition = 0;
-        if (scrollName==="BeAgent") {
-            topPosition = beAgentRef.current.offsetTop - 16;
+        if (scrollName==="HowWorks") {
+            topPosition = howWorksRef.current.offsetTop;
+        } else if (scrollName==="FrequentQuestions") {
+            topPosition = frequentQuestionsRef.current.offsetTop;
+        } else if (scrollName==="BeAgent") {
+            topPosition = beAgentRef.current.offsetTop;
         } else if (scrollName==="FollowUp") { 
-            topPosition = followUpRef.current.offsetTop - 16;
+            topPosition = followUpRef.current.offsetTop;
         } else if (scrollName==="Download") { 
             topPosition = downloadRef.current.offsetTop;
         }
@@ -55,9 +61,13 @@ export const Home = () =>{
                 scrollToRef={scrollToRef}
             />
 
-            <HowWorks />
+            <HowWorks 
+                howWorksRef={howWorksRef}
+            />
 
-            <FrequentQuestions />
+            <FrequentQuestions 
+                frequentQuestionsRef={frequentQuestionsRef}
+            />
 
             <BeAgent 
                 clientName={clientName} 

@@ -28,22 +28,22 @@
     .download-app-img {
         display: none;
         img {
-            width: 100%;
+            width: 80%;
         }
     }
     .download-app-img2 {
         width: 100%;
         img {
-            width: 100%;
+            width: 80%;
         }
     }
-    .qr-container {
-        width: 100%;
-        padding: 0px 30px;
-        img {
-            width: 100%;
-        }
-    }
+    // .qr-container {
+    //     width: 100%;
+    //     padding: 0px 30px;
+    //     img {
+    //         width: 100%;
+    //     }
+    // }
 }
 .modal-video-container {
     .modal-video {
@@ -60,7 +60,7 @@
 
 @media (min-width: 992px) {
     .download {
-        padding: 88px;
+        padding: 70px;
         h3 {
             text-align: start;
         }

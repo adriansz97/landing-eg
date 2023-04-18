@@ -5,9 +5,9 @@ import Complaint from "../../../assets/images/complaint.png";
 import Person from "../../../assets/images/person.png";
 import "./styles.scss";
 
-export const HowWorks = () => {
+export const HowWorks = ({ howWorksRef }) => {
     return(
-        <div className="how-works-container">
+        <div className="how-works-container" ref={howWorksRef}>
             <h3 className="text-center mb-5">¿CÓMO FUNCIONA?</h3>
             <Row>
                 <Col lg="3" md="6" sm="12" className="how-works-item">

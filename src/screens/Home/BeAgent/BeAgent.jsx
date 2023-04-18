@@ -150,9 +150,9 @@ export const BeAgent = ({ clientName, beAgentRef, primaryColor, secondaryColor }
   }
 
   return(
-    <div className="be-agent">
+    <div className="be-agent" ref={beAgentRef}>
       <div className="title">
-        <h3 ref={beAgentRef} >SEAMOS AGENTES DE CAMBIO</h3>
+        <h3 >SEAMOS AGENTES DE CAMBIO</h3>
         <p>Por medio de este sitio podrás denunciar aquellas conductas no éticas de manera sencilla, confidencial, segura y con la opción de hacerlo de forma anónima.
           El sistema es operado por un tercero independiente a {clientName}, líder en el país y especialista en la gestión de denuncias y reportes (EthicsGlobal).</p>
       </div>
