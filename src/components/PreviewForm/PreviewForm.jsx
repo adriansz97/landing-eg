@@ -654,17 +654,6 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
     }
   }
 
-  const handlePrintFormData = () => {
-    let formAnswers = {};
-    for (const [idx, step] of steps.entries()) {
-      formAnswers[step.name] = formData[idx];
-    }
-    const objToSend = {
-      metadata: formAnswers
-    };
-    console.log(objToSend);
-  }
-
   const hdlChg = (e,idx) => {
     if (e.target.type==="checkbox") {
       setFormData(formData.map((item,index)=>index===activeStep
@@ -816,14 +805,13 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
       {
         showButtons &&
           <div className="form-buttons">
-            {/* <Button className='mt-4 mr-1' onClick={handlePrintFormData}>Print</Button> */}
             {
               activeStep!==0 && 
                 <Button 
                   style={{ backgroundColor: btnColor }}
                   className='btn-form' 
                   onClick={()=>setActiveStep((active)=>active-1)}>
-                  Back
+                  Anterior
                 </Button>
             }
             {
@@ -833,14 +821,14 @@ export const PreviewForm = ({ formIdentifier, formDescription, steps, schemaStat
                     style={{ backgroundColor: sendBtnColor }}
                     className='btn-send' 
                     onClick={handleSubmit}>
-                    Send
+                    Enviar
                   </Button>
                 </>
               : <Button
                   style={{ backgroundColor: btnColor }}
                   className='btn-form' 
                   onClick={()=>setActiveStep((active)=>active+1)}>
-                  Next
+                  Siguiente
                 </Button>
             }
           </div>
