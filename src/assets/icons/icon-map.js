@@ -792,6 +792,7 @@ import { ReactComponent as CloudChangeBold } from './vuesax-bold-cloud-change.sv
 
 //Call
 import { ReactComponent as CallBold } from './vuesax-bold-call.svg';
+import { ReactComponent as CallBold2 } from './vuesax-bold-call2.svg';
 import { ReactComponent as CallingBold } from './vuesax-bold-call-calling.svg';
 import { ReactComponent as IncomingCallBold } from './vuesax-bold-call-incoming.svg';
 import { ReactComponent as OutgoingCallBold } from './vuesax-bold-call-outgoing.svg';
@@ -2770,6 +2771,7 @@ export default {
 
     //Call
     "call_bold": CallBold,
+    "call_bold2": CallBold2,
     "incoming_call_bold": IncomingCallBold,
     "calling_bold": CallingBold,
     "outgoing_call_bold": OutgoingCallBold,

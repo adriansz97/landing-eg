@@ -57,13 +57,19 @@ export const Download = ({ clientName, primaryColor, secondaryColor, downloadRef
                             Nuestra App ReportChannel es única para que la puedas utilizar las 24 horas, los 365 días del año. Aquí podrás realizar llamadas o conversar en un chat, pero si lo deseas también puedes llenar el cuestionario que te llevará de la mano. Úsala, es el momento de escucharte.
                         </div>
                         <div className="download-methods mt-3">
-                            <img src={AppStore} alt="App-Store" className="mr-5" />
-                            <img src={GooglePlay} alt="Google-Play" />
+                            <div className="mr-1rem">
+                                <img src={AppStore} alt="App-Store" />
+                            </div>
+                            <div>
+                                <img src={GooglePlay} alt="Google-Play" />
+                            </div>
                         </div>
                         <small className="d-block mt-4">* App operada por EthicsGlobal.</small>
                         <b className="d-block mt-4 mb-4">Entra a la App, escanea el QR o escribe el Código para utilizar la línea.</b>
                         <div className="mt-4 qr-container">
-                            <img src={Qr} alt="qr" />
+                            <div>
+                                <img src={Qr} alt="qr" />
+                            </div>
                         </div>
                     </div>
                 </Col>

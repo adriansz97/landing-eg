@@ -12,18 +12,26 @@
     small {
         text-align: center;
     }
+    .mr-1rem {
+        margin-right: 1rem!important;
+    }
     .download-info-container {
         display: flex;
         align-items: center;
         padding: 0;
     }
     .download-info {
+        width: 100%;
         text-align: center;
     }
     .download-methods {
+        width: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
+        img {
+            width: 100%;
+        }
     }
     .download-app-img {
         display: none;
@@ -37,13 +45,18 @@
             width: 80%;
         }
     }
-    // .qr-container {
-    //     width: 100%;
-    //     padding: 0px 30px;
-    //     img {
-    //         width: 100%;
-    //     }
-    // }
+    .qr-container {
+        text-align: center;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        // div {
+        //     width: 100%;
+        // }
+        img {
+            width: 100%;
+        }
+    }
 }
 .modal-video-container {
     .modal-video {
@@ -54,8 +67,15 @@
     }
 }
 
-@media (min-width: 768px) {
-    
+@media (min-width: 445px) {
+    .download {
+        .qr-container {
+            width: 100%px;
+            img {
+                width: 425px;
+            }
+        }
+    }
 }
 
 @media (min-width: 992px) {
@@ -77,6 +97,9 @@
             text-align: start;
         }
         .download-methods {
+            justify-content: start;
+        }
+        .qr-container {
             justify-content: start;
         }
     }

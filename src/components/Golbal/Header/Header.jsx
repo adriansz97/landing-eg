@@ -12,7 +12,9 @@ export const Header = () => {
             <div className="header">
                 <CDBNavbar className="CDB-container border-0" light expand="md" scrolling>
                     <CDBNavBrand >
-                        <img src={logo} alt="logo" />
+                        <div className="navbrand-container">
+                            <img src={logo} alt="logo" />
+                        </div>
                     </CDBNavBrand>
                     <CDBCollapse navbar>
                         <CDBNavbarNav right>

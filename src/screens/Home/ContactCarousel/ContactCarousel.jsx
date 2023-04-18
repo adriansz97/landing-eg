@@ -51,7 +51,7 @@ export const ContactCarousel = ({ primaryColor, secondaryColor, scrollToRef }) =
                                 style={{ ...(isHoveringTel && { backgroundColor: primaryColor })  }}>
                                 {
                                     isHoveringTel
-                                    ?   <Icon name="call_bold" />
+                                    ?   <Icon name="call_bold2" />
                                     :   <Icon name="call" />
                                 }
                             </div>                    
