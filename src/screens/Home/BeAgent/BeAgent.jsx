@@ -1,153 +1,44 @@
 import { useEffect, useState } from "react";
 import _ from "lodash";
-import { getDetailCurrentReport, catalogByPart } from "../../../apis";
+import { getDetailCurrentReport } from "../../../apis";
 import { PreviewForm } from "../../../components/PreviewForm/PreviewForm";
+import { formStarter } from "../../../components/PreviewForm/formStarter";
 import "./styles.scss";
 
 export const BeAgent = ({ clientName, beAgentRef, primaryColor, secondaryColor }) => {
 
-  const [form, setForm] = useState(null);
-  const [formIdentifier, setFormIdentifier] = useState("");
-  const [formDescription, setFormDescription] = useState("");
-  const [steps, setSteps] = useState([
-    {
-      name: "step_title",
-      title: "Step title",
-      description: "Write a description"
-    }
-  ]);
-  const [schemaState, setSchemaState] = useState([
-    [
-      {
-        "key": "input_label",
-        "type": "string",
-        "label": "Input label",
-        "placeholder": "tempPlaceholder",
-        "required": false,
-        "sensitive": false
-      }
-    ]
-  ]);
-  const [formData, setFormData] = useState([
-    [
-      { input_label: "" }
-    ]
-  ]);
-  const [isValid, setIsValid] = useState([
-    [
-      true
-    ]
-  ]);
+  const [formLoaded, setFormLoaded] = useState(null);
+  const [formIdentifier, setFormIdentifier] = useState(null);
+  const [formDescription, setFormDescription] = useState(null);
+  const [steps, setSteps] = useState(null);
+  const [schemaState, setSchemaState] = useState(null);
+  const [formData, setFormData] = useState(null);
+  const [isValid, setIsValid] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getDetailCurrentReport()
-    .then(setForm)
+    .then(resp=>{
+      setFormLoaded(resp);
+    })
     .catch(console.log)
   }, []);
 
   useEffect(() => {
-    if (form) {
-      begin();
+    setIsLoading(true);
+    if (formLoaded) {
+      formStarter(formLoaded).
+      then(({ initFormIdentifier, initSteps, initSchemaState, initFormData, initIsValid })=>{
+        setFormIdentifier(initFormIdentifier);
+        setSteps(initSteps);
+        setSchemaState(initSchemaState);
+        setFormData(initFormData);
+        setIsValid(initIsValid);
+        setIsLoading(false);
+      })
+      .catch(console.log)
     }
-  }, [form]);
-
-  const checkIfIsCatalogue = async(inputs) => {
-
-    const newInputs = inputs.map(async(inp,idx) => {
-      let newInput = _.cloneDeep(inp);
-      if ("catalogue" in inp && "isOwn" in inp) {
-        _.unset(newInput,`children`);
-        _.unset(newInput,`childs`);
-        _.unset(newInput,`next`);
-        _.set(newInput,`selected`,"");
-
-        const resp = await catalogByPart({ is_own: inp.isOwn, catalogue: inp.catalogue, path: "/" })
-        newInput.children = resp.data;
-        return newInput;
-      }
-      return inp;
-    })
-
-    const newInputsSolved = await Promise.all(newInputs);
-    return newInputsSolved;
-  }
-
-  const begin = async() => {
-    setFormIdentifier(form.identifier_name);
-    setFormDescription(form.description);
-    if (Array.isArray(form.stepers)) {
-
-      let newSteps = [];
-      let newSchemaState = [];
-      let newFormData = [];
-      let newIsValid = [];
-
-      for (const step of form.stepers) {
-        newSteps.push({
-          name: step.name,
-          title: step.title,
-          description: step.description,
-        })
-        const jsonSchemaTemp = _.get(step,`form.json-schema`);
-        const resp = await checkIfIsCatalogue(jsonSchemaTemp);
-        newSchemaState.push(resp);
-        newFormData.push(resp.map( input => {
-          if (input.type === "number") {
-            return {
-              [input.key]: 0,
-              "sensitive": input.sensitive || false
-            }
-          }
-          if (input.type === "checkbox") {
-            return {
-              [input.key]: false,
-              "sensitive": input.sensitive || false
-            }
-          }
-          if (input.type === "date") {
-            let today = new Date();
-            return {
-              [input.key]: today,
-              "sensitive": input.sensitive || false
-            }
-          }
-          if (input.type === "date-range") {
-            let today = new Date().toJSON();
-            return {
-              [input.key]: `${today}__${today}`,
-              "sensitive": input.sensitive || false
-            }
-          }
-          if (input.type === "file") {
-            return {
-              [input.key]: null,
-              "sensitive": input.sensitive || false
-            }
-          }
-          if ("catalogue" in input) {
-            return {
-              [input.catalogue]: "",
-              "sensitive": input.sensitive || false,
-              "catalogue": input.catalogue,
-              "isOwn": input.isOwn
-            }
-          } else {
-            return {
-              [input.key]: "",
-              "sensitive": input.sensitive || false
-            }
-          }
-        }));
-        newIsValid.push(resp.map( input => input.required ? false : true ))
-        // newIsValid.push(resp.map( input => input.required ? false : true ))
-      }
-
-      setSteps(newSteps);
-      setSchemaState(newSchemaState);
-      setFormData(newFormData);
-      setIsValid(newIsValid);
-    }
-  }
+  }, [formLoaded]);
 
   return(
     <div className="be-agent" ref={beAgentRef}>
@@ -157,19 +48,24 @@ export const BeAgent = ({ clientName, beAgentRef, primaryColor, secondaryColor }
           El sistema es operado por un tercero independiente a {clientName}, líder en el país y especialista en la gestión de denuncias y reportes (EthicsGlobal).</p>
       </div>
       <div className="form-container mt-5">
-        <PreviewForm
-          formIdentifier={formIdentifier}
-          formDescription={formDescription}
-          steps={steps}
-          schemaState={schemaState}
-          setSchemaState={setSchemaState}
-          formData={formData}
-          setFormData={setFormData}
-          isValid={isValid}
-          setIsValid={setIsValid}
-          // btnColor={primaryColor}
-          // sendBtnColor={secondaryColor}
-        />  
+        {
+          isLoading 
+          ? <div>Loading...</div>
+          : <PreviewForm
+              formIdentifier={formIdentifier}
+              formDescription={formDescription}
+              steps={steps}
+              schemaState={schemaState}
+              setSchemaState={setSchemaState}
+              formData={formData}
+              setFormData={setFormData}
+              isValid={isValid}
+              setIsValid={setIsValid}
+              showButtons={true}
+              stepClick={false}
+              land={true}
+            />
+        }
       </div>
     </div>
   )

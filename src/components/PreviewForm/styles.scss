@@ -15,6 +15,12 @@
       box-shadow: none;
     }
   }
+  .quit-pl {
+    padding-left: 0px !important;
+  }
+  .quit-mb {
+    margin-bottom: 0px !important;
+  }
   // header del preview donde esta el steper y el titulo del step
   .form-preview-header {
     display: flex;
@@ -36,9 +42,6 @@
   }
   // contenedor que engloba a todos los inputs
   .form-preview-inputs {
-    max-height: 480px;
-    height: 480px;
-    padding-bottom: 16px;
     position: relative;
     * {
       color: $color-blueGray;  
@@ -64,7 +67,6 @@
   .preview-input-container {
     display: flex;
     flex-direction: column;
-    margin-bottom: 30px;
     .preview-input-container-inp {
       padding: 0px;
     }
@@ -72,6 +74,10 @@
       width: 90% !important;
     }
   }
+  .preview-input-err-msg {
+    margin-bottom: 30px;
+  }
+
 
   .invalid-msg {
     color: #dc3545;
@@ -96,6 +102,9 @@
     }
     .steps {
       margin-right: 20px;
+      i {
+        font-family: 'Segoe UI'!important;
+      }
       &:first-child {
         i::before {
           content: "1";
@@ -141,7 +150,7 @@
 }
 
 .form-buttons {
-  padding-top: 30px;
+  // padding-top: 30px;
   display: flex;
   flex-direction: column;
   justify-content: end;
@@ -156,6 +165,12 @@
     &:focus {
       box-shadow: none;
     }
+  }
+  .btn-form {
+    background-color: #009ED7!important;
+  }
+  .btn-send {
+    background-color: #152235!important;
   }
 }
 

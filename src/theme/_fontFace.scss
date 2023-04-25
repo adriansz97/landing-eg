@@ -2,17 +2,56 @@
 
 /* Segoe UI */
 
+// // Regular
+// @font-face {
+//     font-family: $font-family-primary;
+//     src: url('/fonts/segoeui.ttf') format('truetype');
+//     font-weight: $font-weight-regular;
+// }
+
+// // Light
+// @font-face {
+//     font-family: $font-family-primary;
+//     src: url('/fonts/segoeuil.ttf') format('truetype');
+//     font-weight: $font-weight-light;
+// }
+
+// // Semi-Light
+// @font-face {
+//     font-family: $font-family-primary;
+//     src: url('/fonts/segoeuisl.ttf') format('truetype');
+//     font-weight: $font-weight-semiLight;
+// }
+
+// // Bold
+// @font-face {
+//     font-family: $font-family-primary;
+//     src: url('/fonts/segoeuib.ttf') format('truetype');
+//     font-weight: $font-weight-bold;
+// }
+
+
+// // Semi-Bold
+// @font-face {
+//     font-family: $font-family-primary;
+//     src: url('/fonts/segoeuisb.ttf') format('truetype');
+//     font-weight: $font-weight-semibold;
+// }
+
+
+// WOFF
+
 // Regular
 @font-face {
     font-family: $font-family-primary;
-    src: url('/fonts/segoeui.ttf') format('truetype');
+    src: url('/fonts/segoeui.woff') format('woff');
     font-weight: $font-weight-regular;
 }
 
 // Light
 @font-face {
     font-family: $font-family-primary;
-    src: url('/fonts/segoeuil.ttf') format('truetype');
+    src: url('/fonts/segoeuil.woff') format('woff');
     font-weight: $font-weight-light;
 }
 
@@ -26,7 +65,7 @@
 // Bold
 @font-face {
     font-family: $font-family-primary;
-    src: url('/fonts/segoeuib.ttf') format('truetype');
+    src: url('/fonts/segoeuib.woff') format('woff');
     font-weight: $font-weight-bold;
 }
 
