@@ -26,7 +26,7 @@ export const Hero = ({ infoClient, scrollToRef, primaryColor, secondaryColor, pr
                             {
                                 infoClient?.hero?.title
                                 ?   <h1 className="my-4 title">{infoClient?.hero?.title}</h1>
-                                :   <h1 className="my-4 title">Línea Ética de <br /> {infoClient.clientName}</h1>
+                                :   <h1 className="my-4 title text-uppercase">Línea Ética de <br /> {infoClient.clientName}</h1>
                             }
                             <div className="hero-btns">
                                 <CDBBtn 
