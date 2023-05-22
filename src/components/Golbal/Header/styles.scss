@@ -5,8 +5,11 @@
         margin: auto;
     }
     .navbrand-container {
+        min-width: 205px;
+        min-height: 45px;
         img {
-            width: 100%;
+            max-width: 205px;
+            max-height: 45px;
         }
     }
     .logo-ethicsglobal {

@@ -1,5 +1,32 @@
-@import '../../theme/colors';
-@import '../../theme/variables';
+@import '../../../theme/colors';
+@import '../../../theme/variables';
+
+.attachments {
+  transition: all 200ms;
+  border-radius: 2px;
+  text-align: center;
+  padding: 16px;
+  border: 2px dotted $color-blueGray;
+  border-radius: 8px;
+}
+.attachments-icon-container {
+  height: 35px;
+  svg {
+    height: 35px;
+    width: 35px;
+    margin: 0px 4px;
+    filter: brightness(0%) contrast(100%) invert(57%) sepia(3%) saturate(2732%) hue-rotate(155deg) brightness(98%) contrast(80%);
+  }
+}
+.attachments-instructions {
+  p:nth-child(1) {
+    font-size: 24px;
+    margin-bottom: 0px;
+  }
+  p:nth-child(2) {
+    font-size: 18px;
+  }
+}
 
 .form-preview {
   textarea {
@@ -14,12 +41,6 @@
       border-color: $color-ethicsBlue;
       box-shadow: none;
     }
-  }
-  .quit-pl {
-    padding-left: 0px !important;
-  }
-  .quit-mb {
-    margin-bottom: 0px !important;
   }
   // header del preview donde esta el steper y el titulo del step
   .form-preview-header {
@@ -146,6 +167,7 @@
       margin-right: 0;
     }
   }
+
 
 }
 

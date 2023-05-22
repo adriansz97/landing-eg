@@ -8,12 +8,12 @@ import AppStore from "../../../assets/images/app-store.png";
 import GooglePlay from "../../../assets/images/google-play.png";
 import "./styles.scss";
 
-const ModalVideo = ({ clientName, show, onHide }) => {
+const ModalVideo = ({ infoClient, show, onHide }) => {
     return (
         <Modal show={show} onHide={onHide} size="xl" className="modal-video-container">
             <div className="modal-video">
                 <div className="text-center">
-                    <h3>Bienvenido a Línea Ética {clientName}</h3>
+                    <h3>Bienvenido a Línea Ética {infoClient.clientName}</h3>
                 </div>
                 <div className="text-center">
                     <iframe width="840" height="472,5" src="https://www.youtube.com/embed/G29SCxMILdo" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
@@ -26,7 +26,7 @@ const ModalVideo = ({ clientName, show, onHide }) => {
     )
 }
 
-export const Download = ({ clientName, primaryColor, secondaryColor, downloadRef }) => {
+export const Download = ({infoClient, primaryColor, secondaryColor, downloadRef }) => {
 
     const [ isHovering, handleMouseOver, handleMouseOut ] = useIsHovering();
     const [showModalVideo, setShowModalVideo] = useState(false);
@@ -74,7 +74,7 @@ export const Download = ({ clientName, primaryColor, secondaryColor, downloadRef
                     </div>
                 </Col>
             </Row>
-            <ModalVideo clientName={clientName} show={showModalVideo} onHide={()=>setShowModalVideo(false)}  />
+            <ModalVideo infoClient={infoClient} show={showModalVideo} onHide={()=>setShowModalVideo(false)}  />
         </div>
     )
 }

@@ -14,8 +14,8 @@ import { FrequentQuestions } from "./FrequentQuestions/FrequentQuestions";
 
 export const Home = () =>{
     
-    const { clientName } = useContext(AppContext);
-    const { primaryColor, secondaryColor } = useContext(ThemeContext);
+    const { clientName, infoClient } = useContext(AppContext);
+    const { primaryColor, secondaryColor, primaryColorText, secondaryColorText } = useContext(ThemeContext);
     const howWorksRef = useRef(null);
     const frequentQuestionsRef = useRef(null);
     const beAgentRef = useRef(null);
@@ -46,16 +46,21 @@ export const Home = () =>{
 
             <Navbar />
 
-            <Header />
+            <Header 
+                infoClient={infoClient} 
+            />
 
             <Hero 
-                clientName={clientName} 
+                infoClient={infoClient} 
                 primaryColor={primaryColor}
                 secondaryColor={secondaryColor}
+                primaryColorText={primaryColorText}
+                secondaryColorText={secondaryColorText}
                 scrollToRef={scrollToRef} 
             />
 
             <ContactCarousel 
+                infoClient={infoClient}
                 primaryColor={primaryColor}
                 secondaryColor={secondaryColor}
                 scrollToRef={scrollToRef}
@@ -66,25 +71,29 @@ export const Home = () =>{
             />
 
             <FrequentQuestions 
+                infoClient={infoClient}
                 frequentQuestionsRef={frequentQuestionsRef}
             />
 
             <BeAgent 
-                clientName={clientName} 
+                infoClient={infoClient} 
                 beAgentRef={beAgentRef} 
                 primaryColor={primaryColor}
                 secondaryColor={secondaryColor}
             /> {/* Form */}
 
             <FollowUp
-                clientName={clientName} 
+                infoClient={infoClient} 
                 followUpRef={followUpRef} 
                 primaryColor={primaryColor}
                 secondaryColor={secondaryColor}
+                primaryColorText={primaryColorText}
+                secondaryColorText={secondaryColorText}
             /> {/* <Announcement /> */}
 
             <Download 
                 clientName={clientName}
+                infoClient={infoClient} 
                 primaryColor={primaryColor}
                 secondaryColor={secondaryColor}
                 downloadRef={downloadRef}

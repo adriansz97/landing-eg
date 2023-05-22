@@ -1,11 +1,16 @@
 import { Link } from "react-router-dom";
 import { CDBNavbar, CDBNavBrand, CDBNavItem, CDBBtn, CDBNavToggle, CDBCollapse, CDBNavbarNav } from "cdbreact";
-import logo from "../../../assets/images/surdep-logo.png";
-import { Icon } from "../../Icon/Icon";
+import Surtidora from "../../../assets/images/surdep-logo.png";
+import Larrabezua from "../../../assets/images/larr-logo.png";
+import Icon from "../../Icon/Icon";
 import "./styles.scss";
 
-export const Header = () => {
+export const Header = ({ infoClient }) => {
 
+    let logo = Surtidora;
+    if (infoClient?.clientName?.toLowerCase()==="larrabezua grupo empresarial") {
+        logo = Larrabezua;
+    }
 
     return (
         <div className="header-container">

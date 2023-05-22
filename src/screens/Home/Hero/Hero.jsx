@@ -1,11 +1,17 @@
 import { CDBBtn } from "cdbreact";
-import HeroImg from "../../../assets/images/surdep-pp.png";
+import Surtidora from "../../../assets/images/surdep-pp.png";
+import Larrabezua from "../../../assets/images/larr-pp.jpg";
 import { useIsHovering } from "../../../hooks/useIsHovering";
 import "./styles.scss";
 
-export const Hero = ({ clientName, scrollToRef, primaryColor, secondaryColor }) => {
+export const Hero = ({ infoClient, scrollToRef, primaryColor, secondaryColor, primaryColorText, secondaryColorText }) => {
 
     const [ isHovering, handleMouseOver, handleMouseOut ] = useIsHovering();
+
+    let HeroImg = Surtidora;
+    if (infoClient.clientName.toLowerCase()==="larrabezua grupo empresarial") {
+        HeroImg = Larrabezua;
+    }
 
 	return(
 		<div className="home-hero">
@@ -17,19 +23,23 @@ export const Hero = ({ clientName, scrollToRef, primaryColor, secondaryColor }) 
                             <img src={HeroImg} alt="hero" />
                         </div>
                         <div className="ml-0 ml-md-5">
-                            <h1 className="my-4 title">LÍNEA ÉTICA <br /> <span className="text-uppercase">{clientName}</span></h1>
+                            {
+                                infoClient?.hero?.title
+                                ?   <h1 className="my-4 title">{infoClient?.hero?.title}</h1>
+                                :   <h1 className="my-4 title">Línea Ética de <br /> {infoClient.clientName}</h1>
+                            }
                             <div className="hero-btns">
                                 <CDBBtn 
                                     className="hero-btn" 
                                     outline 
-                                    style={{ border: "none", backgroundColor: primaryColor, color: 'white' }}
+                                    style={{ border: "none", backgroundColor: primaryColor, color: primaryColorText }}
                                     onClick={()=>scrollToRef("BeAgent")}>
                                     DENUNCIAR AHORA
                                 </CDBBtn>
                                 <CDBBtn 
                                     className="hero-btn" 
                                     outline 
-                                    style={{ border: "none", backgroundColor: isHovering ? primaryColor : "white", color: isHovering ? "white" : "black" }}
+                                    style={{ border: "none", backgroundColor: isHovering ? primaryColor : "white", color: isHovering ? primaryColorText : "black" }}
                                     onMouseOver={handleMouseOver} 
                                     onMouseOut={handleMouseOut}
                                     onClick={()=>scrollToRef("FollowUp")}>

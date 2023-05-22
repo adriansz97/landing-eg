@@ -1,6 +1,6 @@
 import { Row, Col } from "react-bootstrap";
 import { CDBFooter, CDBIcon } from "cdbreact";
-import { Icon } from "../../Icon/Icon";
+import Icon from "../../Icon/Icon";
 import "./styles.scss";
 
 export const Footer = ({ scrollToRef }) => {
@@ -20,8 +20,8 @@ export const Footer = ({ scrollToRef }) => {
                         <hr />
                         <ul style={{listStyle:"none", cursor:"pointer", padding:"0"}}>
                             <a onClick={()=>scrollToRef("BeAgent")}>Nuevo reporte</a>
-                            <a href="https://sed-static.s3.amazonaws.com/sdlineaetica/Codigo_de_Etica.pdf" target="_blank" >Código de Ética</a>
                             <a onClick={()=>scrollToRef("FollowUp")}>Seguimiento del caso</a>
+                            <a href="https://sed-static.s3.amazonaws.com/sdlineaetica/Codigo_de_Etica.pdf" target="_blank" >Código de Ética</a>
                         </ul>
                     </Col>
                     <Col md="4">
@@ -47,7 +47,7 @@ export const Footer = ({ scrollToRef }) => {
                 </Row>
             </CDBFooter>
             <div className="copyright">
-                <p><a className="link" href="https://www.ethicsglobal.com/es/index.html" target="_blank">© Copyright 1996-2022 ethicsglobal.com</a></p>
+                <p>© Copyright 1996-2022 <a className="link" href="https://www.ethicsglobal.com/es/index.html" target="_blank">ethicsglobal.com</a></p>
                 <p>Todos los derechos reservados. Las distintas marcas comerciales pertenecen a sus respectivos propietarios.</p>
             </div>
         </div>

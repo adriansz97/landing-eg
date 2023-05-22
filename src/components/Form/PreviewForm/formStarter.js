@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { catalogByPart } from "../../apis";
+import { catalogByPart } from "../../../apis";
 
 const checkCatalogues = async(inputs) => {
   const newInputs = inputs.map(async(inp,idx) => {
@@ -198,6 +198,11 @@ export const formStarter = async( formLoaded, target = 'normal' ) => {
         newFormData.push(returnFormData(resp));
         newIsValid.push(returnIsValid(resp));
         newValidCreateInputs.push(resp.map( input => {
+          // const validInput = 
+          // if ("catalogue" in input) {
+            
+          // }
+          // console.log(input)
           return []
         }));
       }

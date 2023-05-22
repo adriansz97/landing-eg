@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import _ from "lodash";
 import { Col } from "react-bootstrap";
-import { catalogByPart } from "../../apis";
+import { catalogByPart } from "../../../apis";
+import { hdlSchm, hdlChg } from "./PreviewForm";
 
 // Render de un input asociado a un catalogo
 export const CatalogueInput = ({ 
+  schema,
   scope,
   value,
   valid,
@@ -13,30 +15,36 @@ export const CatalogueInput = ({
   pathData,
   nestNum = 0,
   idx,
-  type,
-  sensitive,
-  required,
-  catalogue,
-  isOwn,
-  hdlChg,
-  hdlSchm,
   handleValidate,
   returnValidClass,
   tryToSend,
   colsLg=4,
-  land
+  land,
+  entireSchema,
+  entireFormData,
+  setSchemaState,
+  setFormData,
 }) => {
 
   const [selectedKey, setSelectedKey] = useState(scope.selected||"");
   const isUniqueSelectionDefault = Array.isArray(scope.children) && scope.children.length===1;
 
+  const type = schema.type;
+  const sensitive = schema.sensitive;
+  const required = schema.required;
+  const catalogue = schema.catalogue;
+  const isOwn = schema.isOwn;
+
+  const utilHdlSch = { entireSchema, setSchemaState };
+  const utilHdlChg = { entireFormData, setFormData };
+
   useEffect(() => {
     if (isUniqueSelectionDefault && !scope.selected) {
       if (Array.isArray(scope.children[0].childs)) {
-        hdlSchm({ action: "selection", children: scope.children[0].childs, selected: scope.children[0].key, path, pathSchema });
+        hdlSchm({ action: "selection", children: scope.children[0].childs, selected: scope.children[0].key, path, pathSchema, ...utilHdlSch });
         handleValidate(false);
       } else {
-        hdlSchm({ action: "noNextPath", selected: scope.children[0].key, path, pathSchema });
+        hdlSchm({ action: "noNextPath", selected: scope.children[0].key, path, pathSchema, ...utilHdlSch });
         handleValidate(true);
       }
       handleStartData();
@@ -51,7 +59,7 @@ export const CatalogueInput = ({
   const handleKeyChange = (newKey) => {
     if (!newKey) { // Cuando la llave cambia a un string vacio o cuando se crea el componente
       if (scope.selected!==newKey) { // Cuando el selectedKey tiene valor y cambia a ""
-        hdlSchm({ action: "nullSelection", path, idx, pathSchema });
+        hdlSchm({ action: "nullSelection", path, idx, pathSchema, ...utilHdlSch });
         handleDataNull();
         handleValidate(false);
       }
@@ -60,11 +68,11 @@ export const CatalogueInput = ({
       if (isUniqueSelectionDefault) {
         if (Array.isArray(scope.children[0].childs)) {
           if (!scope.next && !scope.selected) {
-            hdlSchm({ action: "selection", children: scope.children[0].childs, selected: scope.children[0].key, path, idx, pathSchema });
+            hdlSchm({ action: "selection", children: scope.children[0].childs, selected: scope.children[0].key, path, idx, pathSchema, ...utilHdlSch });
             handleValidate(false);
           }
         } else { // Cuando el ultimo hijo es unico
-          hdlSchm({ action: "noNextPath", selected: newKey, path, idx, pathSchema });
+          hdlSchm({ action: "noNextPath", selected: newKey, path, idx, pathSchema, ...utilHdlSch });
           handleValidate(true);
           handleDataNormal(newKey);
         }
@@ -73,13 +81,13 @@ export const CatalogueInput = ({
         if (pathOnBack) {
           catalogByPart({ is_own: isOwn, catalogue, path: pathOnBack })
           .then( resp => {
-            hdlSchm({ action: "selection", children: resp.data, selected: newKey, path, idx, pathSchema });
+            hdlSchm({ action: "selection", children: resp.data, selected: newKey, path, idx, pathSchema, ...utilHdlSch });
             handleValidate(false);
             handleDataEndpoint({ pathOnBack, scope: resp.data });
           })
           .catch(console.log);
         } else {
-          hdlSchm({ action: "noNextPath", selected: newKey, path, idx, pathSchema });
+          hdlSchm({ action: "noNextPath", selected: newKey, path, idx, pathSchema, ...utilHdlSch });
           handleValidate(true);
           handleDataNormal(newKey);
         }
@@ -96,16 +104,16 @@ export const CatalogueInput = ({
         })
       } else {  // una sola opcion y no tiene hijos
         if (pathOnBack) {
-          hdlChg({e: { target:{name: catalogue, value: `${pathOnBack}::type::${scope[0].key}`}}, entirePathData: pathData, params: { catalogue, sensitive, isOwn } });
+          hdlChg({e: { target:{name: catalogue, value: `${pathOnBack}::type::${scope[0].key}`}}, entirePathData: pathData, params: { catalogue, sensitive, isOwn }, ...utilHdlChg });
         } else {
-          hdlChg({e: { target:{name: catalogue, value: `${acumulatedPath}::type::${scope[0].key}`}}, entirePathData: pathData, params: { catalogue, sensitive, isOwn }});
+          hdlChg({e: { target:{name: catalogue, value: `${acumulatedPath}::type::${scope[0].key}`}}, entirePathData: pathData, params: { catalogue, sensitive, isOwn }, ...utilHdlChg});
         }
       }
     } else { // varias opciones
       if (pathOnBack) {
-        hdlChg({e: { target:{name: catalogue, value: pathOnBack}}, entirePathData: pathData, params: { catalogue, sensitive, isOwn }});
+        hdlChg({e: { target:{name: catalogue, value: pathOnBack}}, entirePathData: pathData, params: { catalogue, sensitive, isOwn }, ...utilHdlChg});
       } else {
-        hdlChg({e: { target:{name: catalogue, value: acumulatedPath}}, entirePathData: pathData, params: { catalogue, sensitive, isOwn }});
+        hdlChg({e: { target:{name: catalogue, value: acumulatedPath}}, entirePathData: pathData, params: { catalogue, sensitive, isOwn }, ...utilHdlChg});
       }
     }
   }
@@ -116,9 +124,9 @@ export const CatalogueInput = ({
     const slicedArr = splitedArr.slice(0,((2*(nestNum))));
     const joined = slicedArr.join("::");
     if (joined) {
-      hdlChg({e: {target:{name: catalogue, value: `${joined}::type::${newKey}`}}, entirePathData: pathData, params: { catalogue, sensitive, isOwn } });
+      hdlChg({e: {target:{name: catalogue, value: `${joined}::type::${newKey}`}}, entirePathData: pathData, params: { catalogue, sensitive, isOwn }, ...utilHdlChg});
     } else {
-      hdlChg({e: {target:{name: catalogue, value: `type::${newKey}`}}, entirePathData: pathData, params: { catalogue, sensitive, isOwn } });
+      hdlChg({e: {target:{name: catalogue, value: `type::${newKey}`}}, entirePathData: pathData, params: { catalogue, sensitive, isOwn }, ...utilHdlChg});
     }
   }
 
@@ -128,9 +136,9 @@ export const CatalogueInput = ({
     const slicedArr = splitedArr.slice(0,((2*(nestNum))));
     const joined = slicedArr.join("::");
     if (joined) {
-      hdlChg({e: {target:{name: catalogue, value: `${joined}`}}, entirePathData: pathData, params: { catalogue, sensitive, isOwn } });
+      hdlChg({e: {target:{name: catalogue, value: `${joined}`}}, entirePathData: pathData, params: { catalogue, sensitive, isOwn }, ...utilHdlChg});
     } else {
-      hdlChg({e:{target:{name: catalogue, value: ``}}, entirePathData: pathData, params: { catalogue, sensitive, isOwn } });
+      hdlChg({e:{target:{name: catalogue, value: ``}}, entirePathData: pathData, params: { catalogue, sensitive, isOwn }, ...utilHdlChg});
     }
   }
 
@@ -140,9 +148,9 @@ export const CatalogueInput = ({
     const slicedArr = splitedArr.slice(0,((2*(nestNum))));
     const joined = slicedArr.join("::");
     if (joined) {
-      hdlChg({e:{target:{name: catalogue, value: `${joined}::type::${scope.children[0].key}`}}, entirePathData: pathData, params: { catalogue, sensitive, isOwn } });
+      hdlChg({e:{target:{name: catalogue, value: `${joined}::type::${scope.children[0].key}`}}, entirePathData: pathData, params: { catalogue, sensitive, isOwn }, ...utilHdlChg});
     } else {
-      hdlChg({e:{target:{name: catalogue, value: `type::${scope.children[0].key}`}}, entirePathData: pathData, params: { catalogue, sensitive, isOwn } });
+      hdlChg({e:{target:{name: catalogue, value: `type::${scope.children[0].key}`}}, entirePathData: pathData, params: { catalogue, sensitive, isOwn }, ...utilHdlChg});
     }
   }
 
@@ -202,25 +210,24 @@ export const CatalogueInput = ({
               {
                 (scope?.next && selectedKey) &&
                   <CatalogueInput
+                    schema={schema}
                     scope={scope.next} 
                     value={value}
                     valid={valid}
-                    path={`${path}next.`} 
-                    nestNum={nestNum+1}
-                    idx={idx}
-                    type={type} 
-                    sensitive={sensitive}
-                    required={required}
-                    catalogue={catalogue} 
-                    isOwn={isOwn} 
-                    hdlChg={hdlChg}
-                    hdlSchm={hdlSchm}
-                    handleValidate={handleValidate}
-                    returnValidClass={returnValidClass}
+                    path={`${path}next.`}
                     pathSchema={pathSchema}
                     pathData={pathData}
+                    nestNum={nestNum+1}
+                    idx={idx}
+                    handleValidate={handleValidate}
+                    returnValidClass={returnValidClass}
+                    tryToSend={tryToSend}
                     colsLg={colsLg}
                     land={land}
+                    entireSchema={entireSchema}
+                    entireFormData={entireFormData}
+                    setSchemaState={setSchemaState}
+                    setFormData={setFormData}
                   />
               }
             </>
@@ -249,25 +256,24 @@ export const CatalogueInput = ({
               {
                 (scope?.next && selectedKey) &&
                   <CatalogueInput
+                    schema={schema}
                     scope={scope.next} 
                     value={value}
                     valid={valid}
                     path={`${path}next.`}
-                    nestNum={nestNum+1}
-                    idx={idx}
-                    type={type} 
-                    sensitive={sensitive}
-                    required={required}
-                    catalogue={catalogue} 
-                    isOwn={isOwn} 
-                    hdlChg={hdlChg}
-                    hdlSchm={hdlSchm}
-                    handleValidate={handleValidate}
-                    returnValidClass={returnValidClass}
                     pathSchema={pathSchema}
                     pathData={pathData}
+                    nestNum={nestNum+1}
+                    idx={idx}
+                    handleValidate={handleValidate}
+                    returnValidClass={returnValidClass}
+                    tryToSend={tryToSend}
                     colsLg={colsLg}
                     land={land}
+                    entireSchema={entireSchema}
+                    entireFormData={entireFormData}
+                    setSchemaState={setSchemaState}
+                    setFormData={setFormData}
                   />
               }
             </>

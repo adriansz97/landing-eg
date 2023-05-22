@@ -1,9 +1,9 @@
 import { CDBBtn } from 'cdbreact';
 import { useIsHovering } from '../../hooks/useIsHovering';
-import { Icon } from '../Icon/Icon';
+import Icon from '../Icon/Icon';
 import './styles.scss';
 
-export const SearchBar = ({ value, onChange, onClick, placeholder, primaryColor, secondaryColor }) => {
+export const SearchBar = ({ value, onChange, onClick, placeholder, primaryColor, secondaryColor, primaryColorText, secondaryColorText }) => {
 
     const [ isHovering, handleMouseOver, handleMouseOut ] = useIsHovering();
 
@@ -25,7 +25,7 @@ export const SearchBar = ({ value, onChange, onClick, placeholder, primaryColor,
             </div>
             <CDBBtn
                 className="search-button"
-                style={{ backgroundColor: isHovering ? primaryColor : secondaryColor, border: 'none' }} 
+                style={{ backgroundColor: isHovering ? primaryColor : secondaryColor, color: isHovering ? secondaryColorText : primaryColorText, border: 'none' }} 
                 onMouseOver={handleMouseOver} 
                 onMouseOut={handleMouseOut}
                 onClick={onClick}    

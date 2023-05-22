@@ -1,7 +1,7 @@
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { useIsHovering } from "../../../hooks/useIsHovering";
-import { Icon } from '../../../components/Icon/Icon';
+import Icon from '../../../components/Icon/Icon';
 import "./styles.scss";
 
 const CustomLeftArrow = () => {
@@ -15,7 +15,7 @@ const CustomRightArrow = () => {
   )
 }
 
-export const ContactCarousel = ({ primaryColor, secondaryColor, scrollToRef }) => {
+export const ContactCarousel = ({ infoClient, primaryColor, secondaryColor, scrollToRef }) => {
 
     const [ isHoveringTel, handleMouseOverTel, handleMouseOutTel ] = useIsHovering();
     const [ isHoveringWeb, handleMouseOverWeb, handleMouseOutWeb ] = useIsHovering();
@@ -46,7 +46,7 @@ export const ContactCarousel = ({ primaryColor, secondaryColor, scrollToRef }) =
                     customRightArrow={<CustomRightArrow />}
                 >
                     <div className="item">
-                        <a href="tel:8000438422">
+                        <a href={infoClient.phone}>
                             <div className="social-contact" onMouseOver={handleMouseOverTel} onMouseOut={handleMouseOutTel}
                                 style={{ ...(isHoveringTel && { backgroundColor: primaryColor })  }}>
                                 {
@@ -82,7 +82,11 @@ export const ContactCarousel = ({ primaryColor, secondaryColor, scrollToRef }) =
                     </div>
                 </Carousel>
             </div>
-            <div className="noti-message">Si eres testigo de alguna falta a nuestro Código de Ética, no dudes en denunciarlo a través de nuestros canales de denuncia:</div>
+            {
+                infoClient?.carousel?.downText
+                ?   <div className="noti-message">{infoClient.carousel.downText}</div>
+                :   <div className="noti-message">Si eres testigo de alguna falta a nuestro Código de Ética, no dudes en denunciarlo a través de nuestros canales de denuncia:</div>
+            }
             <br />
         </div>
     )

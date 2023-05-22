@@ -3,14 +3,12 @@ import { CDBAccordion } from "cdbreact";
 import { AppContext } from "../../../context/AppContext";
 import "./styles.scss";
 
-export const FrequentQuestions = ({ frequentQuestionsRef }) => {
-
-    const {clientName} = useContext(AppContext);
+export const FrequentQuestions = ({ infoClient, frequentQuestionsRef }) => {
     
     const data = [
         {
             title: `¿Se tomará algún tipo de represalia por realizar un reporte?`,
-            content: `Se presume que todos los reportes son hechas de buena fe y buscando única y exclusivamente que las conductas reportadas se apeguen a los principios éticos de la Compañía, por lo que NO habrá represalias en caso de realizar una denuncia.\n\nSin embargo, es nuestro deber proteger la integridad y el respeto a la reputación e imagen de nuestros colaboradores, por lo que, un reporte hecho de mala fe con el propósito de desprestigiar, denigrar o acusar falsamente como un medio de venganza, es una conducta no deseada y se sancionará de acuerdo con las políticas aplicables.\n\nEn el Código de Ética de ${clientName} establece un apartado de no represalias, lo cual es una política de la organización.`
+            content: `Se presume que todos los reportes son hechas de buena fe y buscando única y exclusivamente que las conductas reportadas se apeguen a los principios éticos de la Compañía, por lo que NO habrá represalias en caso de realizar una denuncia.\n\nSin embargo, es nuestro deber proteger la integridad y el respeto a la reputación e imagen de nuestros colaboradores, por lo que, un reporte hecho de mala fe con el propósito de desprestigiar, denigrar o acusar falsamente como un medio de venganza, es una conducta no deseada y se sancionará de acuerdo con las políticas aplicables.\n\nEn el Código de Ética de ${infoClient?.clientName} establece un apartado de no represalias, lo cual es una política de la organización.`
         },
         {
             title: `¿Por qué reportar?`,
@@ -21,8 +19,8 @@ export const FrequentQuestions = ({ frequentQuestionsRef }) => {
             content: `Puedes hacerlo de lunes a sábado de 8 de la mañana a 10 de la noche y domingo de 9 de la mañana a 3 de la tarde. También, te recordamos que puedes dejar un mensaje en nuestro buzón de voz las 24 horas, los 365 días del año.`
         },
         {
-            title: `¿Cuándo debo usar Línea Ética ${clientName}?`,
-            content: `Cuando conozcas, te informen o estés involucrado en una situación que atente contra el Código de Ética de ${clientName}. Así mismo, cuando tengas inquietudes o sugerencias que prefieras que gestione el Comité de Ética en lugar de tratarlo directamente con tu supervisor. La decisión de usar la plataforma Línea Ética ${clientName} es voluntaria.`
+            title: `¿Cuándo debo usar Línea Ética de ${infoClient?.clientName}?`,
+            content: `Cuando conozcas, te informen o estés involucrado en una situación que atente contra el Código de Ética de ${infoClient?.clientName}. Así mismo, cuando tengas inquietudes o sugerencias que prefieras que gestione el Comité de Ética en lugar de tratarlo directamente con tu supervisor. La decisión de usar la plataforma Línea Ética de ${infoClient?.clientName} es voluntaria.`
         },
         {
             title: `¿En cuánto tiempo le darán solución a un reporte ya hecho?`,
@@ -30,7 +28,7 @@ export const FrequentQuestions = ({ frequentQuestionsRef }) => {
         },
         {
             title: `¿Qué pasa si después de poner mi reporte quiero aportar más información?`,
-            content: `En cualquier momento, tú como informante puedes acceder a Línea Ética ${clientName} y con folio de seguimiento en mano aportarás nueva información o alguna reincidencia, en caso de conocerlo.`
+            content: `En cualquier momento, tú como informante puedes acceder a Línea Ética de ${infoClient?.clientName} y con folio de seguimiento en mano aportarás nueva información o alguna reincidencia, en caso de conocerlo.`
         }
     ];
     return (

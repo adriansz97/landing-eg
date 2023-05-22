@@ -7,34 +7,109 @@ import PerfectScrollbar from 'perfect-scrollbar';
 import 'perfect-scrollbar/css/perfect-scrollbar.css';
 import { Col, Row, Button } from "react-bootstrap";
 import { CDBStep, CDBStepper } from "cdbreact";
-import { createReport } from "../../apis";
+import { createAttachment, createReport } from "../../../apis";
+import Icon from "../../Icon/Icon";
 import { CatalogueInput } from './CatalogueInput'
 import { ConditionalInputs } from './ConditionalInputs'
 import './styles.scss'
 
+export const hdlSchm = ({ action, path, children, selected, pathSchema, inputs, entireSchema, setSchemaState}) => {
+  const newSchema = _.cloneDeep(entireSchema);
+  if (action==="selection") {
+    _.unset( newSchema, `${pathSchema}.${path}next` );
+    _.set( newSchema, `${pathSchema}.${path}selected`, selected );
+    _.set( newSchema, `${pathSchema}.${path}next.children`, children );
+    _.set( newSchema, `${pathSchema}.${path}next.selected`, "" );
+    _.set( newSchema, `${pathSchema}.${path}lastChild`, false );
+  }
+  if (action==="nullSelection") {
+    _.set( newSchema, `${pathSchema}.${path}selected`, "" );
+    _.set( newSchema, `${pathSchema}.${path}lastChild`, false );
+    _.unset( newSchema, `${pathSchema}.${path}next`, "" );
+  }
+  if (action==="noNextPath") {
+    _.set( newSchema, `${pathSchema}.${path}selected`, selected );
+    _.set( newSchema, `${pathSchema}.${path}lastChild`, true );
+    _.unset( newSchema, `${pathSchema}.${path}next` );
+  }
+  if (action==="resetInputs") {
+    _.set( newSchema, `${pathSchema}`, inputs );
+    // console.log({ pathSchema: `${pathSchema}.nestChildren`, inputs });
+  }
+  setSchemaState(newSchema);
+}
+
+export const hdlChg = ({ e, entirePathData, entirePathDataWithKey, params, entireFormData, setFormData }) => {
+  const newFromData = _.cloneDeep(entireFormData);
+  if (e.target.type==="checkbox") {
+    _.set(newFromData, entirePathDataWithKey, e.target.checked);
+  } else if (e.target.type==="file") {
+    _.set(newFromData, entirePathDataWithKey, e.target.files);
+  } else if (typeof e.target?.type === 'string' && e.target.type.includes("date-range")) {
+    if (e.target.type.includes("start")) {
+      let dates = _.get(newFromData, entirePathDataWithKey);
+      dates = dates.split("__");
+      if (dates.length===2) {
+        dates[0] = e.target.value.toJSON();
+        dates = dates.join("__");
+        _.set(newFromData, entirePathDataWithKey, e.target.value);
+      } 
+    } else if (e.target.type.includes("end")) {
+      let dates = _.get(newFromData, entirePathDataWithKey);
+      dates = dates.split("__");
+      if (dates.length===2) {
+        dates[1] = e.target.value.toJSON();
+        dates = dates.join("__");
+        _.set(newFromData, entirePathDataWithKey, e.target.value);
+      } 
+    }
+  } else if ( params && "catalogue" in params && "isOwn" in params ) {
+    _.set(newFromData, entirePathData, {...params});
+    _.set(newFromData, `${entirePathData}.${params.catalogue}`, e.target.value);
+  } else if ( params && "conditionals" in params ) {
+    _.set(newFromData, `${entirePathData}.conditionals`, params.conditionals);
+  } else {
+    _.set(newFromData, entirePathData, {...params});
+    _.set(newFromData, entirePathDataWithKey, e.target.value);
+  }
+  setFormData(newFromData);
+}
+
+export const hdlIsVal = ({ errors, entirePathDataWithKey, entireIsValid, setIsValid }) => {
+  const newIsValid = _.cloneDeep(entireIsValid);
+  _.set(newIsValid, `${entirePathDataWithKey}`, errors);
+  setIsValid(newIsValid);
+}
+
 // Render de cada uno de los inputs en el schema
 export const RenderInput = ({ 
   entireSchema,
-  entirePathSchema,
   entireFormData,
-  entirePathData,
   entireIsValid,
-  hdlChg, 
-  hdlSchm, 
-  hdlIsVal, 
+  entirePathSchema,
+  entirePathData,
+  attachments,
+  setAttachments,
   tryToNext,
   activeStep,
   idx,
-  land
+  land,
+  colsLg=4,
+  setSchemaState,
+  setFormData,
+  setIsValid
 }) => {
 
   const schema = _.get(entireSchema, entirePathSchema);
   const key = schema.type.includes("catalog") ? schema.catalogue : schema.key;
+  const inputAttachment = useRef(null);
 
   const entirePathDataWithKey = `${entirePathData}.${key}`;
   const value = _.get(entireFormData, entirePathDataWithKey);
   const valid = _.get(entireIsValid, entirePathDataWithKey);
   const tryNext = _.get(tryToNext, activeStep);
+
+  const utilHdlChg = { entireFormData, entirePathData, entirePathDataWithKey, setFormData };
 
   const doValidate = (test) => {
     let errors = [];
@@ -124,20 +199,20 @@ export const RenderInput = ({
       }
     }
     return errors;
-  }
+  };
   
   const handleChange = (e) => {
-    hdlChg({ e, entirePathData, entirePathDataWithKey, params: { sensitive: schema.sensitive }})
+    hdlChg({ e, params: { sensitive: schema.sensitive }, ...utilHdlChg })
     const errors = doValidate(e.target.value);
     if ((typeof schema.type === 'string') && !(schema.type.includes('catalog'))) {
-      hdlIsVal({ errors, entirePathDataWithKey });
+      hdlIsVal({errors, entirePathDataWithKey, entireIsValid, setIsValid});
     }
-  }
+  };
   
   const handleValidate = (validCat) => {
     const errors = doValidate(validCat);
-    hdlIsVal({errors, entirePathDataWithKey});
-  }
+    hdlIsVal({errors, entirePathDataWithKey, entireIsValid, setIsValid});
+  };
 
   const ReturnErrorMesages = () => {
     return (
@@ -151,14 +226,36 @@ export const RenderInput = ({
         }
       </>
     )
-  }
+  };
 
   const returnValidClass = () => {
     if (Array.isArray(valid) && valid.length>0 && tryNext) {
       return "is-invalid"
     }
     return ""
-  }
+  };
+
+  // FOR ATTACHMENTS
+  const hdlAttch = (e) => {
+    const formData = new FormData();
+    for (let i = 0; i < e.target.files.length; i++) {
+      formData.append("attachments", e.target.files[i]);
+    } 
+    setAttachments(formData)
+  };
+
+  const hdlDragOvAttch = (e) => {
+    e.preventDefault();
+  };
+
+  const hdlDropAttch = (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    for (let i = 0; i < e.dataTransfer.files.length; i++) {
+      formData.append("attachments", e.dataTransfer.files[i]);
+    }
+    setAttachments(formData);
+  };
 
   // FOR DATES
   const isValidDate = (startend) => {
@@ -184,7 +281,7 @@ export const RenderInput = ({
       return newDate;
     }
     return false;
-  }
+  };
 
   if (schema.type === "string") {
     return (
@@ -258,18 +355,20 @@ export const RenderInput = ({
           <ConditionalInputs 
             parentValue={value}
             conditionals={schema.conditionals}
-            hdlChg={hdlChg}
-            hdlSchm={hdlSchm}
-            hdlIsVal={hdlIsVal}
-            pathData={`${entirePathDataWithKey}`}
+            pathData={entirePathDataWithKey}
             entireSchema={entireSchema}
             entireFormData={entireFormData}
             entireIsValid={entireIsValid}
             entirePathSchema={entirePathSchema}
             entirePathData={entirePathData}
+            attachments={attachments}
+            setAttachments={setAttachments}
             tryToNext={tryToNext}
             activeStep={activeStep}
             land={land}
+            setSchemaState={setSchemaState}
+            setFormData={setFormData}
+            setIsValid={setIsValid}
           />
         </Row>
       </Col>
@@ -277,14 +376,34 @@ export const RenderInput = ({
   }
   if (schema.type === "file") {
     return (
-      <Col lg="12" className={`preview-input-container fade-in-image ${!land?"quit-pl":""}`}>
-        <div className="form-check">
-          <label>
-            {schema.label}{schema.required?"*":""}
-          </label>
-          <div className="preview-input-container-inp">
-            <input className={`form-control ${returnValidClass()} w-100`} name={schema.key} type="file" onChange={handleChange}  />
+      <Col lg="12" className={`preview-input-container fade-in-image ${!land?"quit-pl":""}`} onDrop={hdlDropAttch} onDragOver={hdlDragOvAttch}>
+        <label className="form-check-label">
+          {schema.label}
+        </label>
+        <div className="attachments pointer" onClick={()=>inputAttachment.current.click()} >
+
+          <div className="attachments-icon-container">
+            <Icon name="gallery" />
+            <Icon name="outline_clipboard_text" />
+            <Icon name="volume_high" />
+            <Icon name="outline_video" />
+            <Icon name="outline_document" />
           </div>
+          
+          <div className="attachments-instructions">
+            <p>Arrastre sus archivos</p>
+            <button className="btn attachments-btn">O haga click aquí</button>
+          </div>
+
+        </div>
+        <input className={`form-control ${returnValidClass()} w-100`} name={schema.key} type="file" onChange={hdlAttch} multiple hidden ref={inputAttachment} />
+        <div className={`preview-input-err-msg ${!land?"quit-pl":""}`}>
+          {
+            attachments !== null &&
+            [...attachments.entries()].map((item,idx) => {
+              return <li key={idx}>{item[1].name}</li>
+            })
+          }
         </div>
         <div className={`preview-input-err-msg ${!land?"quit-pl":""}`}>
           <ReturnErrorMesages />
@@ -304,7 +423,7 @@ export const RenderInput = ({
             <DatePicker
               className={`form-control ${returnValidClass()} w-100`}
               selected={ isValidDate() ? value : initialDate }
-              onChange={(value)=>hdlChg({target:{name: schema.key, value, type: "date"}})} 
+              onChange={(value)=>hdlChg({e:{target:{name: schema.key, value, type: "date"}}, ...utilHdlChg})}
             />
           </div>
         </div>
@@ -328,8 +447,8 @@ export const RenderInput = ({
               <div className="preview-input-container-inp">
                 <DatePicker
                   className={`form-control ${returnValidClass()} w-100`}
-                  selected={ isValidDate("start")?returnDateRange("start"):initialDate}
-                  onChange={(value)=>hdlChg({target:{name: schema.key, value, type: "date-range-start"}})}
+                  selected={isValidDate("start")?returnDateRange("start"):initialDate}
+                  onChange={(value)=>hdlChg({e:{target:{name: schema.key, value, type: "date-range-start"}}, ...utilHdlChg})}
                 />
               </div>
             </Col>
@@ -339,7 +458,7 @@ export const RenderInput = ({
                 <DatePicker 
                   className={`form-control ${returnValidClass()} w-100`}
                   selected={ isValidDate("end")?returnDateRange("end"):initialDate}
-                  onChange={(value)=>hdlChg({target:{name: schema.key, value, type: "date-range-end"}})}
+                  onChange={(value)=>hdlChg({e:{target:{name: schema.key, value, type: "date-range-end"}}, ...utilHdlChg})}
                 />
               </div>
             </Col>
@@ -380,18 +499,11 @@ export const RenderInput = ({
         <label>{schema.label}{schema.required?"*":""}</label>
         <Row>
           <CatalogueInput 
+            schema={schema}
             scope={schema}
             valid={valid}
             value={value}
-            keyData={schema.key}
             idx={idx}
-            type={schema.type}
-            sensitive={schema.sensitive}
-            required={schema.required}
-            catalogue={schema.catalogue}
-            isOwn={schema.isOwn}
-            hdlChg={hdlChg}
-            hdlSchm={hdlSchm}
             handleValidate={handleValidate}
             returnValidClass={returnValidClass}
             ReturnErrorMesages={ReturnErrorMesages}
@@ -399,6 +511,11 @@ export const RenderInput = ({
             pathData={entirePathData}
             entirePathDataWithKey={entirePathDataWithKey}
             land={land}
+            colsLg={colsLg}
+            entireSchema={entireSchema}
+            entireFormData={entireFormData}
+            setSchemaState={setSchemaState}
+            setFormData={setFormData}
           />
           <div className={`preview-input-err-msg ${!land?"quit-pl":""}`}>
             <ReturnErrorMesages />
@@ -414,24 +531,23 @@ export const RenderInput = ({
         <Row>
           <Col md="12" className={`${!land?"quit-pl":""}`}>
             <CatalogueInput 
+              schema={schema}
               scope={schema}
               valid={valid}
               value={value}
               idx={idx}
-              type={schema.type}
-              sensitive={schema.sensitive}
-              required={schema.required}
-              catalogue={schema.catalogue}
-              isOwn={schema.isOwn}
-              hdlChg={hdlChg}
-              hdlSchm={hdlSchm}
               handleValidate={handleValidate}
               returnValidClass={returnValidClass}
               ReturnErrorMesages={ReturnErrorMesages}
-              pathSchema={`${entirePathSchema}`}
-              pathData={`${entirePathData}`}
+              pathSchema={entirePathSchema}
+              pathData={entirePathData}
               entirePathDataWithKey={entirePathDataWithKey}
               land={land}
+              colsLg={colsLg}
+              entireSchema={entireSchema}
+              entireFormData={entireFormData}
+              setSchemaState={setSchemaState}
+              setFormData={setFormData}
             />
             <div className="preview-input-err-msg">
               <ReturnErrorMesages />
@@ -441,18 +557,21 @@ export const RenderInput = ({
             <ConditionalInputs 
               parentValue={value}
               conditionals={schema.conditionals}
-              hdlChg={hdlChg}
-              hdlSchm={hdlSchm}
-              hdlIsVal={hdlIsVal}
-              pathData={`${entirePathDataWithKey}`}
+              pathData={entirePathDataWithKey}
               entireSchema={entireSchema}
               entireFormData={entireFormData}
               entireIsValid={entireIsValid}
               entirePathSchema={entirePathSchema}
               entirePathData={entirePathData}
+              attachments={attachments}
+              setAttachments={setAttachments}
               tryToNext={tryToNext}
               activeStep={activeStep}
               land={land}
+              colsLg={12}
+              setSchemaState={setSchemaState}
+              setFormData={setFormData}
+              setIsValid={setIsValid}
             />
           </Row>
         </Row>
@@ -469,13 +588,12 @@ export const RenderInput = ({
 // Vista previa del formulario
 export const PreviewForm = ({ 
   formIdentifier,
-  formDescription,
   steps,
   schemaState,
-  setSchemaState,
   formData,
-  setFormData,
   isValid,
+  setSchemaState,
+  setFormData,
   setIsValid,
   showButtons=true,
   stepClick=false,
@@ -488,6 +606,7 @@ export const PreviewForm = ({
   const [rerender, setRerender] = useState(false);
   const [allowStepClick, setAllowStepClick] = useState(stepClick);
   const [tryToNext, setTryToNext] = useState(null);
+  const [attachments, setAttachments] = useState(null);
 
   useEffect(() => {
     if (refContainer.current) {
@@ -518,22 +637,23 @@ export const PreviewForm = ({
   const handleSubmit = async() => {
     let isValidForm = hdlValidStep({ lastStep: true });
     if (!(isValidForm===false)) {
-      let formAnswers = {};
-      for (const [idx, step] of steps.entries()) {
-        formAnswers[step.name] = formData[idx];
-      }
-      const objToSend = {
-        folio: "FOL-2022-08-30--10-13-09",
-        tracking_code: "REP-02200--2-38",
-        metadata: formAnswers,
-        attachments_id: [
-          "ATL09Ue2HGdd21Z1oZ22088m12018O0653",
-          "ATLnw42620j3T7f60u27A1y0gI19211r99",
-          "ATI8215MSd6db42JP321i240920l00Y16W",
-          "AT03MR311094e104g01m0P6XOD29P222QP"
-        ]
-      };
       try {
+        let formAnswers = {};
+        var attachments_id = [];
+        if (attachments) {
+          const attachmentsRes = await createAttachment(attachments);
+          attachments_id = attachmentsRes.attachments_id;
+        }
+        for (const [idx, step] of steps.entries()) {
+          formAnswers[step.name] = formData[idx];
+        }
+        const objToSend = {
+          folio: "FOL-2022-08-30--10-13-09",
+          tracking_code: "REP-02200--2-38",
+          metadata: formAnswers,
+          attachments_id
+        };
+        console.log(objToSend);
         const resp = await createReport(objToSend);
         Swal.fire({
           title: 'Reporte enviado con exito',
@@ -552,83 +672,14 @@ export const PreviewForm = ({
           //   )
           // }
         })
-        console.log(resp);
+        // console.log(resp);
       } catch (error) {
         Swal.fire( 'Error', 'An error has occurred while sending the form', 'error');
         console.log(error);
       }
     } else {
-      // hdlActStp(firstStepWithErr);
       setAllowStepClick(true);
     }
-  }
-
-  const hdlChg = ({ e, entirePathData, entirePathDataWithKey, params }) => {
-    const newFromData = _.cloneDeep(formData);
-    if (e.target.type==="checkbox") {
-      _.set(newFromData, entirePathDataWithKey, e.target.checked);
-    } else if (e.target.type==="file") {
-      _.set(newFromData, entirePathDataWithKey, e.target.files);
-    } else if (typeof e.target?.type === 'string' && e.target.type.includes("date-range")) {
-      if (e.target.type.includes("start")) {
-        let dates = _.get(newFromData, entirePathDataWithKey);
-        dates = dates.split("__");
-        if (dates.length===2) {
-          dates[0] = e.target.value.toJSON();
-          dates = dates.join("__");
-          _.set(newFromData, entirePathDataWithKey, e.target.value);
-        } 
-      } else if (e.target.type.includes("end")) {
-        let dates = _.get(newFromData, entirePathDataWithKey);
-        dates = dates.split("__");
-        if (dates.length===2) {
-          dates[1] = e.target.value.toJSON();
-          dates = dates.join("__");
-          _.set(newFromData, entirePathDataWithKey, e.target.value);
-        } 
-      }
-    } else if ( "catalogue" in params && "isOwn" in params ) {
-      _.set(newFromData, entirePathData, {...params});
-      _.set(newFromData, `${entirePathData}.${params.catalogue}`, e.target.value);
-    } else if ( "conditionals" in params ) {
-      _.set(newFromData, `${entirePathData}.conditionals`, params.conditionals);
-    } else {
-      _.set(newFromData, entirePathData, {...params});
-      _.set(newFromData, entirePathDataWithKey, e.target.value);
-    }
-    setFormData(newFromData);
-  }
-
-  const hdlSchm = ({ action, path, children, selected, pathSchema, inputs }) => {
-    const newSchema = _.cloneDeep(schemaState);
-    if (action==="selection") {
-      _.unset( newSchema, `${pathSchema}.${path}next` );
-      _.set( newSchema, `${pathSchema}.${path}selected`, selected );
-      _.set( newSchema, `${pathSchema}.${path}next.children`, children );
-      _.set( newSchema, `${pathSchema}.${path}next.selected`, "" );
-      _.set( newSchema, `${pathSchema}.${path}lastChild`, false );
-    }
-    if (action==="nullSelection") {
-      _.set( newSchema, `${pathSchema}.${path}selected`, "" );
-      _.set( newSchema, `${pathSchema}.${path}lastChild`, false );
-      _.unset( newSchema, `${pathSchema}.${path}next`, "" );
-    }
-    if (action==="noNextPath") {
-      _.set( newSchema, `${pathSchema}.${path}selected`, selected );
-      _.set( newSchema, `${pathSchema}.${path}lastChild`, true );
-      _.unset( newSchema, `${pathSchema}.${path}next` );
-    }
-    if (action==="resetInputs") {
-      _.set( newSchema, `${pathSchema}`, inputs );
-      // console.log({ pathSchema: `${pathSchema}.nestChildren`, inputs });
-    }
-    setSchemaState(newSchema);
-  }
-  
-  const hdlIsVal = ({ errors, entirePathDataWithKey }) => {
-    const newIsValid = _.cloneDeep(isValid);
-    _.set(newIsValid, `${entirePathDataWithKey}`, errors);
-    setIsValid(newIsValid);
   }
 
   const hdlActStp = (step) => {
@@ -721,17 +772,19 @@ export const PreviewForm = ({
                   <RenderInput 
                     key={`form-input-${idx}`}
                     entireSchema={schemaState}
-                    entirePathSchema={`${activeStep}.${idx}`}
                     entireFormData={formData}
-                    entirePathData={`${activeStep}.${idx}`}
                     entireIsValid={isValid}
+                    entirePathSchema={`${activeStep}.${idx}`}
+                    entirePathData={`${activeStep}.${idx}`}
+                    setSchemaState={setSchemaState}
+                    setFormData={setFormData}
+                    setIsValid={setIsValid}
                     tryToNext={tryToNext}
-                    hdlSchm={hdlSchm}
-                    hdlChg={hdlChg}
-                    hdlIsVal={hdlIsVal}
                     activeStep={activeStep}
                     idx={idx}
                     land={land}
+                    attachments={attachments}
+                    setAttachments={setAttachments}
                   />
                 ))
               }

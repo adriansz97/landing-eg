@@ -1,7 +1,8 @@
 import axios from 'axios';
 const host = "https://djaguar.herokuapp.com";
 // const tenant = "ethicsglobal.com";
-const tenant = "sd.lineaetica.com.mx";
+// const tenant = "sd.lineaetica.com.mx";
+const tenant = "larrabezua.sistemaetico.com";
 const baseURL = `${host}/${tenant}/api`;
 
 const apiCall = axios.create({ baseURL });
@@ -27,6 +28,19 @@ export const createReport = async ( report = {} ) => {
 export const getDetailCurrentReport = async () => {
   try {
     const resp = await apiCall.get(`/form/report/`)
+    return resp.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const createAttachment = async (files) => {
+  try {
+    const resp = await apiCall.post(`/attachment/`, files, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
     return resp.data;
   } catch (error) {
     console.log(error);
