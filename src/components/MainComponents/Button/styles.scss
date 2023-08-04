@@ -1,0 +1,102 @@
+@import '../../../theme/colors';
+@import '../../../theme/fontFace';
+
+.mcbtn {
+
+  &.btn {
+    max-height: 38px;
+    height: 38px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 4px;
+  }
+
+  .btn-icon {
+    svg {
+      height: 16px;
+      width: 16px;
+      g { transition: all 150ms ease; }
+    }
+  }
+
+  &.btn.btn-primary {
+    color: $color-white;
+    border: solid 1px $color-ethicsBlue;
+    background-color: $color-ethicsBlue;
+    svg g { fill: $color-white;  }
+    &:hover {
+      border: solid 1px darken($color: $color-ethicsBlue, $amount: 10);
+      background-color: darken($color: $color-ethicsBlue, $amount: 10);
+    }
+    &.outline {
+      color: $color-ethicsBlue;
+      border: solid 1px $color-ethicsBlue;
+      background-color: transparent;
+      svg g { fill: $color-ethicsBlue; }
+      &:hover {
+        color: $color-white;
+        border: solid 1px darken($color: $color-ethicsBlue, $amount: 10);
+        background-color: darken($color: $color-ethicsBlue, $amount: 10);
+        svg g { fill: $color-white; }
+      }
+    }
+  }
+
+  &.btn.btn-danger {
+    color: $color-white;
+    border: solid 1px $color-red;
+    background-color: $color-red;
+    svg g { fill: $color-white; }
+    &:hover {
+      color: $color-white;
+      border: solid 1px darken($color: $color-red, $amount: 10);
+      background-color: darken($color: $color-red, $amount: 10);
+    }
+    &.outline {
+      color: $color-red;
+      border: solid 1px $color-red;
+      background-color: transparent;
+      svg g { fill: $color-red; }
+      &:hover {
+        color: $color-white;
+        border: solid 1px $color-red;
+        background-color: $color-red;
+        svg g { fill: $color-white; }
+      }
+    }
+  }
+
+  &.btn.btn-sm {
+    max-height: 30px;
+    height: 30px;
+  }
+  &.btn.btn-lg {
+    max-height:45px;
+    height: 45px;
+  }
+}
+
+
+
+
+// .mcbtn.dark {
+//   &.btn.btn-primary {
+//     color: $color-white;
+//     border: solid 1px $color-ethicsBlue;
+//     background-color: $color-ethicsBlue;
+//     &:hover {
+//       border: solid 1px $color-oxfordBlue;
+//       background-color: $color-oxfordBlue;
+//     }
+//     &.outline {
+//       color: $color-ethicsBlue;
+//       border: solid 1px $color-ethicsBlue;
+//       background-color: transparent;
+//       &:hover {
+//         color: $color-white;
+//         border: solid 1px $color-ethicsBlue;
+//         background-color: $color-ethicsBlue;
+//       }
+//     }
+//   }
+// }

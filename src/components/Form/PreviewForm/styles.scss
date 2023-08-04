@@ -36,11 +36,15 @@
     transition: all 250ms;
     border-radius: 4px;
     margin-top: 0px;
-    font-size: 14px;
+    // font-size: 14px;
     &:focus {
       border-color: $color-ethicsBlue;
       box-shadow: none;
     }
+  }
+  .is-invalid-container {
+    background-color: rgba(216,27,96,0.3);
+    border: 2px solid rgb(216,27,96);
   }
   // header del preview donde esta el steper y el titulo del step
   .form-preview-header {
@@ -68,7 +72,12 @@
       color: $color-blueGray;  
     }
     label {
-      font-size: 12px;
+      font-weight: 600;
+      font-size: 1em;
+      margin-bottom: 0.5em !important;
+      &.dark-mode {
+        color: $color-coolGray;
+      }
     }
     .ps__rail-y {
       &:hover {
@@ -88,17 +97,17 @@
   .preview-input-container {
     display: flex;
     flex-direction: column;
+    animation: flashAnimation 800ms ease-in-out;
     .preview-input-container-inp {
       padding: 0px;
     }
-    .form-select-input {
-      width: 90% !important;
-    }
+    // .form-select-input {
+    //   width: 90% !important;
+    // }
   }
   .preview-input-err-msg {
-    margin-bottom: 30px;
+    margin-bottom: 24px;
   }
-
 
   .invalid-msg {
     color: #dc3545;
@@ -171,6 +180,14 @@
 
 }
 
+.form-preview::-webkit-scrollbar {
+  width: 3px;
+}
+
+.form-preview::-webkit-scrollbar-thumb {
+  background: #009ED7;
+}
+
 .form-buttons {
   // padding-top: 30px;
   display: flex;
@@ -190,9 +207,124 @@
   }
   .btn-form {
     background-color: #009ED7!important;
+    &:hover {
+      background-color: #0089c4!important;
+      box-shadow: 0px 0px 10px 0px rgba(0,158,215, 0.889);
+    }
+  }
+  .btn-form.ant{
+    background-color: #a0d4fa !important;
+    color: #ffffff !important;
+    &:hover {
+      background-color: #87cbfc !important;
+      box-shadow: 0px 0px 10px 0px rgba(160,212,250, 0.889);
+    }
   }
   .btn-send {
-    background-color: #152235!important;
+    background-color: #007b6f !important;
+    &:hover {
+      background-color: #006e65 !important;
+      box-shadow: 0px 0px 10px 0px rgba(0,123,111, 0.889);
+    }
+  }
+}
+
+.label-required {
+  color: #d81b60 !important;
+}
+
+.container-checkbox {
+  background-color: #f3f7fa;
+  border-radius: 15px;
+  border: 1px solid #d8dfe3;
+  &.dark-mode {
+    background-color: #242836;
+    border: 1px solid #363742;
+    input[type="radio"] {
+      border: 1px solid #8aa1ac;
+    }
+    a.selected {
+      color: #fff;
+    }
+    &.selected {
+      background-color: rgba(92, 102, 110, 0.7);
+      border: 1px solid #fff;
+      box-shadow: rgb(255, 255, 255) 0px 0px 6px 1px;
+    }
+  }
+  &.selected {
+    background-color: rgb(232, 245, 253); 
+    border: 1px solid #a0d4fa;
+    box-shadow: #a0d4fa 0px 0px 6px 2px;
+  }
+}
+
+a.dark-mode {
+  color: $color-coolGray !important;
+}
+
+label.selected, p.selected {
+  color: #546E7A !important;
+  &.dark-mode {
+    color: #fff !important;
+  }
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+  cursor: pointer;
+  border: 1px solid #363742;
+}
+
+input[type="radio"]:hover,
+input[type="checkbox"]:hover {
+  border: 1px solid #009ed7 !important;
+  box-shadow: #009ed750 0px 0px 3px 2px;
+}
+
+.modal-example-dialog.dark-mode {
+  background-color: #242836;
+  border: 1px solid #363742;
+}
+
+.cus-modal-title {
+  color: rgb(0, 0, 0) !important;
+}
+
+.animation {
+  position: relative;
+  animation: animation 0.2s ease-out;
+}
+
+.flash-new-child {
+  animation: flashAnimation 800ms ease-in-out;
+}
+
+hr {
+  border-top: 2px solid !important;
+}
+
+@keyframes animation {
+  0% {
+    opacity: 0;
+    right: -100px;
+    // right: -70px;
+  }
+
+  100% {
+    opacity: 1;
+    right: 0;
+  }
+}
+
+@keyframes flashAnimation {
+  0% {
+    background-color: rgba(205, 220, 57, 0.4);
+    border: none;
+  }
+  100% {
+    background-color: transparent;
+    border: none;
   }
 }
 

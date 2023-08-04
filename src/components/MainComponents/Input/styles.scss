@@ -1,0 +1,65 @@
+@import "../../../theme/colors";
+
+
+label.selected, p.selected {
+  color: $color-slate2 !important;
+  &.dark-mode {
+    color: $color-white !important;
+  }
+}
+
+
+input[type="radio"],
+input[type="checkbox"] {
+  cursor: pointer;
+  border: 1px solid $color-darkBorder;
+}
+
+input[type="radio"]:hover,
+input[type="checkbox"]:hover {
+  border: 1px solid $color-ethicsBlue !important;
+  box-shadow: #009ed750 0px 0px 3px 2px;
+}
+
+input[type="text"],
+input[type="number"],
+textarea,
+textarea {
+  background-color: $color-white;
+  color: $color-blueGray900;
+
+  &.dark {
+    background-color: $color-darkFour !important;
+    color: $color-coolGray !important;
+    border: 1px solid $color-darkBorder !important;
+    &:focus, &:hover {
+      border: 1px solid $color-blueGray600 !important;
+    }
+  }
+}
+
+input[type="text"]:hover,
+input[type="number"]:hover,
+textarea:hover {
+  border-color: $color-blueGray600;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+input[type=number] { -moz-appearance:textfield; }
+
+.react-datepicker {
+  display: flex!important;
+}
+
+.react-datepicker-wrapper input{    
+  width: 100%;
+  padding: 6px;
+  border-radius: 5px;
+  background-color: transparent;
+  color: inherit;
+  border: 1px solid #009ed7;
+}

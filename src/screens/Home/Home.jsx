@@ -1,5 +1,4 @@
-import { useContext, useRef } from "react";
-import { AppContext, ThemeContext } from "../../context/AppContext";
+import { useRef } from "react";
 import { Navbar } from "../../components/Golbal/navbar/Navbar";
 import { Header } from "../../components/Golbal/Header/Header";
 import { Footer } from "../../components/Golbal/Footer/Footer";
@@ -11,11 +10,12 @@ import { BeAgent } from "./BeAgent/BeAgent";
 import { FollowUp } from "./FollowUp/FollowUp";
 import { Download } from "./Download/Download";
 import { FrequentQuestions } from "./FrequentQuestions/FrequentQuestions";
+import { useSelector } from "react-redux";
 
 export const Home = () =>{
     
-    const { clientName, infoClient } = useContext(AppContext);
-    const { primaryColor, secondaryColor, primaryColorText, secondaryColorText } = useContext(ThemeContext);
+    const { infoClient } = useSelector(st=>st.app);
+    const { primaryColor, secondaryColor, primaryColorText, secondaryColorText } = useSelector(st=>st.theme);
     const howWorksRef = useRef(null);
     const frequentQuestionsRef = useRef(null);
     const beAgentRef = useRef(null);
@@ -92,7 +92,6 @@ export const Home = () =>{
             /> {/* <Announcement /> */}
 
             <Download 
-                clientName={clientName}
                 infoClient={infoClient} 
                 primaryColor={primaryColor}
                 secondaryColor={secondaryColor}

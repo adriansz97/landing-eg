@@ -8,6 +8,7 @@ const checkCatalogues = async(inputs) => {
     _.unset(newInput,`childs`);
     _.unset(newInput,`next`);
     _.set(newInput,`selected`,"");
+    _.set(newInput,`lastChild`,true);
     
     if ("catalogue" in inp && "isOwn" in inp && !("conditionals" in inp) ) {
 
@@ -39,6 +40,36 @@ const checkCatalogues = async(inputs) => {
   return newInputsSolved;
 }
 
+const checkConditionals = (conditionals, value, origin, target = "data") => {
+  const currentConditionals = conditionals.find(item=>checkTypeOfConditional(item, value));
+  const currentConditionalsIdx = conditionals.findIndex(item=>checkTypeOfConditional(item, value));
+  if (currentConditionals && currentConditionalsIdx>=0) {
+    if (target==="data") {
+      return returnFormData(currentConditionals.nestChildren, `${origin}::conditionals::${currentConditionalsIdx}::nestChildren`)
+    } else if (target==="valid") {
+      return returnIsValid(currentConditionals.nestChildren)
+    }
+  }
+  return [];
+}
+
+export const checkTypeOfConditional = (item, value) => {
+  if (typeof value === "boolean" ) {
+    if (value===item.caseOf) {
+      return true
+    } else {
+      return false
+    }
+  }
+  if (typeof value === "string" ) {
+    if (value.includes(item.caseOf)) {
+      return true
+    } else {
+      return false
+    }
+  }
+}
+
 export const resetInputsCatalogues = (inputs) => {
   const newInputs = inputs.map((inp,idx) => {
     let newInput = _.cloneDeep(inp);
@@ -52,45 +83,52 @@ export const resetInputsCatalogues = (inputs) => {
   return newInputs;
 }
 
-export const returnFormData = (inputs) => {
-  const newInputs = inputs.map( input => {
+export const returnFormData = (inputs, path) => {
+  const newInputs = inputs.map((input, idx) => {
+    const newPath = `${path}::${idx}`;
     if (input.type === "date") {
       let today = new Date();
       return {
         [input.key]: today,
-        "sensitive": input.sensitive || false
+        "sensitive": input.sensitive || false,
+        "origin": newPath,
       }
     }
     if (input.type === "date-range") {
       let today = new Date().toJSON();
       return {
         [input.key]: `${today}__${today}`,
-        "sensitive": input.sensitive || false
+        "sensitive": input.sensitive || false,
+        "origin": newPath,
       }
     }
     if (input.type === "file") {
       return {
         [input.key]: null,
-        "sensitive": input.sensitive || false
+        "sensitive": input.sensitive || false,
+        "origin": newPath,
       }
     }
     if (input.type === "checkbox") {
       return {
         [input.key]: false,
-        "sensitive": input.sensitive || false
+        "sensitive": input.sensitive || false,
+        "origin": newPath,
       }
     }
     if (input.type === "checkbox-conditional") {
       return {
         [input.key]: false,
         "sensitive": input.sensitive || false,
-        "conditionals": []
+        "origin": newPath,
+        "conditionals": checkConditionals(input.conditionals, false, newPath, "data")
       }
     }
     if ("catalogue" in input && !("conditionals" in input)) {
       return {
         [input.catalogue]: "",
         "sensitive": input.sensitive || false,
+        "origin": newPath,
         "catalogue": input.catalogue,
         "isOwn": input.isOwn
       }
@@ -99,14 +137,16 @@ export const returnFormData = (inputs) => {
       return {
         [input.catalogue]: "",
         "sensitive": input.sensitive || false,
+        "origin": newPath,
         "catalogue": input.catalogue,
         "isOwn": input.isOwn,
-        "conditionals": []
+        "conditionals": checkConditionals(input.conditionals, "", newPath, "data")
       }
     }
     return {
       [input.key]: "",
-      "sensitive": input.sensitive || false
+      "sensitive": input.sensitive || false,
+      "origin": newPath,
     }
   })
   return newInputs
@@ -128,24 +168,24 @@ export const returnIsValid = (inputs) => {
     if (input.type === "checkbox-conditional") {
       return {
         [key]: [],
-        "conditionals": []
+        "conditionals": checkConditionals(input.conditionals, false, "", "valid")
       }
     }
     if ("catalogue" in input && !("conditionals" in input) && input.required) {
       return {
-        [key]: ["El catalogo debe estar completo"]
+        [key]: ["Este campo es requerido"]
       }
     }
     if ("catalogue" in input && "conditionals" in input) {
       if (input.required) {
         return {
-          [key]: ["El catalogo debe estar completo"],
-          "conditionals": []
+          [key]: ["Este campo es requerido"],
+          "conditionals": checkConditionals(input.conditionals, "", "", "valid")
         }  
       } else {
         return {
           [key]: [],
-          "conditionals": []
+          "conditionals": checkConditionals(input.conditionals, "", "", "valid")
         }
       }
     }
@@ -185,7 +225,7 @@ export const formStarter = async( formLoaded, target = 'normal' ) => {
   const begin = async() => {
     formIdentifier = formLoaded.identifier_name;
     if (Array.isArray(formLoaded.stepers)) {
-      for (const step of formLoaded.stepers) {
+      for (const [ idx, step ] of formLoaded.stepers.entries()) {
         newSteps.push({
           name: step.name,
           title: step.title,
@@ -195,7 +235,7 @@ export const formStarter = async( formLoaded, target = 'normal' ) => {
         const jsonSchemaTemp = _.get(step,`form.json-schema`);
         const resp = await checkCatalogues(jsonSchemaTemp);
         newSchemaState.push(resp);
-        newFormData.push(returnFormData(resp));
+        newFormData.push(returnFormData(resp, `stepers::${idx}::form::json-schema`, ));
         newIsValid.push(returnIsValid(resp));
         newValidCreateInputs.push(resp.map( input => {
           // const validInput = 
@@ -212,20 +252,21 @@ export const formStarter = async( formLoaded, target = 'normal' ) => {
   const beginNew = () => {
     newSteps = [
       {
-        name: "step_title",
-        title: "Step title",
-        description: "Write a description"
+        name: "titulo_del_paso",
+        title: "Título del paso",
+        description: "Any description"
       }
     ];
     newSchemaState = [
       [
         {
-          "key": "input_label",
+          "key": "ingrese_etiqueta",
           "type": "string",
-          "label": "Input label",
+          "label": "Ingrese etiqueta",
           "placeholder": "tempPlaceholder",
           "required": false,
-          "sensitive": false
+          "sensitive": false,
+          "grid": 4
         }
       ]
     ];
@@ -248,173 +289,6 @@ export const formStarter = async( formLoaded, target = 'normal' ) => {
       ]
     ]
   }
-
-  // const beginNew2 = () => {
-  //   newSteps = [
-  //     {
-  //       name: "step_title",
-  //       title: "Step title",
-  //       description: "Write a description"
-  //     }
-  //   ];
-  //   newSchemaState = [
-  //     [
-  //       {
-  //         "key": "input_label",
-  //         "type": "string",
-  //         "label": "Input label",
-  //         "placeholder": "tempPlaceholder",
-  //         "required": false,
-  //         "sensitive": false
-  //       },
-  //       {
-  //         "key": "input_label2",
-  //         "type": "checkbox-conditional",
-  //         "label": "Mantenerme Informado del caso",
-  //         "placeholder": "tempPlaceholder",
-  //         "required": false,
-  //         "sensitive": false,
-  //         "conditionals": [
-  //           {
-  //             "caseOf": true,
-  //             "nestChildren": [
-  //               {
-  //                 "key": "correo_electronico",
-  //                 "type": "string",
-  //                 "label": "Correo electronico",
-  //                 "placeholder": "tempPlaceholder",
-  //                 "required": false,
-  //                 "sensitive": false
-  //               },
-  //               {
-  //                 "key": "telefono",
-  //                 "type": "number",
-  //                 "label": "Telefono",
-  //                 "placeholder": "tempPlaceholder",
-  //                 "required": false,
-  //                 "sensitive": false
-  //               },
-  //             ]
-  //           },
-  //         ]
-  //       },
-  //       {
-  //         "key": "C::EG::RD-102101",
-  //         "type": "catalog-select-conditional",
-  //         "label": "Relationship with the company",
-  //         "placeholder": "tempPlaceholder",
-  //         "required": false,
-  //         "sensitive": false,
-  //         "scope": "/",
-  //         "selected": "",
-  //         "conditionals": [
-  //           {
-  //             "caseOf": "type::associatesCommissionAgentsDistributorsExternal",
-  //             "nestChildren": [
-  //               {
-  //                 "key": "input_label_de_associatesCommissionAgentsDistributorsExternal",
-  //                 "type": "string",
-  //                 "label": "Input label ass",
-  //                 "placeholder": "tempPlaceholder",
-  //                 "required": false,
-  //                 "sensitive": false
-  //               },
-  //             ]
-  //           },
-  //           {
-  //             "caseOf": "type::clients",
-  //             "nestChildren": [
-  //               {
-  //                 "key": "C::EG::IC-101",
-  //                 "type": "catalog-select",
-  //                 "label": "Industry classification",
-  //                 "placeholder": "tempPlaceholder",
-  //                 "required": true,
-  //                 "sensitive": false,
-  //                 "scope": "/",
-  //                 "selected": "",
-  //                 "isOwn": false,
-  //                 "catalogue": "IC-101"
-  //               },
-  //               {
-  //                 "key": "input_label_de_clients2",
-  //                 "type": "string",
-  //                 "label": "Input label clientes",
-  //                 "placeholder": "tempPlaceholder",
-  //                 "required": false,
-  //                 "sensitive": false
-  //               },
-  //             ]
-  //           },
-  //         ],
-  //         "isOwn": false,
-  //         "catalogue": "RD-102101"
-  //       },
-  //     ]
-  //   ];
-  //   newFormData = [
-  //     [
-  //       { "input_label": "" },
-  //       { 
-  //         "input_label2": false,
-  //         "conditionals": [
-  //           { 
-  //             "input_label_de_clients": "" 
-  //           },
-  //           { 
-  //             "input_label_de_clients2": "" 
-  //           }
-  //         ]
-  //       },
-  //       { 
-  //         "RD-102101": "",
-  //         "conditionals": [
-  //           { 
-  //             "input_label_de_clients": "" 
-  //           },
-  //           { 
-  //             "input_label_de_clients2": "" 
-  //           }
-  //         ]
-  //       },
-  //     ]
-  //   ];
-  //   newIsValid = [
-  //     [
-  //       { "input_label": [] },
-  //       { 
-  //         "input_label2": [],
-  //         "conditionals": [
-  //           { 
-  //             "input_label_de_clients": []
-  //           },
-  //           { 
-  //             "input_label_de_clients2": []
-  //           }
-  //         ]
-  //       },
-  //       { 
-  //         "RD-102101": [],
-  //         "conditionals": [
-  //           { 
-  //             "input_label_de_clients": []
-  //           },
-  //           { 
-  //             "input_label_de_clients2": []
-  //           }
-  //         ]
-  //       },
-  //     ]
-  //   ];
-  //   newValidCreateSteps = [
-  //     []
-  //   ]
-  //   newValidCreateInputs = [
-  //     [
-  //       []
-  //     ]
-  //   ]
-  // }
 
   if (target === 'normal') {
     await begin();

@@ -1,39 +1,39 @@
 import { useEffect, useRef, useState } from "react";
 import _ from "lodash";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import Swal from "sweetalert2";
-import PerfectScrollbar from 'perfect-scrollbar';
-import 'perfect-scrollbar/css/perfect-scrollbar.css';
+import Container from "react-bootstrap/Container";
 import { Col, Row, Button } from "react-bootstrap";
 import { CDBStep, CDBStepper } from "cdbreact";
 import { createAttachment, createReport } from "../../../apis";
+import { MCInput } from "../../MainComponents/Input/Input";
 import Icon from "../../Icon/Icon";
-import { CatalogueInput } from './CatalogueInput'
-import { ConditionalInputs } from './ConditionalInputs'
-import './styles.scss'
+import { CatalogueInput } from "./CatalogueInput"
+import { ConditionalInputs } from "./ConditionalInputs"
+import "./styles.scss"
 
-export const hdlSchm = ({ action, path, children, selected, pathSchema, inputs, entireSchema, setSchemaState}) => {
+
+export const hdlSchm = ({ action, path, children, selected, pathSchema, inputs, entireSchema, setSchemaState }) => {
   const newSchema = _.cloneDeep(entireSchema);
-  if (action==="selection") {
-    _.unset( newSchema, `${pathSchema}.${path}next` );
-    _.set( newSchema, `${pathSchema}.${path}selected`, selected );
-    _.set( newSchema, `${pathSchema}.${path}next.children`, children );
-    _.set( newSchema, `${pathSchema}.${path}next.selected`, "" );
-    _.set( newSchema, `${pathSchema}.${path}lastChild`, false );
+  if (action === "selection") {
+    _.unset(newSchema, `${pathSchema}.${path}next`);
+    _.set(newSchema, `${pathSchema}.${path}lastChild`, false);
+    _.set(newSchema, `${pathSchema}.${path}selected`, selected);
+    _.set(newSchema, `${pathSchema}.${path}next.children`, children);
+    _.set(newSchema, `${pathSchema}.${path}next.selected`, "");
+    _.set(newSchema, `${pathSchema}.${path}next.lastChild`, true);
   }
-  if (action==="nullSelection") {
-    _.set( newSchema, `${pathSchema}.${path}selected`, "" );
-    _.set( newSchema, `${pathSchema}.${path}lastChild`, false );
-    _.unset( newSchema, `${pathSchema}.${path}next`, "" );
+  if (action === "nullSelection") {
+    _.set(newSchema, `${pathSchema}.${path}selected`, "");
+    _.set(newSchema, `${pathSchema}.${path}lastChild`, false);
+    _.unset(newSchema, `${pathSchema}.${path}next`, "");
   }
-  if (action==="noNextPath") {
-    _.set( newSchema, `${pathSchema}.${path}selected`, selected );
-    _.set( newSchema, `${pathSchema}.${path}lastChild`, true );
-    _.unset( newSchema, `${pathSchema}.${path}next` );
+  if (action === "noNextPath") {
+    _.set(newSchema, `${pathSchema}.${path}selected`, selected);
+    _.set(newSchema, `${pathSchema}.${path}lastChild`, true);
+    _.unset(newSchema, `${pathSchema}.${path}next`);
   }
-  if (action==="resetInputs") {
-    _.set( newSchema, `${pathSchema}`, inputs );
+  if (action === "resetInputs") {
+    _.set(newSchema, `${pathSchema}`, inputs);
     // console.log({ pathSchema: `${pathSchema}.nestChildren`, inputs });
   }
   setSchemaState(newSchema);
@@ -41,35 +41,40 @@ export const hdlSchm = ({ action, path, children, selected, pathSchema, inputs, 
 
 export const hdlChg = ({ e, entirePathData, entirePathDataWithKey, params, entireFormData, setFormData }) => {
   const newFromData = _.cloneDeep(entireFormData);
-  if (e.target.type==="checkbox") {
+  if (e.target.type === "checkbox") {
     _.set(newFromData, entirePathDataWithKey, e.target.checked);
-  } else if (e.target.type==="file") {
+  } else if (e.target.type === "file") {
     _.set(newFromData, entirePathDataWithKey, e.target.files);
   } else if (typeof e.target?.type === 'string' && e.target.type.includes("date-range")) {
     if (e.target.type.includes("start")) {
       let dates = _.get(newFromData, entirePathDataWithKey);
       dates = dates.split("__");
-      if (dates.length===2) {
+      if (dates.length === 2) {
         dates[0] = e.target.value.toJSON();
         dates = dates.join("__");
-        _.set(newFromData, entirePathDataWithKey, e.target.value);
-      } 
+        _.set(newFromData, entirePathDataWithKey, dates);
+      }
     } else if (e.target.type.includes("end")) {
       let dates = _.get(newFromData, entirePathDataWithKey);
       dates = dates.split("__");
-      if (dates.length===2) {
+      if (dates.length === 2) {
         dates[1] = e.target.value.toJSON();
         dates = dates.join("__");
-        _.set(newFromData, entirePathDataWithKey, e.target.value);
-      } 
+        _.set(newFromData, entirePathDataWithKey, dates);
+      }
     }
-  } else if ( params && "catalogue" in params && "isOwn" in params ) {
-    _.set(newFromData, entirePathData, {...params});
+  } else if (params && "catalogue" in params && "isOwn" in params) {
+    if ("conditionals" in params) {
+      const temp = _.get(newFromData, entirePathData);
+      _.set(newFromData, entirePathData, { ...params, conditionals: temp?.conditionals || [] });
+    } else {
+      _.set(newFromData, entirePathData, { ...params });
+    }
     _.set(newFromData, `${entirePathData}.${params.catalogue}`, e.target.value);
-  } else if ( params && "conditionals" in params ) {
+  } else if (params && "conditionals" in params) {
     _.set(newFromData, `${entirePathData}.conditionals`, params.conditionals);
   } else {
-    _.set(newFromData, entirePathData, {...params});
+    _.set(newFromData, entirePathData, { ...params });
     _.set(newFromData, entirePathDataWithKey, e.target.value);
   }
   setFormData(newFromData);
@@ -82,7 +87,7 @@ export const hdlIsVal = ({ errors, entirePathDataWithKey, entireIsValid, setIsVa
 }
 
 // Render de cada uno de los inputs en el schema
-export const RenderInput = ({ 
+export const RenderInput = ({
   entireSchema,
   entireFormData,
   entireIsValid,
@@ -93,55 +98,56 @@ export const RenderInput = ({
   tryToNext,
   activeStep,
   idx,
-  land,
-  colsLg=4,
+  colsLg = 4,
   setSchemaState,
   setFormData,
-  setIsValid
+  setIsValid,
+  origin,
 }) => {
 
   const schema = _.get(entireSchema, entirePathSchema);
   const key = schema.type.includes("catalog") ? schema.catalogue : schema.key;
-  const inputAttachment = useRef(null);
-
+  
   const entirePathDataWithKey = `${entirePathData}.${key}`;
   const value = _.get(entireFormData, entirePathDataWithKey);
   const valid = _.get(entireIsValid, entirePathDataWithKey);
   const tryNext = _.get(tryToNext, activeStep);
-
+  
   const utilHdlChg = { entireFormData, entirePathData, entirePathDataWithKey, setFormData };
+  
+  const inputAttachment = useRef(null);
 
   const doValidate = (test) => {
     let errors = [];
     if (schema.type === "string") {
-      if (schema.required===true) {
-        if (test.trim()==="") {
+      if (schema.required === true) {
+        if (test.trim() === "") {
           errors.push("Este campo es requerido")
         }
       }
     }
     if (schema.type === "number") {
       const tempNum = Number(test);
-      if (schema.required===true) {
-        if (test==="") {
+      if (schema.required === true) {
+        if (test === "") {
           errors.push("Este campo es requerido")
           console.log(test)
         } else if (isNaN(tempNum)) {
           errors.push("No es un numero válido");
-        } else if (tempNum<0) {
+        } else if (tempNum < 0) {
           errors.push("No deberia ser menor a cero");
         }
       } else {
         if (isNaN(tempNum)) {
           errors.push("No es un numero válido");
-        } else if (tempNum<0) {
+        } else if (tempNum < 0) {
           errors.push("No deberia ser menor a cero");
         }
       }
     }
     if (schema.type === "textarea") {
-      if (schema.required===true) {
-        if (test.trim()==="") {
+      if (schema.required === true) {
+        if (test.trim() === "") {
           errors.push("Este campo es requerido")
         }
       }
@@ -152,8 +158,8 @@ export const RenderInput = ({
       }
     }
     if (schema.type === "file") {
-      if (schema.required===true) {
-        if (test===null) {
+      if (schema.required === true) {
+        if (test === null) {
           errors.push("Este campo debe de llevar un archivo")
         }
       }
@@ -178,47 +184,51 @@ export const RenderInput = ({
       }
     }
     if (schema.type === "subject") {
-      if (schema.required===true) {
-        if (test.trim()==="") {
+      if (schema.required === true) {
+        if (test.trim() === "") {
           errors.push("Este campo es requerido")
         }
       }
     }
     if (schema.type === "description") {
-      if (schema.required===true) {
-        if (test.trim()==="") {
+      if (schema.required === true) {
+        if (test.trim() === "") {
           errors.push("Este campo es requerido")
         }
       }
     }
     if (schema.type.includes("catalog")) {
+      if (schema.catalogue==="RC-100") {
+        // console.log(schema)
+        // console.log(test)
+      }
       if (schema.required) {
         if (!test) {
-          errors.push("El catalogo debe estar completo");
+          errors.push("Este campo es requerido");
         }
       }
     }
     return errors;
   };
-  
+
   const handleChange = (e) => {
-    hdlChg({ e, params: { sensitive: schema.sensitive }, ...utilHdlChg })
+    hdlChg({ e, params: { sensitive: schema.sensitive, origin }, ...utilHdlChg })
     const errors = doValidate(e.target.value);
     if ((typeof schema.type === 'string') && !(schema.type.includes('catalog'))) {
-      hdlIsVal({errors, entirePathDataWithKey, entireIsValid, setIsValid});
+      hdlIsVal({ errors, entirePathDataWithKey, entireIsValid, setIsValid });
     }
   };
-  
+
   const handleValidate = (validCat) => {
     const errors = doValidate(validCat);
-    hdlIsVal({errors, entirePathDataWithKey, entireIsValid, setIsValid});
+    hdlIsVal({ errors, entirePathDataWithKey, entireIsValid, setIsValid });
   };
 
   const ReturnErrorMesages = () => {
     return (
       <>
-        { tryNext && Array.isArray(valid) && valid.length>0 &&
-          valid.map((err,idx)=>(
+        {tryNext && Array.isArray(valid) && valid.length > 0 &&
+          valid.map((err, idx) => (
             <div key={idx} className="invalid-msg">
               {err} <br />
             </div>
@@ -228,8 +238,11 @@ export const RenderInput = ({
     )
   };
 
-  const returnValidClass = () => {
-    if (Array.isArray(valid) && valid.length>0 && tryNext) {
+  const returnValidClass = (type) => {
+    if (Array.isArray(valid) && valid.length > 0 && tryNext && type === "container") {
+      return "is-invalid-container"
+    }
+    if (Array.isArray(valid) && valid.length > 0 && tryNext) {
       return "is-invalid"
     }
     return ""
@@ -240,7 +253,7 @@ export const RenderInput = ({
     const formData = new FormData();
     for (let i = 0; i < e.target.files.length; i++) {
       formData.append("attachments", e.target.files[i]);
-    } 
+    }
     setAttachments(formData)
   };
 
@@ -261,10 +274,11 @@ export const RenderInput = ({
   const isValidDate = (startend) => {
     if (startend) {
       let dates = value;
+      console.log(value);
       dates = dates.split("__");
-      if (startend==="start" && dates.length===2) {
+      if (startend === "start" && dates.length === 2) {
         return !isNaN(new Date(dates[0]).getTime());
-      } else if (startend==="end" && dates.length===2) {
+      } else if (startend === "end" && dates.length === 2) {
         return !isNaN(new Date(dates[1]).getTime());
       }
     }
@@ -273,10 +287,10 @@ export const RenderInput = ({
   const returnDateRange = (startend) => {
     let dates = value;
     dates = dates.split("__");
-    if (startend==="start" && dates.length===2) {
+    if (startend === "start" && dates.length === 2) {
       let newDate = new Date(dates[0]);
       return newDate;
-    } else if (startend==="end" && dates.length===2) {
+    } else if (startend === "end" && dates.length === 2) {
       let newDate = new Date(dates[1]);
       return newDate;
     }
@@ -285,25 +299,39 @@ export const RenderInput = ({
 
   if (schema.type === "string") {
     return (
-      <Col lg="6" className={`preview-input-container fade-in-image ${!land?"quit-pl":""}`}>
-          <label className="w-100">{schema.label}{schema.required?"*":""}</label>
-          <div className="preview-input-container-inp">
-            <input autoComplete="off" type="text" className={`form-control ${returnValidClass()} w-100`} name={schema.key} defaultValue={value} onChange={handleChange} />
-          </div>
-          <div className="preview-input-err-msg">
-            <ReturnErrorMesages />
-          </div>
+      <Col lg={schema.grid || 12} className={`preview-input-container`}>
+        <label className={`${schema.required?"label-required":""}`}>{schema.label}{schema.required ? "*" : ""}</label>
+        <div className={`preview-input-container-inp ${returnValidClass("container")}`}>
+          <MCInput 
+            autoComplete="off"
+            type="text"
+            className={`${returnValidClass()}`}
+            name={schema.key} 
+            defaultValue={value}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="preview-input-err-msg">
+          <ReturnErrorMesages />
+        </div>
       </Col>
     )
   }
   if (schema.type === "number") {
     return (
-      <Col lg="6" className={`preview-input-container fade-in-image ${!land?"quit-pl":""}`}>
-        <label className="w-100">{schema.label}{schema.required?"*":""}</label>
-        <div className="preview-input-container-inp">
-          <input autoComplete="off" type="number" className={`form-control ${returnValidClass()} w-100`} name={schema.key} defaultValue={value} onChange={handleChange} />
+      <Col lg={schema.grid || 12} className={`preview-input-container`}>
+        <label className={`${schema.required?"label-required":""}`}>{schema.label}{schema.required ? "*" : ""}</label>
+        <div className={`preview-input-container-inp ${returnValidClass("container")}`}>
+          <MCInput 
+            autoComplete="off"
+            type="number"
+            className={`${returnValidClass()}`}
+            name={schema.key}
+            defaultValue={value}
+            onChange={handleChange}
+          />
         </div>
-        <div className={`preview-input-err-msg ${!land?"quit-pl":""}`}>
+        <div className={`preview-input-err-msg`}>
           <ReturnErrorMesages />
         </div>
       </Col>
@@ -311,12 +339,20 @@ export const RenderInput = ({
   }
   if (schema.type === "textarea") {
     return (
-      <Col lg="6" className={`preview-input-container fade-in-image ${!land?"quit-pl":""}`}>
-        <label className="w-100" >{schema.label}{schema.required?"*":""}</label>
-        <div className="preview-input-container-inp">
-          <textarea autoComplete="off" type="text" className={`form-control ${returnValidClass()} w-100`} name={schema.key} defaultValue={value} onChange={handleChange} ></textarea>
+      <Col lg={schema.grid || 12} className={`preview-input-container`}>
+        <label className={`${schema.required?"label-required":""}`} >{schema.label}{schema.required ? "*" : ""}</label>
+        <div className={`preview-input-container-inp ${returnValidClass("container")}`}>
+          <MCInput 
+            type="textarea"
+            rows={3}
+            autoComplete="off"
+            className={`${returnValidClass()}`}
+            name={schema.key}
+            defaultValue={value}
+            onChange={handleChange}
+          />
         </div>
-        <div className={`preview-input-err-msg ${!land?"quit-pl":""}`}>
+        <div className={`preview-input-err-msg`}>
           <ReturnErrorMesages />
         </div>
       </Col>
@@ -324,14 +360,14 @@ export const RenderInput = ({
   }
   if (schema.type === "checkbox") {
     return (
-      <Col lg="12" className={`preview-input-container fade-in-image ${!land?"quit-pl":""}`}>
-        <div className="form-check">
+      <Col lg={schema.grid || 12} className={`preview-input-container`}>
+        <div className={`form-check ${returnValidClass("container")}`}>
           <input className="form-check-input" type="checkbox" id={`${entirePathDataWithKey}-${idx}`} name={schema.key} defaultChecked={value} value={value} onChange={handleChange} />
-          <label className="form-check-label" htmlFor={`${entirePathDataWithKey}-${idx}`}>
-            {schema.label}{schema.required?"*":""}
+          <label className={`${schema.required?"label-required":""} form-check-label`} htmlFor={`${entirePathDataWithKey}-${idx}`}>
+            {schema.label}{schema.required ? "*" : ""}
           </label>
         </div>
-        <div className={`preview-input-err-msg ${!land?"quit-pl":""}`}>
+        <div className={`preview-input-err-msg`}>
           <ReturnErrorMesages />
         </div>
       </Col>
@@ -339,21 +375,22 @@ export const RenderInput = ({
   }
   if (schema.type === "checkbox-conditional") {
     return (
-      <Col lg="12" className={`preview-input-container fade-in-image ${!land?"quit-pl":""} quit-mb`}>
-        <Col lg="12" className={`preview-input-container fade-in-image ${!land?"quit-pl":""}`}>
-          <div className="form-check">
+      <>
+        <Col lg={schema.grid || 12} className={`preview-input-container`}>
+          <div className={`form-check ${returnValidClass("container")}`}>
             <input className="form-check-input" type="checkbox" name={schema.key} id={schema.key} defaultChecked={value} value={value} onChange={handleChange} />
-            <label className="form-check-label" htmlFor={schema.key}>
-              {schema.label}{schema.required?"*":""}
+            <label className={`${schema.required?"label-required":""} form-check-label`} htmlFor={schema.key}>
+              {schema.label}{schema.required ? "*" : ""}
             </label>
           </div>
-          <div className={`preview-input-err-msg ${!land?"quit-pl":""}`}>
+          <div className={`preview-input-err-msg`}>
             <ReturnErrorMesages />
           </div>
         </Col>
-        <Row className={`${!land?"quit-pl":""}`}>
-          <ConditionalInputs 
+        <div></div>
+          <ConditionalInputs
             parentValue={value}
+            parentOrigin={origin}
             conditionals={schema.conditionals}
             pathData={entirePathDataWithKey}
             entireSchema={entireSchema}
@@ -365,22 +402,21 @@ export const RenderInput = ({
             setAttachments={setAttachments}
             tryToNext={tryToNext}
             activeStep={activeStep}
-            land={land}
             setSchemaState={setSchemaState}
             setFormData={setFormData}
             setIsValid={setIsValid}
-          />
-        </Row>
-      </Col>
+            />
+          <div></div>
+      </>
     )
   }
   if (schema.type === "file") {
     return (
-      <Col lg="12" className={`preview-input-container fade-in-image ${!land?"quit-pl":""}`} onDrop={hdlDropAttch} onDragOver={hdlDragOvAttch}>
-        <label className="form-check-label">
+      <Col lg={schema.grid || 12} className={`preview-input-container`} onDrop={hdlDropAttch} onDragOver={hdlDragOvAttch}>
+        <label className={`${schema.required?"label-required":""}`}>
           {schema.label}
         </label>
-        <div className="attachments pointer" onClick={()=>inputAttachment.current.click()} >
+        <div className="attachments pointer" onClick={() => inputAttachment.current.click()} >
 
           <div className="attachments-icon-container">
             <Icon name="gallery" />
@@ -389,7 +425,7 @@ export const RenderInput = ({
             <Icon name="outline_video" />
             <Icon name="outline_document" />
           </div>
-          
+
           <div className="attachments-instructions">
             <p>Arrastre sus archivos</p>
             <button className="btn attachments-btn">O haga click aquí</button>
@@ -397,15 +433,15 @@ export const RenderInput = ({
 
         </div>
         <input className={`form-control ${returnValidClass()} w-100`} name={schema.key} type="file" onChange={hdlAttch} multiple hidden ref={inputAttachment} />
-        <div className={`preview-input-err-msg ${!land?"quit-pl":""}`}>
+        <div className={`preview-input-err-msg`}>
           {
             attachments !== null &&
-            [...attachments.entries()].map((item,idx) => {
+            [...attachments.entries()].map((item, idx) => {
               return <li key={idx}>{item[1].name}</li>
             })
           }
         </div>
-        <div className={`preview-input-err-msg ${!land?"quit-pl":""}`}>
+        <div className={`preview-input-err-msg`}>
           <ReturnErrorMesages />
         </div>
       </Col>
@@ -414,20 +450,22 @@ export const RenderInput = ({
   if (schema.type === "date") {
     const initialDate = new Date();
     return (
-      <Col lg="6" className={`preview-input-container fade-in-image ${!land?"quit-pl":""}`}>
-        <div>
-          <label>
-            {schema.label}{schema.required?"*":""}
+      <Col lg={schema.grid || 12} className={`preview-input-container`}>
+        <div className={`${returnValidClass("container")}`}>
+          <label className={`${schema.required?"label-required":""}`} >
+            {schema.label}{schema.required ? "*" : ""}
           </label>
           <div className="preview-input-container-inp">
-            <DatePicker
-              className={`form-control ${returnValidClass()} w-100`}
-              selected={ isValidDate() ? value : initialDate }
-              onChange={(value)=>hdlChg({e:{target:{name: schema.key, value, type: "date"}}, ...utilHdlChg})}
+            <MCInput 
+              type="date" 
+              className={`${returnValidClass()}`}
+              selected={isValidDate() ? value : initialDate}
+              dateFormat="dd/MM/yy"
+              onChange={(value) => hdlChg({ e: { target: { name: schema.key, value, type: "date" } }, ...utilHdlChg })}
             />
           </div>
         </div>
-        <div className={`preview-input-err-msg ${!land?"quit-pl":""}`}>
+        <div className={`preview-input-err-msg`}>
           <ReturnErrorMesages />
         </div>
       </Col>
@@ -436,58 +474,117 @@ export const RenderInput = ({
   if (schema.type === "date-range") {
     const initialDate = new Date();
     return (
-      <Col lg="12" className="preview-input-container fade-in-image">
-        <div>
-          <label>
-            {schema.label}{schema.required?"*":""}
-          </label>
-          <Row>
-            <Col md="6">
-              <label>Fecha inicial</label>
-              <div className="preview-input-container-inp">
-                <DatePicker
-                  className={`form-control ${returnValidClass()} w-100`}
-                  selected={isValidDate("start")?returnDateRange("start"):initialDate}
-                  onChange={(value)=>hdlChg({e:{target:{name: schema.key, value, type: "date-range-start"}}, ...utilHdlChg})}
-                />
+      <>
+        {
+          schema.grid !== 12
+          ? <>
+              <Col lg={schema.grid || 12} className={`preview-input-container`}>
+                <label className={`${schema.required?"label-required":""}`}>
+                  {schema.label}{schema.required ? "*" : ""} <br />
+                  Fecha inicial
+                </label>
+                <div className="preview-input-container-inp">
+                  <MCInput 
+                    type="date" 
+                    className={`${returnValidClass()}`}
+                    selected={isValidDate("start") ? returnDateRange("start") : initialDate}
+                    dateFormat="dd/MM/yy"
+                    onChange={(value) => hdlChg({ e: { target: { name: schema.key, value, type: "date-range-start" } }, ...utilHdlChg })}
+                  />
+                </div>
+                <div className={`preview-input-err-msg`}>
+                  <ReturnErrorMesages />
+                </div>
+              </Col>
+              <Col lg={schema.grid || 12} className={`preview-input-container`}>
+                <br />
+                <label>Fecha final</label>
+                <div className="preview-input-container-inp">
+                  <MCInput 
+                    type="date" 
+                    className={`${returnValidClass()}`}
+                    selected={isValidDate("end") ? returnDateRange("end") : initialDate}
+                    dateFormat="dd/MM/yy"
+                    onChange={(value) => hdlChg({ e: { target: { name: schema.key, value, type: "date-range-end" } }, ...utilHdlChg })}
+                  />
+                </div>
+              </Col>
+            </>
+          : <Col lg={schema.grid || 12} className="preview-input-container">
+              <div className={`${returnValidClass("container")}`}>
+                <label className={`${schema.required?"label-required":""}`}>
+                  {schema.label}{schema.required ? "*" : ""}
+                </label>
+                <Row>
+                  <Col md="6" className="ps-lg-0">
+                    <label>Fecha inicial</label>
+                    <div className="preview-input-container-inp">
+                    <MCInput 
+                      type="date" 
+                      className={`${returnValidClass()}`}
+                      selected={isValidDate("start") ? returnDateRange("start") : initialDate}
+                      dateFormat="dd/MM/yy"
+                      onChange={(value) => hdlChg({ e: { target: { name: schema.key, value, type: "date-range-start" } }, ...utilHdlChg })}
+                    />
+                    </div>
+                  </Col>
+                  <Col md="6" className="pe-lg-0">
+                    <label>Fecha final</label>
+                    <div className="preview-input-container-inp">
+                    <MCInput 
+                      type="date" 
+                      className={`${returnValidClass()}`}
+                      selected={isValidDate("end") ? returnDateRange("end") : initialDate}
+                      dateFormat="dd/MM/yy"
+                      onChange={(value) => hdlChg({ e: { target: { name: schema.key, value, type: "date-range-end" } }, ...utilHdlChg })}
+                    />
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+              <div className={`preview-input-err-msg`}>
+                <ReturnErrorMesages />
               </div>
             </Col>
-            <Col md="6">
-              <label>Fecha final</label>
-              <div className="preview-input-container-inp">
-                <DatePicker 
-                  className={`form-control ${returnValidClass()} w-100`}
-                  selected={ isValidDate("end")?returnDateRange("end"):initialDate}
-                  onChange={(value)=>hdlChg({e:{target:{name: schema.key, value, type: "date-range-end"}}, ...utilHdlChg})}
-                />
-              </div>
-            </Col>
-          </Row>
-        </div>
-      </Col>
+        }
+      </>
     )
   }
   if (schema.type === "subject") {
     return (
-      <Col lg="6" className={`preview-input-container fade-in-image ${!land?"quit-pl":""}`}>
-          <label className="w-100">{schema.label}{schema.required?"*":""}</label>
-          <div className="preview-input-container-inp">
-            <input autoComplete="off" type="text" className={`form-control ${returnValidClass()} w-100`} name={schema.key} defaultValue={value} onChange={handleChange} />
-          </div>
-          <div className={`preview-input-err-msg ${!land?"quit-pl":""}`}>
-            <ReturnErrorMesages />
-          </div>
+      <Col lg={schema.grid || 12} className={`preview-input-container`}>
+        <label className={`${schema.required?"label-required":""}`}>{schema.label}{schema.required ? "*" : ""}</label>
+        <div className={`preview-input-container-inp ${returnValidClass("container")}`}>
+          <MCInput 
+            autoComplete="off" 
+            type="text" 
+            className={`${returnValidClass()}`} 
+            name={schema.key} 
+            defaultValue={value} 
+            onChange={handleChange} 
+          />
+        </div>
+        <div className={`preview-input-err-msg`}>
+          <ReturnErrorMesages />
+        </div>
       </Col>
     )
   }
   if (schema.type === "description") {
     return (
-      <Col lg="6" className={`preview-input-container fade-in-image ${!land?"quit-pl":""}`}>
-        <label className="w-100" >{schema.label}{schema.required?"*":""}</label>
-        <div className="preview-input-container-inp">
-          <textarea autoComplete="off" type="text" className={`form-control ${returnValidClass()} w-100`} name={schema.key} defaultValue={value} onChange={handleChange} ></textarea>
+      <Col lg={schema.grid || 12} className={`preview-input-container`}>
+        <label className={`${schema.required?"label-required":""}`}>{schema.label}{schema.required ? "*" : ""}</label>
+        <div className={`preview-input-container-inp ${returnValidClass("container")}`}>
+          <MCInput 
+            type="textarea"
+            autoComplete="off" 
+            className={`${returnValidClass()}`} 
+            name={schema.key} 
+            defaultValue={value} 
+            onChange={handleChange}
+          />
         </div>
-        <div className={`preview-input-err-msg ${!land?"quit-pl":""}`}>
+        <div className={`preview-input-err-msg`}>
           <ReturnErrorMesages />
         </div>
       </Col>
@@ -495,87 +592,86 @@ export const RenderInput = ({
   }
   if (schema.type === "catalog-select" || schema.type === "catalog-radio") {
     return (
-      <Col md="12" className={`${!land?"quit-pl":""}`}>
-        <label>{schema.label}{schema.required?"*":""}</label>
-        <Row>
-          <CatalogueInput 
-            schema={schema}
-            scope={schema}
-            valid={valid}
-            value={value}
-            idx={idx}
-            handleValidate={handleValidate}
-            returnValidClass={returnValidClass}
-            ReturnErrorMesages={ReturnErrorMesages}
-            pathSchema={entirePathSchema}
-            pathData={entirePathData}
-            entirePathDataWithKey={entirePathDataWithKey}
-            land={land}
-            colsLg={colsLg}
-            entireSchema={entireSchema}
-            entireFormData={entireFormData}
-            setSchemaState={setSchemaState}
-            setFormData={setFormData}
-          />
-          <div className={`preview-input-err-msg ${!land?"quit-pl":""}`}>
-            <ReturnErrorMesages />
-          </div>
-        </Row>
-      </Col>
+      <>
+        <div></div>
+        <label className={`${schema.required?"label-required":""}`}>{schema.label}{schema.required ? "*" : ""}</label>
+        <CatalogueInput
+          schema={schema}
+          scope={schema}
+          valid={valid}
+          value={value}
+          idx={idx}
+          origin={origin}
+          handleValidate={handleValidate}
+          returnValidClass={returnValidClass}
+          ReturnErrorMesages={ReturnErrorMesages}
+          pathSchema={entirePathSchema}
+          pathData={entirePathData}
+          entirePathDataWithKey={entirePathDataWithKey}
+          colsLg={colsLg}
+          entireSchema={entireSchema}
+          entireFormData={entireFormData}
+          setSchemaState={setSchemaState}
+          setFormData={setFormData}
+          tryToNext={tryNext}
+        />
+        <div className="preview-input-err-msg">
+          <ReturnErrorMesages />
+        </div>
+        <div></div>
+      </>
     )
   }
-  if (schema.type === "catalog-select-conditional") {
+  if (schema.type === "catalog-select-conditional" || schema.type === "catalog-radio-conditional") {
     return (
-      <Col md="12" className={`${!land?"quit-pl":""} quit-mb`}>
-        <label>{schema.label}{schema.required?"*":""}</label>
-        <Row>
-          <Col md="12" className={`${!land?"quit-pl":""}`}>
-            <CatalogueInput 
-              schema={schema}
-              scope={schema}
-              valid={valid}
-              value={value}
-              idx={idx}
-              handleValidate={handleValidate}
-              returnValidClass={returnValidClass}
-              ReturnErrorMesages={ReturnErrorMesages}
-              pathSchema={entirePathSchema}
-              pathData={entirePathData}
-              entirePathDataWithKey={entirePathDataWithKey}
-              land={land}
-              colsLg={colsLg}
-              entireSchema={entireSchema}
-              entireFormData={entireFormData}
-              setSchemaState={setSchemaState}
-              setFormData={setFormData}
-            />
-            <div className="preview-input-err-msg">
-              <ReturnErrorMesages />
-            </div>
-          </Col>
-          <Row className={`${!land?"quit-pl":""}`}>
-            <ConditionalInputs 
-              parentValue={value}
-              conditionals={schema.conditionals}
-              pathData={entirePathDataWithKey}
-              entireSchema={entireSchema}
-              entireFormData={entireFormData}
-              entireIsValid={entireIsValid}
-              entirePathSchema={entirePathSchema}
-              entirePathData={entirePathData}
-              attachments={attachments}
-              setAttachments={setAttachments}
-              tryToNext={tryToNext}
-              activeStep={activeStep}
-              land={land}
-              colsLg={12}
-              setSchemaState={setSchemaState}
-              setFormData={setFormData}
-              setIsValid={setIsValid}
-            />
-          </Row>
-        </Row>
-      </Col>
+      <>
+        <div></div>
+        <label className={`${schema.required?"label-required":""}`}>{schema.label}{schema.required ? "*" : ""}</label>
+        <CatalogueInput
+          schema={schema}
+          scope={schema}
+          valid={valid}
+          value={value}
+          idx={idx}
+          origin={origin}
+          handleValidate={handleValidate}
+          returnValidClass={returnValidClass}
+          ReturnErrorMesages={ReturnErrorMesages}
+          pathSchema={entirePathSchema}
+          pathData={entirePathData}
+          entirePathDataWithKey={entirePathDataWithKey}
+          colsLg={colsLg}
+          entireSchema={entireSchema}
+          entireFormData={entireFormData}
+          setSchemaState={setSchemaState}
+          setFormData={setFormData}
+          tryToNext={tryNext}
+        />
+        <div className="preview-input-err-msg">
+          <ReturnErrorMesages />
+        </div>
+        <ConditionalInputs
+          parentValue={value}
+          parentOrigin={origin}
+          conditionals={schema.conditionals}
+          pathData={entirePathDataWithKey}
+          entireSchema={entireSchema}
+          entireFormData={entireFormData}
+          entireIsValid={entireIsValid}
+          entirePathSchema={entirePathSchema}
+          entirePathData={entirePathData}
+          attachments={attachments}
+          setAttachments={setAttachments}
+          tryToNext={tryToNext}
+          activeStep={activeStep}
+          colsLg={12}
+          setSchemaState={setSchemaState}
+          setFormData={setFormData}
+          setIsValid={setIsValid}
+        />
+        <div></div>
+      </>
+
     )
   }
   if (schema.type === "catalog-error") {
@@ -586,8 +682,7 @@ export const RenderInput = ({
 }
 
 // Vista previa del formulario
-export const PreviewForm = ({ 
-  formIdentifier,
+export const PreviewForm = ({
   steps,
   schemaState,
   formData,
@@ -595,29 +690,16 @@ export const PreviewForm = ({
   setSchemaState,
   setFormData,
   setIsValid,
-  showButtons=true,
-  stepClick=false,
-  land=false
+  showButtons = true,
+  stepClick = false,
 }) => {
-
-  const refContainer = useRef(null);
 
   const [activeStep, setActiveStep] = useState(0);
   const [rerender, setRerender] = useState(false);
   const [allowStepClick, setAllowStepClick] = useState(stepClick);
   const [tryToNext, setTryToNext] = useState(null);
   const [attachments, setAttachments] = useState(null);
-
-  useEffect(() => {
-    if (refContainer.current) {
-      const ps = new PerfectScrollbar(refContainer.current, {
-        wheelSpeed: .4,
-        minScrollbarLength: 20,
-        suppressScrollX: true,
-        swipeEasing: 'ease-in-out'
-      });
-    }
-  }, [refContainer.current]);
+  const formRef = useRef(null)
 
   useEffect(() => {
     setRerender(true);
@@ -630,13 +712,13 @@ export const PreviewForm = ({
   }, [rerender]);
 
   useEffect(() => {
-    const newTryToNext = steps.map(item=>false);
+    const newTryToNext = steps.map(item => false);
     setTryToNext(newTryToNext);
   }, [steps]);
-  
-  const handleSubmit = async() => {
-    let isValidForm = hdlValidStep({ lastStep: true });
-    if (!(isValidForm===false)) {
+
+  const handleSubmit = async () => {
+    let isValidForm = handleValidStep({ lastStep: true });
+    if (!(isValidForm === false)) {
       try {
         let formAnswers = {};
         var attachments_id = [];
@@ -674,7 +756,7 @@ export const PreviewForm = ({
         })
         // console.log(resp);
       } catch (error) {
-        Swal.fire( 'Error', 'An error has occurred while sending the form', 'error');
+        Swal.fire('Error', 'An error has occurred while sending the form', 'error');
         console.log(error);
       }
     } else {
@@ -682,65 +764,59 @@ export const PreviewForm = ({
     }
   }
 
-  const hdlActStp = (step) => {
-    setActiveStep(step);
-  };
+  const handleValidStep = ({ lastStep }) => {
 
-  const hdlValidStep = ({ lastStep }) => {
-  
-    const validForNextStep = (item, pathSchema, pathData, nestNum = 0) => {
-      let key = _.get(schemaState, `${activeStep}.${pathSchema}`);
-      key = key.type.includes("catalog") ? key.catalogue : key.key;
-
-      if (item[key].length>0) return false;
-
-      if ("conditionals" in item) {
-        const parentValue = _.get(formData, `${activeStep}.${pathData}.${key}`);
-        const conditionals = _.get(schemaState, `${activeStep}.${pathSchema}.conditionals`);
-        const nextValid = conditionals.find(item2=>item2.caseOf===parentValue);
-        const nextValidIdx = conditionals.findIndex(item2=>item2.caseOf===parentValue);
-
-        if (nextValid) {
-          const validConditionals = item.conditionals.map((item2, idx2)=> {
-            return validForNextStep(
-              item2, 
-              `${pathSchema}.conditionals.${nextValidIdx}.nestChildren.${idx2}`,
-              `${pathData}.conditionals`,
-              nestNum = nestNum + 1
-            )
-          })
-          if (validConditionals.includes(false)) return false;
+    const validForNextStep = (inputs) => {
+      for (const inp of inputs) {
+        const { conditionals, ...rest} = inp
+        for (const key in rest) {
+          const valor = rest[key];
+          if (valor.length > 0) {
+            return false;
+          }
+        }
+        if (conditionals) {
+          const conditionalsValid = validForNextStep(conditionals);
+          if (!conditionalsValid) {
+            return false;
+          }
         }
       }
-    }
+      return true;
+    };
 
-    const isValidStep = isValid[activeStep].map((item, idx)=> {
-      const validatedStep = validForNextStep(item, `${idx}`, `${idx}`);
-      return validatedStep;
-    })
+    const tempIsValid = _.cloneDeep(isValid[activeStep]);
+    const isValidStep = validForNextStep(tempIsValid);
 
-    setTryToNext(tryToNext.map((item,idx)=>idx===activeStep ? true : item));
+    setTryToNext(tryToNext.map((item, idx) => idx === activeStep ? true : item));
 
-    // Siguiente step en caso de que no sea el ultimo
-    if (!isValidStep.includes(false)) {
+    if (isValidStep) {
       if (!lastStep) {
-        hdlActStp(activeStep+1);
+        setActiveStep(activeStep + 1);
+        handleScroll()
       }
+      return true;
     } else {
-      if (lastStep) {
-        return false;
-      }
+      return false;
     }
 
   }
 
+  const handleScroll = () => {
+    if (formRef.current) {
+      const rect = formRef.current.getBoundingClientRect();
+      const offset = 50;
+      window.scrollBy({ top: rect.top - offset, behavior: "smooth" });
+    }
+  };
+
   return (
-    <>
-      <div className={`form-preview`} onSubmit={(e)=>handleSubmit(e)}>
-        <div className="form-preview-header">
+    <div className="mt-20" ref={formRef}>
+      <Container fluid="md" className="dyTheme1 dyBorder1 p-5">
+
+        <div className="form-preview-header mb-30 ">
           <div className="form-preview-header-name">
-            <h3>{steps[activeStep].title||"Step sin nombre"}</h3>
-            {/* <p>Description</p> */}
+            <h3>{steps[activeStep].title || "Step sin nombre"}</h3>
           </div>
           <div className="form-preview-header-steper">
             <CDBStepper
@@ -752,83 +828,90 @@ export const PreviewForm = ({
               steps={[...steps.map((step, index) => index)]}>
               {schemaState.map((step, index) => (
                 <CDBStep
-                  key={index}
-                  id={index}
-                  icon={`stack-${index + 1}x`}
+                  key={index + 1}
+                  id={index + 1}
                   name={steps[index]?.title || "Sin Nombre"}
-                  handleClick={allowStepClick?()=>hdlActStp(index):()=>{}}
-                  active={activeStep}
+                  handleClick={allowStepClick ? () => setActiveStep(index) : () => { }}
+                  active={activeStep + 1}
+                  activeBgColor='#009ed7'
+                  activeTextColor='#009ed7'
+                  incompleteBgColor='#ffaf00'
+                  incompleteTextColor='#ffefc0'
+                  completeBgColor='#44cb67'
+                  completeTextColor='white'
                 />
               ))}
             </CDBStepper>
           </div>
         </div>
+        <div className={`form-preview`} onSubmit={(e) => handleSubmit(e)}>
+          {
+            !rerender && schemaState &&
+            <div className="form-preview-inputs animation">
+              <Row className="pr-3 pl-1">
+                {
+                  schemaState[activeStep].map((sch, idx) => (
+                    <RenderInput
+                      key={`form-input-${idx}`}
+                      entireSchema={schemaState}
+                      entireFormData={formData}
+                      entireIsValid={isValid}
+                      entirePathSchema={`${activeStep}.${idx}`}
+                      entirePathData={`${activeStep}.${idx}`}
+                      setSchemaState={setSchemaState}
+                      setFormData={setFormData}
+                      setIsValid={setIsValid}
+                      tryToNext={tryToNext}
+                      activeStep={activeStep}
+                      idx={idx}
+                      attachments={attachments}
+                      setAttachments={setAttachments}
+                      origin={`stepers::${activeStep}::form::json-schema::${idx}`}
+                    />
+                  ))
+                }
+              </Row>
+            </div>
+          }
+          <pre>
+            {/* {JSON.stringify(schemaState,null,2)} */}
+            {/* {JSON.stringify(formData,null,2)} */}
+            {/* {JSON.stringify(isValid,null,2)} */}
+            {/* {JSON.stringify(tryToNext,null,2)} */}
+          </pre>
+        </div>
         {
-          !rerender && schemaState &&
-          <div className="form-preview-inputs" ref={refContainer} style={{height: land && 480, marginBottom: land && 16}}>
-            <Row className="pr-3 pl-1">
-              {
-                schemaState[activeStep].map((sch,idx) => (
-                  <RenderInput 
-                    key={`form-input-${idx}`}
-                    entireSchema={schemaState}
-                    entireFormData={formData}
-                    entireIsValid={isValid}
-                    entirePathSchema={`${activeStep}.${idx}`}
-                    entirePathData={`${activeStep}.${idx}`}
-                    setSchemaState={setSchemaState}
-                    setFormData={setFormData}
-                    setIsValid={setIsValid}
-                    tryToNext={tryToNext}
-                    activeStep={activeStep}
-                    idx={idx}
-                    land={land}
-                    attachments={attachments}
-                    setAttachments={setAttachments}
-                  />
-                ))
-              }
-            </Row>
-          </div>
-        }
-      </div>
-      {
-        showButtons &&
+          showButtons &&
           <div className="form-buttons">
-            <pre>
-              {/* {JSON.stringify(schemaState,null,2)} */}
-              {/* {JSON.stringify(formData,null,2)} */}
-              {/* {JSON.stringify(isValid,null,2)} */}
-              {/* {JSON.stringify(tryToNext,null,2)} */}
-            </pre>
             {
-              activeStep!==0 && 
-                <Button 
-                  style={{ backgroundColor: "#009ED7" }}
-                  className='btn-form' 
-                  onClick={()=>setActiveStep((active)=>active-1)}>
-                  Anterior
-                </Button>
+              activeStep !== 0 &&
+              <Button
+                style={{ backgroundColor: "#009ED7" }}
+                className='btn-form ant'
+                onClick={() => setActiveStep((active) => active - 1)}>
+                Anterior
+              </Button>
             }
             {
-              activeStep===steps.length-1
-              ? <>
-                  <Button 
+              activeStep === steps.length - 1
+                ? <>
+                  <Button
                     style={{ backgroundColor: "#152235" }}
-                    className='btn-send' 
+                    className='btn-send'
                     onClick={handleSubmit}>
                     Enviar
                   </Button>
                 </>
-              : <Button
+                : <Button
                   style={{ backgroundColor: "#009ED7" }}
-                  className='btn-form' 
-                  onClick={hdlValidStep}>
+                  className='btn-form'
+                  onClick={handleValidStep}>
                   Siguiente
                 </Button>
             }
           </div>
-      }
-    </>
+        }
+      </Container>
+    </div>
   )
 }

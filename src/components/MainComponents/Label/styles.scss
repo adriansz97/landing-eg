@@ -1,0 +1,22 @@
+@import '../../../theme/colors';
+
+label.selected {
+    color: #546E7A !important;
+
+    &.dark {
+        color: #fff !important;
+    }
+}
+
+label {
+    font-weight: 600;
+    font-size: 1em;
+    margin-bottom: 0.5em !important;
+    &.dark {
+      color: $color-coolGray;
+    }
+  }
+
+.required {
+    color: #d81b60 !important;
+}

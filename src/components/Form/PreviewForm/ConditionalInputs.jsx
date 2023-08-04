@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import _ from "lodash";
 import { RenderInput, hdlChg, hdlSchm, hdlIsVal } from './PreviewForm'
-import { resetInputsCatalogues, returnFormData, returnIsValid } from "./formStarter";
+import { checkTypeOfConditional, resetInputsCatalogues, returnFormData, returnIsValid } from "./formStarter";
 
 export const ConditionalInputs = ({ 
   entireSchema, entirePathSchema, setSchemaState,
@@ -9,6 +9,7 @@ export const ConditionalInputs = ({
   entireIsValid, setIsValid,
   conditionals = [], 
   parentValue, 
+  parentOrigin,
   attachments, 
   setAttachments, 
   tryToSend,
@@ -20,36 +21,33 @@ export const ConditionalInputs = ({
   
   const [currentConditionals, setCurrentConditionals] = useState([]);
   const [currentConditionalsIdx, setCurrentConditionalsIdx] = useState(null);
-  const [rerendering, setRerendering] = useState(true);
+  const [rerendering, setRerendering] = useState(false);
+  const [parentValueState, setParentValueState] = useState(parentValue);
 
   const changeValidationForConditionals = (getCurrentConditionals, getCurrentConditionalsIdx) => {
-    const newSchemaConditionals = Array.isArray(getCurrentConditionals) && resetInputsCatalogues(getCurrentConditionals) || [];
-    const newDataConditionals = Array.isArray(getCurrentConditionals) && returnFormData(getCurrentConditionals) || [];
-    const newValidConditionals = Array.isArray(getCurrentConditionals) && returnIsValid(getCurrentConditionals) || [];
-
-    hdlSchm({action: "resetInputs", pathSchema: `${entirePathData}.conditionals.${getCurrentConditionalsIdx}.nestChildren`, inputs: newSchemaConditionals, entireSchema, setSchemaState})
-    hdlChg({e:{target:{value: newDataConditionals}}, entirePathData, params: { conditionals: newDataConditionals }, entireFormData, setFormData})
-    hdlIsVal({errors: newValidConditionals, entirePathDataWithKey: `${entirePathData}.conditionals`, entireIsValid, setIsValid});
+    if (getCurrentConditionalsIdx!=currentConditionalsIdx) {
+      const newSchemaConditionals = Array.isArray(getCurrentConditionals) && resetInputsCatalogues(getCurrentConditionals) || [];
+      const newDataConditionals = Array.isArray(getCurrentConditionals) && returnFormData(getCurrentConditionals, `${parentOrigin}::conditionals::${getCurrentConditionalsIdx}::nestChildren`) || [];
+      const newValidConditionals = Array.isArray(getCurrentConditionals) && returnIsValid(getCurrentConditionals) || [];
+      hdlSchm({action: "resetInputs", pathSchema: `${entirePathData}.conditionals.${getCurrentConditionalsIdx}.nestChildren`, inputs: newSchemaConditionals, entireSchema, setSchemaState})
+      hdlChg({e:{target:{value: newDataConditionals}}, entirePathData, params: { conditionals: newDataConditionals }, entireFormData, setFormData})
+      hdlIsVal({errors: newValidConditionals, entirePathDataWithKey: `${entirePathData}.conditionals`, entireIsValid, setIsValid});
+      setParentValueState(parentValue);
+      setRerendering(true);
+    }
   }
   
   const changeSchema = () => {
     if (!rerendering) {
-      const getCurrentConditionals = conditionals.find(item=>item.caseOf===parentValue);
-      const getCurrentConditionalsIdx = conditionals.findIndex(item=>item.caseOf===parentValue);
+      const getCurrentConditionals = conditionals.find(item=>checkTypeOfConditional(item, parentValue));
+      const getCurrentConditionalsIdx = conditionals.findIndex(item=>checkTypeOfConditional(item, parentValue));
       setCurrentConditionals(getCurrentConditionals?.nestChildren);
       setCurrentConditionalsIdx(getCurrentConditionalsIdx);
-      changeValidationForConditionals(getCurrentConditionals?.nestChildren, getCurrentConditionalsIdx);
-      setRerendering(true);
+      if (parentValueState != parentValue) {
+        changeValidationForConditionals(getCurrentConditionals?.nestChildren, getCurrentConditionalsIdx);
+      }
     }
   }
-
-  useEffect(() => {
-    const getCurrentConditionals = conditionals.find(item=>item.caseOf===parentValue);
-    const getCurrentConditionalsIdx = conditionals.findIndex(item=>item.caseOf===parentValue);
-    setCurrentConditionals(getCurrentConditionals?.nestChildren || []);
-    setCurrentConditionalsIdx(getCurrentConditionalsIdx);
-    setRerendering(false);
-  }, []);
 
   useEffect(() => {
     if (rerendering) {
@@ -58,10 +56,8 @@ export const ConditionalInputs = ({
   }, [rerendering]);
 
   useEffect(() => {
-    changeSchema(parentValue);
+    changeSchema();
   }, [parentValue]);
-
-  // useMemo(() => changeSchema(parentValue), [parentValue]);
   
   return (
     <>
@@ -69,7 +65,7 @@ export const ConditionalInputs = ({
         (Array.isArray(currentConditionals)) && (currentConditionals.length > 0) && (currentConditionalsIdx >= 0) && !rerendering &&
         currentConditionals.map((sch,idx) => (
           <RenderInput
-            key={`form-input-conditional-${idx}`}
+            key={`${parentOrigin}::conditionals::${currentConditionalsIdx}::nestChildren::${idx}`}
             idx={idx}
             tryToSend={tryToSend}
             entireSchema={entireSchema}
@@ -87,6 +83,7 @@ export const ConditionalInputs = ({
             setSchemaState={setSchemaState}
             setFormData={setFormData}
             setIsValid={setIsValid}
+            origin={`${parentOrigin}::conditionals::${currentConditionalsIdx}::nestChildren::${idx}`}
           />
         ))
       }

@@ -4,10 +4,6 @@ import './theme/styles.scss'
 
 export const App = () => {
   return (
-    <AppProvider>
-      <ThemeProvider>
-        <AppRouter />
-      </ThemeProvider>
-    </AppProvider>
+    <AppRouter />
   )
 }

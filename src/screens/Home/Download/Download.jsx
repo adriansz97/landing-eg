@@ -3,7 +3,7 @@ import { Row, Col, Modal } from "react-bootstrap";
 import { CDBBtn, CDBIcon } from "cdbreact";
 import { useIsHovering } from "../../../hooks/useIsHovering";
 import App from "../../../assets/images/app.png";
-import Qr from "../../../assets/images/1-Surtidora.png";
+import Qr from "../../../assets/images/qr.png";
 import AppStore from "../../../assets/images/app-store.png";
 import GooglePlay from "../../../assets/images/google-play.png";
 import "./styles.scss";
@@ -26,7 +26,7 @@ const ModalVideo = ({ infoClient, show, onHide }) => {
     )
 }
 
-export const Download = ({infoClient, primaryColor, secondaryColor, downloadRef }) => {
+export const Download = ({infoClient, downloadRef }) => {
 
     const [ isHovering, handleMouseOver, handleMouseOut ] = useIsHovering();
     const [showModalVideo, setShowModalVideo] = useState(false);

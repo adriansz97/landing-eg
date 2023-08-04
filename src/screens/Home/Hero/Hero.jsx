@@ -1,17 +1,11 @@
 import { CDBBtn } from "cdbreact";
-import Surtidora from "../../../assets/images/surdep-pp.png";
-import Larrabezua from "../../../assets/images/larr-pp.jpg";
+import Pp from "../../../assets/images/pp.png";
 import { useIsHovering } from "../../../hooks/useIsHovering";
 import "./styles.scss";
 
 export const Hero = ({ infoClient, scrollToRef, primaryColor, secondaryColor, primaryColorText, secondaryColorText }) => {
 
     const [ isHovering, handleMouseOver, handleMouseOut ] = useIsHovering();
-
-    let HeroImg = Surtidora;
-    if (infoClient.clientName.toLowerCase()==="larrabezua grupo empresarial") {
-        HeroImg = Larrabezua;
-    }
 
 	return(
 		<div className="home-hero">
@@ -20,13 +14,13 @@ export const Hero = ({ infoClient, scrollToRef, primaryColor, secondaryColor, pr
                 <div style={{maxWidth:"1320px", margin:"0 auto"}}>                        
                     <div className="main-text">
                         <div className="main-img-container">
-                            <img src={HeroImg} alt="hero" />
+                            <img src={Pp} alt="hero" />
                         </div>
                         <div className="ml-0 ml-md-5">
                             {
                                 infoClient?.hero?.title
-                                ?   <h1 className="my-4 title">{infoClient?.hero?.title}</h1>
-                                :   <h1 className="my-4 title text-uppercase">Línea Ética de <br /> {infoClient.clientName}</h1>
+                                ?   <h1 className="my-4 ms-lg-2 title">{infoClient?.hero?.title}</h1>
+                                :   <h1 className="my-4 ms-lg-2 title text-uppercase">Línea Ética de <br /> {infoClient.clientName}</h1>
                             }
                             <div className="hero-btns">
                                 <CDBBtn 

@@ -50,7 +50,7 @@ export const BeAgent = ({ infoClient, beAgentRef, primaryColor, secondaryColor }
           : <p>Por medio de este sitio podrás denunciar aquellas conductas no éticas de manera sencilla, confidencial, segura y con la opción de hacerlo de forma anónima. El sistema es operado por un tercero independiente a {infoClient.clientName}, líder en el país y especialista en la gestión de denuncias y reportes (EthicsGlobal).</p>
         }
       </div>
-      <div className="form-container mt-5">
+      <div className="form-container mt-5" id="main-form-container">
         {
           isLoading 
           ? <div>Loading...</div>

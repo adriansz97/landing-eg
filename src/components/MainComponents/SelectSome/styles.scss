@@ -1,0 +1,54 @@
+.chipBox {
+  border: 1px solid #a0d4fa;
+  background-color: #e8f5fd;
+  color: #455a64;
+  padding: 3px 5px 0 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  width: auto;
+  height: 26px;
+  align-self: center;
+  justify-content: center;
+  margin-right: 0.5em;
+
+  svg {
+    width: 1rem !important;
+    height: 1rem !important;
+    margin-left: 1rem !important;
+
+  }
+
+  // &.dark-mode {
+  //   color: #72909d;
+  //   background-color: #2d3243;
+  //   border: solid 1px #3f465e;
+  // }
+}
+
+.dark-mode .chipBox {
+  color: #72909d;
+  background-color: #2d3243;
+  border: solid 1px #3f465e;
+}
+
+.chipClose {
+  align-self: center;
+  justify-content: center;
+  cursor: pointer;
+
+  path {
+    fill: #77c6ff;
+  }
+
+  // &.dark-mode {
+  //   path {
+  //     fill: #8aa1ac;
+  //   }
+  // }
+}
+
+.dark-mode .chipClose {
+  path {
+    fill: #8aa1ac;
+  }
+}

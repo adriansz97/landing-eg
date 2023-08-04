@@ -46,7 +46,7 @@ export const ContactCarousel = ({ infoClient, primaryColor, secondaryColor, scro
                     customRightArrow={<CustomRightArrow />}
                 >
                     <div className="item">
-                        <a href={infoClient.phone}>
+                        <a href={`tel:${infoClient.phone}`}>
                             <div className="social-contact" onMouseOver={handleMouseOverTel} onMouseOut={handleMouseOutTel}
                                 style={{ ...(isHoveringTel && { backgroundColor: primaryColor })  }}>
                                 {

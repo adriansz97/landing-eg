@@ -1,6 +1,4 @@
-import { useContext } from "react";
 import { CDBAccordion } from "cdbreact";
-import { AppContext } from "../../../context/AppContext";
 import "./styles.scss";
 
 export const FrequentQuestions = ({ infoClient, frequentQuestionsRef }) => {

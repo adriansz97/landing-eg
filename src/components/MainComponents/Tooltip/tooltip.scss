@@ -1,0 +1,19 @@
+@import "../../../theme/colors";
+
+.tooltip.dark .tooltip-arrow::before {
+    position: absolute;
+    content: "";
+    border-color: transparent;
+    border-style: solid;
+    border-bottom-color: $color-ethicsBlue !important;
+    color: $color-oxfordBlue;
+}
+
+.tooltip.helptip .tooltip-inner{
+    font-size: 11px !important;
+    max-width: 300px !important;
+}
+
+.tooltip.dark .tooltip-inner {
+    background-color: $color-ethicsBlue;
+}

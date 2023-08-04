@@ -1,26 +1,28 @@
 import { useEffect, useRef, useState } from "react"; 
 import { Col, Row } from "react-bootstrap";
-import { CDBBtn, CDBIcon } from "cdbreact";
-import { useLocation } from "react-router-dom"
-import { useIsFocused } from "../../hooks/useIsFocused";
-import { useIsHovering } from "../../hooks/useIsHovering";
-import './styles.scss'
-import { createMessagePublic, getPublicMessagesList } from "../../apis";
+import { useLocation, useNavigate } from "react-router-dom"
 import Swal from "sweetalert2";
+import { createAnonymousMessage, getAnonymousPanel } from "../../apis";
+import { useIsFocused } from "../../hooks/useIsFocused";
+import { MCButton } from "../../components/MainComponents/Button/Button";
+import './styles.scss'
 
 export const SearchGrievance = () => {
 
   const location = useLocation();
+  const navigate = useNavigate()
+  const [isloading, setIsloading] = useState(true);
   const [msgToSend, setMsgToSend] = useState("");
-  const [errorsMsg, setErrorsMsg] = useState([]);
   const { isFocused, handleOnFocus, handleOnBlur } = useIsFocused();
-  const [ isHovering, handleMouseOver, handleMouseOut ] = useIsHovering();
   const [msgs, setMsgs] = useState([]);
   const attachmentsRef = useRef(null);
 
   useEffect(() => {
-    getPublicMessagesList(location.state.tracking_code)
-    .then(resp=>setMsgs(resp.response));
+    getAnonymousPanel(location.state.tracking_code)
+    .then(resp=>{
+      setMsgs(resp);
+      setIsloading(false);
+    });
   }, []);
 
   const handleSendMessage = async() => {
@@ -28,10 +30,9 @@ export const SearchGrievance = () => {
     if (msgToSend.trim()==="") {
       errors.push("Este campo no deberia de estar vacio")
     }
-    setErrorsMsg(errors);
     if (errors.length === 0) {
       try {
-        await createMessagePublic(location.state.tracking_code, msgToSend);
+        await createAnonymousMessage({ tracking_code: location.state.tracking_code, content: msgToSend });
         Swal.fire( 'Mensaje enviado', 'Gracias por su aportación adicional', 'success');
         setMsgToSend("");
       } catch (error) {
@@ -61,7 +62,7 @@ export const SearchGrievance = () => {
         <Row className="gx-5">
 
 
-          <Col xs={6}>
+          <Col lg={6}>
 
             <span className="col-title">Additional Information</span>
 
@@ -78,7 +79,6 @@ export const SearchGrievance = () => {
                     onBlur={handleOnBlur}
                     id="additional-facts-input" 
                     className="additional-facts-input"
-                    cols="30" 
                     rows="10">
                   </textarea>
 
@@ -108,15 +108,18 @@ export const SearchGrievance = () => {
 
             </div>
             <div className="d-flex justify-content-end">
-              <CDBBtn
+              <MCButton 
+                className="mt-2 me-2"
+                label="Volver"
+                variant="primary"
+                onClick={()=>navigate(-1)}
+                />
+              <MCButton 
                 className="mt-2"
-                style={{ backgroundColor: isHovering ? '#00bbff' : '#009ED7', borderRadius: 4 }} 
-                onMouseOver={handleMouseOver} 
-                onMouseOut={handleMouseOut}
+                label="Terminar"
+                variant="primary"
                 onClick={handleSendMessage}
-              >
-                Terminar
-              </CDBBtn>
+              />
             </div>
 
 
@@ -124,7 +127,7 @@ export const SearchGrievance = () => {
 
           <input className="d-none" type="file" id="attachments-input" cols="30" rows="10" ref={attachmentsRef} ></input>
 
-          <Col xs={6} className="history-mail">
+          <Col lg={6} className="history-mail">
             
             <h4 className="col-title">Mailbox</h4>
 
@@ -133,31 +136,16 @@ export const SearchGrievance = () => {
                 <div className="atta">
                   
                   {
-                    !msgs 
+                    !isloading && msgs.length === 0
                     ? <>
                         <p>Aquí encontrará los mensajes que algún asesor o responsable de investigación le envíe, en cuanto tenga alguno usted podrá enviar sus respuestas.</p>
-                        <div class="alert alert-danger m-t-20" role="alert">Hasta el momento no se han recibido mensajes para usted.</div>
+                        <div className="alert alert-danger m-t-20" role="alert">Hasta el momento no se han recibido mensajes para usted.</div>
                       </>
                     : <div className="chat-container" style={{ backgroundColor: '#F0F0F0' }}>
-                        <div className="chat-msg sended">
-                          <div>Hola.</div>
-                        </div>
-                        <div className="chat-msg recived">
-                          <div>Hola, en que puedo ayudarte?.</div>
-                        </div>
-                        <div className="chat-msg sended">
-                          <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae enim perspiciatis, earum in numquam fuga, voluptatibus est error dolorum omnis molestiae nesciunt repellendus adipisci ut perferendis dignissimos! Ipsum, perferendis voluptate.</div>
-                        </div>
-                        <div className="chat-msg recived">
-                          <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae enim perspiciatis, earum in numquam fuga, voluptatibus est error dolorum omnis molestiae nesciunt repellendus adipisci ut perferendis dignissimos! Ipsum, perferendis voluptate.</div>
-                        </div>
-                        <div className="chat-msg sended">
-                          <div>Adios</div>
-                        </div>
                         {
                           msgs.map(item=>(
-                            <div className="chat-msg sended">
-                              <div>{item.content}</div>
+                            <div className={`chat-msg ${item.is_sender?"sended":"recived"}`}>
+                              <div>{item.content} <br /> <small><small>{item.created_at}</small></small></div>
                             </div>
                           ))
                         }

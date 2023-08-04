@@ -21,7 +21,8 @@ export const Footer = ({ scrollToRef }) => {
                         <ul style={{listStyle:"none", cursor:"pointer", padding:"0"}}>
                             <a onClick={()=>scrollToRef("BeAgent")}>Nuevo reporte</a>
                             <a onClick={()=>scrollToRef("FollowUp")}>Seguimiento del caso</a>
-                            <a href="https://sed-static.s3.amazonaws.com/sdlineaetica/Codigo_de_Etica.pdf" target="_blank" >Código de Ética</a>
+                            <a href="#" >Código de Ética</a>
+                            {/* <a href="https://sed-static.s3.amazonaws.com/sdlineaetica/Codigo_de_Etica.pdf" target="_blank" >Código de Ética</a> */}
                         </ul>
                     </Col>
                     <Col md="4">

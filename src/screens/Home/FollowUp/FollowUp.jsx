@@ -7,7 +7,7 @@ import FollowUpIcon2 from "../../../assets/images/icon9.png";
 import FollowUpIcon3 from "../../../assets/images/icon10.png";
 import FollowUpIcon4 from "../../../assets/images/icon11.png";
 import { SearchBar } from '../../../components/SearchBar/SearchBar';
-import { getPublicStatusReport } from "../../../apis";
+import { getStatusReport } from "../../../apis";
 import "./styles.scss";
 
 export const FollowUp = ({ infoClient, followUpRef, primaryColor, secondaryColor, primaryColorText, secondaryColorText }) => {
@@ -16,7 +16,7 @@ export const FollowUp = ({ infoClient, followUpRef, primaryColor, secondaryColor
     const [tracking_code, setTracking_code] = useState("");
 
     const searchReport = async() => {
-        const resp = await getPublicStatusReport(tracking_code);
+        const resp = await getStatusReport(tracking_code);
         if (resp.error) {
             Swal.fire(
                 'Error',
@@ -32,8 +32,7 @@ export const FollowUp = ({ infoClient, followUpRef, primaryColor, secondaryColor
         <div className="follow-up" ref={followUpRef}>
             <div className="title">
                 <h3>SEGUIMIENTO A TU DENUNCIA</h3>
-                <p>Por medio de este sitio podrás denunciar aquellas conductas no éticas de manera sencilla, confidencial, segura y con la opción de hacerlo de forma anónima.
-                    El sistema es operado por un tercero independiente a {infoClient.clientName}, líder en el país y especialista en la gestión de denuncias y reportes (EthicsGlobal).</p>
+                <p>En la Línea Ética, es posible mantenerte en contacto con las personas encargadas de atender tu caso y tener una conversación con ellas de forma anónima. Con tu folio de seguimiento mantente en contacto con tu organización e informado sobre la atención de tu reporte.</p>
             </div>
             <Row className="w-100 m-0 searchbar-container">
                 <Col lg="7" md="10" className="mt-20 p-0">
