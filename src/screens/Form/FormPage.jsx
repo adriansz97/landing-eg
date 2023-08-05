@@ -5,10 +5,13 @@ import { formStarter } from "../../components/Form/PreviewForm/formStarter";
 import { PreviewForm } from "../../components/Form/PreviewForm/PreviewForm";
 import { useSelector } from "react-redux";
 import "./styles.scss";
+import Icon from "../../components/Icon/Icon";
+import { useNavigate } from "react-router-dom";
 
 export const FormPage = () => {
 
   const { infoClient } = useSelector(state=>state.app);
+  const navigate = useNavigate();
 
   const [formLoaded, setFormLoaded] = useState(null);
   const [formIdentifier, setFormIdentifier] = useState(null);
@@ -46,7 +49,10 @@ export const FormPage = () => {
   return(
     <div className="form-page">
       <div className="title">
-        <h3 >SEAMOS AGENTES DE CAMBIO</h3>
+        <div className="d-flex align-items-center mb-3">
+          <small role="button" onClick={()=>navigate("/")} ><Icon name="arrow_left_3" /> </small>
+          <h3 className="m-0">SEAMOS AGENTES DE CAMBIO</h3>
+        </div>
         {
           infoClient?.beAgent?.description
           ? <p>{infoClient?.beAgent?.description}</p>

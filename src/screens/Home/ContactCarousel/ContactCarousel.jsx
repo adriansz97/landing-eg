@@ -3,6 +3,7 @@ import "react-multi-carousel/lib/styles.css";
 import { useIsHovering } from "../../../hooks/useIsHovering";
 import Icon from '../../../components/Icon/Icon';
 import "./styles.scss";
+import { useNavigate } from "react-router-dom";
 
 const CustomLeftArrow = () => {
   return (
@@ -15,8 +16,9 @@ const CustomRightArrow = () => {
   )
 }
 
-export const ContactCarousel = ({ infoClient, primaryColor, secondaryColor, scrollToRef }) => {
+export const ContactCarousel = ({ infoClient, primaryColor, secondaryColor, scrollToRef, formType }) => {
 
+    const navigate = useNavigate();
     const [ isHoveringTel, handleMouseOverTel, handleMouseOutTel ] = useIsHovering();
     const [ isHoveringWeb, handleMouseOverWeb, handleMouseOutWeb ] = useIsHovering();
     const [ isHoveringApp, handleMouseOverApp, handleMouseOutApp ] = useIsHovering();
@@ -35,6 +37,15 @@ export const ContactCarousel = ({ infoClient, primaryColor, secondaryColor, scro
             items: 2
         }
     };
+
+    const handleFormClick = () => {
+        if (formType === "page") {
+            navigate("/form")
+        } else {
+            scrollToRef("BeAgent");
+        }
+    }
+
     return(
         <div className="contact-carousel">
             <div className="carousel-block">
@@ -59,7 +70,7 @@ export const ContactCarousel = ({ infoClient, primaryColor, secondaryColor, scro
                         <h6>Teléfono</h6>
                     </div>
                     <div className="item">
-                        <div className="social-contact" onClick={()=>scrollToRef("BeAgent")} onMouseOver={handleMouseOverWeb} onMouseOut={handleMouseOutWeb}
+                        <div className="social-contact" onClick={handleFormClick} onMouseOver={handleMouseOverWeb} onMouseOut={handleMouseOutWeb}
                             style={{ ...(isHoveringWeb && { backgroundColor: primaryColor })  }}>
                             {
                                 isHoveringWeb

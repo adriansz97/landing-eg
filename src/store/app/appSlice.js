@@ -24,7 +24,7 @@ export const appSlice = createSlice({
   name: 'app',
   initialState: {
     infoClient,
-    formType: "both", // "home" || "page" || "both"
+    formType: "page", // "home" || "page" || "both"
   },
   reducers: {
     setTheme: (state, { payload }) => {

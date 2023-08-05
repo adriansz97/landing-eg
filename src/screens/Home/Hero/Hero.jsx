@@ -2,10 +2,20 @@ import { CDBBtn } from "cdbreact";
 import Pp from "../../../assets/images/pp.png";
 import { useIsHovering } from "../../../hooks/useIsHovering";
 import "./styles.scss";
+import { useNavigate } from "react-router-dom";
 
-export const Hero = ({ infoClient, scrollToRef, primaryColor, secondaryColor, primaryColorText, secondaryColorText }) => {
+export const Hero = ({ infoClient, scrollToRef, primaryColor, secondaryColor, primaryColorText, secondaryColorText, formType }) => {
 
     const [ isHovering, handleMouseOver, handleMouseOut ] = useIsHovering();
+    const navigate =  useNavigate();
+
+    const handleFormClick = () => {
+        if (formType === "page") {
+            navigate("/form");
+        } else {
+            scrollToRef("BeAgent");
+        }
+    }
 
 	return(
 		<div className="home-hero">
@@ -27,7 +37,7 @@ export const Hero = ({ infoClient, scrollToRef, primaryColor, secondaryColor, pr
                                     className="hero-btn" 
                                     outline 
                                     style={{ border: "none", backgroundColor: primaryColor, color: primaryColorText }}
-                                    onClick={()=>scrollToRef("BeAgent")}>
+                                    onClick={handleFormClick}>
                                     DENUNCIAR AHORA
                                 </CDBBtn>
                                 <CDBBtn 

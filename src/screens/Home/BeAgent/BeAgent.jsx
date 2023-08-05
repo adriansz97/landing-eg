@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import _ from "lodash";
 import { getDetailCurrentReport } from "../../../apis";
 import { PreviewForm } from "../../../components/Form/PreviewForm/PreviewForm";
@@ -15,6 +16,7 @@ export const BeAgent = ({ infoClient, beAgentRef, primaryColor, secondaryColor }
   const [formData, setFormData] = useState(null);
   const [isValid, setIsValid] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
 
   useEffect(() => {
     getDetailCurrentReport()
@@ -50,11 +52,11 @@ export const BeAgent = ({ infoClient, beAgentRef, primaryColor, secondaryColor }
           : <p>Por medio de este sitio podrás denunciar aquellas conductas no éticas de manera sencilla, confidencial, segura y con la opción de hacerlo de forma anónima. El sistema es operado por un tercero independiente a {infoClient.clientName}, líder en el país y especialista en la gestión de denuncias y reportes (EthicsGlobal).</p>
         }
       </div>
-      <div className="form-container mt-5" id="main-form-container">
-        {
-          isLoading 
-          ? <div>Loading...</div>
-          : <PreviewForm
+        <div className="form-container mt-5" id="main-form-container">
+          {
+            isLoading
+            ? <div>Loading...</div>
+            : <PreviewForm
               formIdentifier={formIdentifier}
               formDescription={formDescription}
               steps={steps}
@@ -68,8 +70,8 @@ export const BeAgent = ({ infoClient, beAgentRef, primaryColor, secondaryColor }
               stepClick={false}
               land={true}
             />
-        }
-      </div>
+          }
+        </div>
     </div>
   )
 }

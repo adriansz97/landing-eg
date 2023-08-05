@@ -14,7 +14,7 @@ import { useSelector } from "react-redux";
 
 export const Home = () =>{
     
-    const { infoClient } = useSelector(st=>st.app);
+    const { infoClient, formType } = useSelector(st=>st.app);
     const { primaryColor, secondaryColor, primaryColorText, secondaryColorText } = useSelector(st=>st.theme);
     const howWorksRef = useRef(null);
     const frequentQuestionsRef = useRef(null);
@@ -57,6 +57,7 @@ export const Home = () =>{
                 primaryColorText={primaryColorText}
                 secondaryColorText={secondaryColorText}
                 scrollToRef={scrollToRef} 
+                formType={formType}
             />
 
             <ContactCarousel 
@@ -64,6 +65,7 @@ export const Home = () =>{
                 primaryColor={primaryColor}
                 secondaryColor={secondaryColor}
                 scrollToRef={scrollToRef}
+                formType={formType}
             />
 
             <HowWorks 
@@ -75,12 +77,16 @@ export const Home = () =>{
                 frequentQuestionsRef={frequentQuestionsRef}
             />
 
-            <BeAgent 
-                infoClient={infoClient} 
-                beAgentRef={beAgentRef} 
-                primaryColor={primaryColor}
-                secondaryColor={secondaryColor}
-            /> {/* Form */}
+            {
+                (formType === "home" || formType === "both") &&
+                <BeAgent 
+                    infoClient={infoClient} 
+                    beAgentRef={beAgentRef} 
+                    primaryColor={primaryColor}
+                    secondaryColor={secondaryColor}
+                />
+            }
+
 
             <FollowUp
                 infoClient={infoClient} 
