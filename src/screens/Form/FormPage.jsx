@@ -7,6 +7,9 @@ import { useSelector } from "react-redux";
 import "./styles.scss";
 import Icon from "../../components/Icon/Icon";
 import { useNavigate } from "react-router-dom";
+import { Navbar } from "../../components/Golbal/navbar/Navbar";
+import { Header } from "../../components/Golbal/Header/Header";
+import { NavbarForm } from "../../components/Golbal/NavbarForm/NavbarForm";
 
 export const FormPage = () => {
 
@@ -47,38 +50,43 @@ export const FormPage = () => {
   }, [formLoaded]);
 
   return(
-    <div className="form-page">
-      <div className="title">
-        <div className="d-flex align-items-center mb-3">
-          <small role="button" onClick={()=>navigate("/")} ><Icon name="arrow_left_3" /> </small>
-          <h3 className="m-0">SEAMOS AGENTES DE CAMBIO</h3>
+    <>
+      <Navbar />
+      <Header />
+      <NavbarForm />
+      <div className="form-page">
+        <div className="title">
+          <div className="d-flex align-items-center mb-3">
+            <small role="button" onClick={()=>navigate("/")} ><Icon name="arrow_left_3" /> </small>
+            <h3 className="m-0">SEAMOS AGENTES DE CAMBIO</h3>
+          </div>
+          {
+            infoClient?.beAgent?.description
+            ? <p>{infoClient?.beAgent?.description}</p>
+            : <p>Por medio de este sitio podrás denunciar aquellas conductas no éticas de manera sencilla, confidencial, segura y con la opción de hacerlo de forma anónima. El sistema es operado por un tercero independiente a {infoClient.clientName}, líder en el país y especialista en la gestión de denuncias y reportes (EthicsGlobal).</p>
+          }
         </div>
-        {
-          infoClient?.beAgent?.description
-          ? <p>{infoClient?.beAgent?.description}</p>
-          : <p>Por medio de este sitio podrás denunciar aquellas conductas no éticas de manera sencilla, confidencial, segura y con la opción de hacerlo de forma anónima. El sistema es operado por un tercero independiente a {infoClient.clientName}, líder en el país y especialista en la gestión de denuncias y reportes (EthicsGlobal).</p>
-        }
+        <div className="form-container mt-5" id="main-form-container">
+          {
+            isLoading 
+            ? <div>Loading...</div>
+            : <PreviewForm
+                formIdentifier={formIdentifier}
+                formDescription={formDescription}
+                steps={steps}
+                schemaState={schemaState}
+                setSchemaState={setSchemaState}
+                formData={formData}
+                setFormData={setFormData}
+                isValid={isValid}
+                setIsValid={setIsValid}
+                showButtons={true}
+                stepClick={false}
+                land={true}
+              />
+          }
+        </div>
       </div>
-      <div className="form-container mt-5" id="main-form-container">
-        {
-          isLoading 
-          ? <div>Loading...</div>
-          : <PreviewForm
-              formIdentifier={formIdentifier}
-              formDescription={formDescription}
-              steps={steps}
-              schemaState={schemaState}
-              setSchemaState={setSchemaState}
-              formData={formData}
-              setFormData={setFormData}
-              isValid={isValid}
-              setIsValid={setIsValid}
-              showButtons={true}
-              stepClick={false}
-              land={true}
-            />
-        }
-      </div>
-    </div>
+    </>
   )
 }

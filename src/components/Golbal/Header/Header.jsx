@@ -5,7 +5,7 @@ import "./styles.scss";
 
 export const Header = ({ infoClient }) => {
     return (
-        <div className="header-container">
+        <div className="header-container mt-1">
             <div className="header">
                 <CDBNavbar className="CDB-container border-0" light expand="md" scrolling>
                     <CDBNavBrand >
