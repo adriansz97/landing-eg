@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import _ from "lodash";
 import { getDetailCurrentReport } from "../../apis";
 import { formStarter } from "../../components/Form/PreviewForm/formStarter";
 import { PreviewForm } from "../../components/Form/PreviewForm/PreviewForm";
-import { useSelector } from "react-redux";
-import "./styles.scss";
 import Icon from "../../components/Icon/Icon";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "../../components/Golbal/navbar/Navbar";
 import { Header } from "../../components/Golbal/Header/Header";
 import { NavbarForm } from "../../components/Golbal/NavbarForm/NavbarForm";
+import "./styles.scss";
 
 export const FormPage = () => {
 
-  const { infoClient } = useSelector(state=>state.app);
+  const { campaingName, content } = useSelector(st=>st.app);
+
   const navigate = useNavigate();
 
   const [formLoaded, setFormLoaded] = useState(null);
@@ -58,12 +59,12 @@ export const FormPage = () => {
         <div className="title">
           <div className="d-flex align-items-center mb-3">
             <small role="button" onClick={()=>navigate("/")} ><Icon name="arrow_left_3" /> </small>
-            <h3 className="m-0">SEAMOS AGENTES DE CAMBIO</h3>
+            <h3 className="m-0">{content?.formTitle || "SEAMOS AGENTES DE CAMBIO"}</h3>
           </div>
           {
-            infoClient?.beAgent?.description
-            ? <p>{infoClient?.beAgent?.description}</p>
-            : <p>Por medio de este sitio podrás denunciar aquellas conductas no éticas de manera sencilla, confidencial, segura y con la opción de hacerlo de forma anónima. El sistema es operado por un tercero independiente a {infoClient.clientName}, líder en el país y especialista en la gestión de denuncias y reportes (EthicsGlobal).</p>
+            content?.formMsg
+            ? <p>{content?.formMsg}</p>
+            : <p>Por medio de este sitio podrás denunciar aquellas conductas no éticas de manera sencilla, confidencial, segura y con la opción de hacerlo de forma anónima. El sistema es operado por un tercero independiente a {campaingName}, líder en el país y especialista en la gestión de denuncias y reportes (EthicsGlobal).</p>
           }
         </div>
         <div className="form-container mt-5" id="main-form-container">

@@ -73,14 +73,14 @@ export const Home = () =>{
                 frequentQuestionsRef={frequentQuestionsRef}
             />
 
-            {/* {
-                (formType === "home" || formType === "both") && */}
+            {
+                (formType === "home" || formType === "both") &&
                 <BeAgent 
                     campaingName={campaingName}
                     beAgentRef={beAgentRef}
                     content={content}
                 />
-            {/* } */}
+            }
 
             <FollowUp
                 followUpRef={followUpRef} 
