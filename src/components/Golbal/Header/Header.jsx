@@ -3,7 +3,7 @@ import Logo from "../../../assets/images/logo.png";
 import Icon from "../../Icon/Icon";
 import "./styles.scss";
 
-export const Header = ({ infoClient }) => {
+export const Header = () => {
     return (
         <div className="header-container mt-1">
             <div className="header">

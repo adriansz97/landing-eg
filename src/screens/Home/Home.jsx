@@ -14,8 +14,8 @@ import { useSelector } from "react-redux";
 
 export const Home = () =>{
     
-    const { infoClient, formType } = useSelector(st=>st.app);
-    const { primaryColor, secondaryColor, primaryColorText, secondaryColorText } = useSelector(st=>st.theme);
+    const { campaingName, domain, channels, content, colors, formType } = useSelector(st=>st.app);
+    // const { primaryColor, secondaryColor, primaryColorText, secondaryColorText } = useSelector(st=>st.theme);
     const howWorksRef = useRef(null);
     const frequentQuestionsRef = useRef(null);
     const beAgentRef = useRef(null);
@@ -46,24 +46,20 @@ export const Home = () =>{
 
             <Navbar />
 
-            <Header 
-                infoClient={infoClient} 
-            />
+            <Header />
 
             <Hero 
-                infoClient={infoClient} 
-                primaryColor={primaryColor}
-                secondaryColor={secondaryColor}
-                primaryColorText={primaryColorText}
-                secondaryColorText={secondaryColorText}
+                campaingName={campaingName} 
+                content={content}
+                colors={colors}
                 scrollToRef={scrollToRef} 
                 formType={formType}
             />
 
             <ContactCarousel 
-                infoClient={infoClient}
-                primaryColor={primaryColor}
-                secondaryColor={secondaryColor}
+                content={content} 
+                colors={colors}
+                channels={channels}
                 scrollToRef={scrollToRef}
                 formType={formType}
             />
@@ -73,34 +69,27 @@ export const Home = () =>{
             />
 
             <FrequentQuestions 
-                infoClient={infoClient}
+                campaingName={campaingName}
                 frequentQuestionsRef={frequentQuestionsRef}
             />
 
-            {
-                (formType === "home" || formType === "both") &&
+            {/* {
+                (formType === "home" || formType === "both") && */}
                 <BeAgent 
-                    infoClient={infoClient} 
-                    beAgentRef={beAgentRef} 
-                    primaryColor={primaryColor}
-                    secondaryColor={secondaryColor}
+                    campaingName={campaingName}
+                    beAgentRef={beAgentRef}
+                    content={content}
                 />
-            }
-
+            {/* } */}
 
             <FollowUp
-                infoClient={infoClient} 
                 followUpRef={followUpRef} 
-                primaryColor={primaryColor}
-                secondaryColor={secondaryColor}
-                primaryColorText={primaryColorText}
-                secondaryColorText={secondaryColorText}
-            /> {/* <Announcement /> */}
+                colors={colors}
+            />
 
             <Download 
-                infoClient={infoClient} 
-                primaryColor={primaryColor}
-                secondaryColor={secondaryColor}
+                campaingName={campaingName}
+                colors={colors}
                 downloadRef={downloadRef}
             />
 

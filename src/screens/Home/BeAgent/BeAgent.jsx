@@ -6,7 +6,7 @@ import { PreviewForm } from "../../../components/Form/PreviewForm/PreviewForm";
 import { formStarter } from "../../../components/Form/PreviewForm/formStarter";
 import "./styles.scss";
 
-export const BeAgent = ({ infoClient, beAgentRef, primaryColor, secondaryColor }) => {
+export const BeAgent = ({ campaingName, content, beAgentRef }) => {
 
   const [formLoaded, setFormLoaded] = useState(null);
   const [formIdentifier, setFormIdentifier] = useState(null);
@@ -45,11 +45,11 @@ export const BeAgent = ({ infoClient, beAgentRef, primaryColor, secondaryColor }
   return(
     <div className="be-agent" ref={beAgentRef}>
       <div className="title">
-        <h3 >SEAMOS AGENTES DE CAMBIO</h3>
+        <h3>{content?.formTitle || "SEAMOS AGENTES DE CAMBIO"}</h3>
         {
-          infoClient?.beAgent?.description
-          ? <p>{infoClient?.beAgent?.description}</p>
-          : <p>Por medio de este sitio podrás denunciar aquellas conductas no éticas de manera sencilla, confidencial, segura y con la opción de hacerlo de forma anónima. El sistema es operado por un tercero independiente a {infoClient.clientName}, líder en el país y especialista en la gestión de denuncias y reportes (EthicsGlobal).</p>
+          content?.formMsg
+          ? <p>{content.formMsg}</p>
+          : <p>Por medio de este sitio podrás denunciar aquellas conductas no éticas de manera sencilla, confidencial, segura y con la opción de hacerlo de forma anónima. El sistema es operado por un tercero independiente a {campaingName}, líder en el país y especialista en la gestión de denuncias y reportes (EthicsGlobal).</p>
         }
       </div>
         <div className="form-container mt-5" id="main-form-container">

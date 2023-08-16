@@ -4,7 +4,7 @@ import { useIsHovering } from "../../../hooks/useIsHovering";
 import "./styles.scss";
 import { useNavigate } from "react-router-dom";
 
-export const Hero = ({ infoClient, scrollToRef, primaryColor, secondaryColor, primaryColorText, secondaryColorText, formType }) => {
+export const Hero = ({ campaingName, content, colors, scrollToRef, formType }) => {
 
     const [ isHovering, handleMouseOver, handleMouseOut ] = useIsHovering();
     const navigate =  useNavigate();
@@ -28,26 +28,26 @@ export const Hero = ({ infoClient, scrollToRef, primaryColor, secondaryColor, pr
                         </div>
                         <div className="ml-0 ml-md-5">
                             {
-                                infoClient?.hero?.title
-                                ?   <h1 className="my-4 ms-lg-2 title">{infoClient?.hero?.title}</h1>
-                                :   <h1 className="my-4 ms-lg-2 title text-uppercase">Línea Ética de <br /> {infoClient.clientName}</h1>
+                                campaingName
+                                ?   <h1 className="my-4 ms-lg-2 title">{campaingName}</h1>
+                                :   <h1 className="my-4 ms-lg-2 title text-uppercase">Línea Ética</h1>
                             }
                             <div className="hero-btns">
                                 <CDBBtn 
                                     className="hero-btn" 
                                     outline 
-                                    style={{ border: "none", backgroundColor: primaryColor, color: primaryColorText }}
+                                    style={{ border: "none", backgroundColor: colors.primaryColor, color: colors.primaryTextColor }}
                                     onClick={handleFormClick}>
-                                    DENUNCIAR AHORA
+                                    {content?.grievanceBtn || "Denunciar ahora"}
                                 </CDBBtn>
                                 <CDBBtn 
                                     className="hero-btn" 
                                     outline 
-                                    style={{ border: "none", backgroundColor: isHovering ? primaryColor : "white", color: isHovering ? primaryColorText : "black" }}
+                                    style={{ border: "none", backgroundColor: isHovering ? colors.primaryColor : "white", color: isHovering ? colors.primaryTextColor : "black" }}
                                     onMouseOver={handleMouseOver} 
                                     onMouseOut={handleMouseOut}
                                     onClick={()=>scrollToRef("FollowUp")}>
-                                    SEGUIMIENTO DE LA DENUNCIA
+                                    {content?.trackBtn || "Seguimiento de la denuncia"}
                                 </CDBBtn>
                             </div>
                         </div>

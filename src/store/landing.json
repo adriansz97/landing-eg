@@ -1,0 +1,54 @@
+{
+    "landing": {
+        "campaing_name": "EthicsGlobal te escucha",
+        "domain": "ethicsglobal.com",
+        "channels": {
+            "website": true,
+            "phones": {
+                "is_active": false,
+                "list_phones": []
+            },
+            "email": {
+                "email": null,
+                "is_active": false
+            },
+            "whatsapp": {
+                "phone_number": null,
+                "is_active": false
+            },
+            "chat": {
+                "text": null,
+                "is_active": false
+            },
+            "app_mobile": {
+                "text": null,
+                "is_active": false
+            },
+            "phone_app": false,
+            "chat_app": {
+                "text": null,
+                "is_active": false
+            }
+        },
+        "content": {
+            "grievance_btn": "Denunciar ahora",
+            "track_btn": "Seguimiento de la denuncia",
+            "welcome_msg": "Si eres testigo de alguna falta a nuestro Código de Ética, no dudes en denunciarlo a través de nuestros canales de denuncia:",
+            "how_function": {},
+            "questions": [],
+            "form_title": "SEAMOS AGENTES DE CAMBIO",
+            "form_msg": "Por medio de este sitio podrás denunciar aquellas conductas no éticas de manera sencilla, confidencial, segura y con la opción de hacerlo de forma anónima. El sistema es operado por un tercero independiente a EthicsGlobal, líder en el país y especialista en la gestión de denuncias y reportes (EthicsGlobal).",
+            "tracking_grievance_title": "SEGUIMIENTO A TU DENUNCIA",
+            "tracking_grievance_msg": "En la Línea Ética, es posible mantenerte en contacto con las personas encargadas de atender tu caso y tener una conversación con ellas de forma anónima. Con tu folio de seguimiento mantente en contacto con tu organización e informado sobre la atención de tu reporte."
+        },
+        "colors": {
+            "grievance_btn_color": "#f5a623",
+            "track_btn_color": "#f5a623",
+            "track_btn_hover_color": "#f5a623",
+            "primary_color": "#009ed7",
+            "secondary_color": "#546e7a",
+            "primary_text_color": "#ffffff",
+            "secondary_text_color": "#ffffff"
+        }
+    }
+}

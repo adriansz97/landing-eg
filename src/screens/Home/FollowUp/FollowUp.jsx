@@ -10,7 +10,9 @@ import { SearchBar } from '../../../components/SearchBar/SearchBar';
 import { getStatusReport } from "../../../apis";
 import "./styles.scss";
 
-export const FollowUp = ({ infoClient, followUpRef, primaryColor, secondaryColor, primaryColorText, secondaryColorText }) => {
+export const FollowUp = ({ followUpRef, colors }) => {
+
+    const { primaryColor, secondaryColor, primaryTextColor, secondaryTextColor } = colors;
 
     const navigate = useNavigate();
     const [tracking_code, setTracking_code] = useState("");
@@ -18,11 +20,7 @@ export const FollowUp = ({ infoClient, followUpRef, primaryColor, secondaryColor
     const searchReport = async() => {
         const resp = await getStatusReport(tracking_code);
         if (resp.error) {
-            Swal.fire(
-                'Error',
-                'Report not found',
-                'error'
-            )
+            Swal.fire( 'Error', 'Report not found', 'error');
         } else {
             navigate("/search_grievance", { state: { tracking_code, status: resp.status, message: resp.message }});
         }
@@ -40,8 +38,8 @@ export const FollowUp = ({ infoClient, followUpRef, primaryColor, secondaryColor
                         <SearchBar 
                             primaryColor={secondaryColor}
                             secondaryColor={primaryColor}
-                            primaryColorText={primaryColorText}
-                            secondaryColorText={secondaryColorText}
+                            primaryColorText={primaryTextColor}
+                            secondaryColorText={secondaryTextColor}
                             value={tracking_code}
                             onChange={(e)=>setTracking_code(e.target.value)}
                             placeholder="Escribe tu folio de seguimiento"

@@ -1,13 +1,14 @@
 
 import { configureStore } from '@reduxjs/toolkit';
-import { langSlice } from './lang/langSlice';
-import { themeSlice } from './theme/themeSlice';
+// import { langSlice } from './lang/langSlice';
+import {  } from './app/appSlice';
 import { appSlice } from './app/appSlice';
+import { themeSlice } from './theme/themeSlice';
 
 export const store = configureStore({
   reducer: {
-    app: appSlice.reducer,
     theme: themeSlice.reducer,
-    lang: langSlice.reducer,
+    app: appSlice.reducer,
+    // lang: langSlice.reducer,
   }
 })

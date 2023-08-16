@@ -16,24 +16,83 @@ import { createSlice } from '@reduxjs/toolkit';
 //   clientName: "Surtidora Departamental"
 // }
 // ETHICS GLOBAL
-const infoClient = {
-  clientName: "EthicsGlobal"
-}
+// const infoClient = {
+//   clientName: "EthicsGlobal"
+
+
 
 export const appSlice = createSlice({
   name: 'app',
   initialState: {
-    infoClient,
-    formType: "page", // "home" || "page" || "both"
+    "campaingName": "EthicsGlobal te escucha",
+    "domain": "ethicsglobal.com",
+    "channels": {
+      "website": true,
+      "phones": {
+        "isActive": false,
+        "listPhones": []
+      },
+      "email": {
+        "email": null,
+        "isActive": false
+      },
+      "whatsapp": {
+        "phoneNumber": null,
+        "isActive": false
+      },
+      "chat": {
+        "text": null,
+        "isActive": false
+      },
+      "app_mobile": {
+        "text": null,
+        "isActive": false
+      },
+      "phoneApp": false,
+      "chatApp": {
+        "text": null,
+        "isActive": false
+      }
+    },
+    "content": {
+      "grievanceBtn": "Denunciar ahora",
+      "trackBtn": "Seguimiento de la denuncia",
+      "welcomeMsg": "Si eres testigo de alguna falta a nuestro Código de Ética, no dudes en denunciarlo a través de nuestros canales de denuncia:",
+      "howFunction": {},
+      "questions": [],
+      "formTitle": "SEAMOS AGENTES DE CAMBIO",
+      "formMsg": "Por medio de este sitio podrás denunciar aquellas conductas no éticas de manera sencilla, confidencial, segura y con la opción de hacerlo de forma anónima. El sistema es operado por un tercero independiente a EthicsGlobal, líder en el país y especialista en la gestión de denuncias y reportes (EthicsGlobal).",
+      "trackingGrievanceTitle": "SEGUIMIENTO A TU DENUNCIA",
+      "trackingGrievanceMsg": "En la Línea Ética, es posible mantenerte en contacto con las personas encargadas de atender tu caso y tener una conversación con ellas de forma anónima. Con tu folio de seguimiento mantente en contacto con tu organización e informado sobre la atención de tu reporte."
+    },
+    "colors": {
+      "grievanceBtnColor": "#f5a623",
+      "trackBtnColor": "#f5a623",
+      "trackBtnHoverColor": "#f5a623",
+      "primaryColor": "#009ed7",
+      "secondaryColor": "#546e7a",
+      "primaryTextColor": "#ffffff",
+      "secondaryTextColor": "#ffffff"
+    },
+    "formType": "page", // "home" || "page" || "both"
+    "innerWidth": 0,
+    "innerHeight": 0,
+    "size": "xs"
   },
   reducers: {
-    setTheme: (state, { payload }) => {
-      state.gTheme = payload;
+    setAppInfo: (state, { payload }) => {
+      state.campaingName = payload.campaing_name;
+      state.domain = payload.domain;
+      state.channels = payload.channels;
+      state.content = payload.content;
+      state.colors = payload.colors;
     },
-    setThemeLS: (state, { payload }) => {
-      state.gTheme = payload;
-    },
+    setBrowserSize: (state, { payload }) => {
+      state.innerWidth = payload.innerWidth;
+      state.innerHeight = payload.innerHeight;
+      state.size = payload.size;
+    }
   }
 });
 
-export const { setTheme, setThemeLS } = appSlice.actions;
+export const { setAppInfo, setBrowserSize } = appSlice.actions;
