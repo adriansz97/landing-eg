@@ -2,13 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import Swal from "sweetalert2";
 import Container from "react-bootstrap/Container";
-import { Col, Row, Button } from "react-bootstrap";
+import { Col, Row, Button, Tab, Nav } from "react-bootstrap";
 import { CDBStep, CDBStepper } from "cdbreact";
 import { createAttachment, createReport } from "../../../apis";
 import { MCInput } from "../../MainComponents/Input/Input";
 import Icon from "../../Icon/Icon";
 import { CatalogueInput } from "./CatalogueInput"
 import { ConditionalInputs } from "./ConditionalInputs"
+import { CATALOGUES_PREFIX, INPUT_TYPE_CATALOGUE_ERROR, INPUT_TYPE_CATALOGUE_RADIO, INPUT_TYPE_CATALOGUE_RADIO_CONDITIONAL, INPUT_TYPE_CATALOGUE_RADIO_DESCRIPTION, INPUT_TYPE_CATALOGUE_RADIO_DESCRIPTION_CONDITIONAL, INPUT_TYPE_CATALOGUE_SELECT, INPUT_TYPE_CATALOGUE_SELECT_CONDITIONAL, INPUT_TYPE_CHECKBOX, INPUT_TYPE_CHECKBOX_CONDITIONAL, INPUT_TYPE_DATE, INPUT_TYPE_DATE_RANGE, INPUT_TYPE_DESCRIPTION, INPUT_TYPE_FILE, INPUT_TYPE_NUMBER, INPUT_TYPE_SUBJECT, INPUT_TYPE_TEXT, INPUT_TYPE_TEXTAREA } from "../consts";
 import "./styles.scss"
 
 
@@ -89,24 +90,22 @@ export const hdlIsVal = ({ errors, entirePathDataWithKey, entireIsValid, setIsVa
 // Render de cada uno de los inputs en el schema
 export const RenderInput = ({
   entireSchema,
-  entireFormData,
-  entireIsValid,
   entirePathSchema,
+  setSchemaState,
+  entireFormData,
   entirePathData,
+  setFormData,
+  entireIsValid,
+  setIsValid,
   attachments,
   setAttachments,
   tryToNext,
   activeStep,
-  idx,
-  colsLg = 4,
-  setSchemaState,
-  setFormData,
-  setIsValid,
   origin,
 }) => {
 
   const schema = _.get(entireSchema, entirePathSchema);
-  const key = schema.type.includes("catalog") ? schema.catalogue : schema.key;
+  const key = schema.type.includes(CATALOGUES_PREFIX) ? schema.catalogue : schema.key;
   
   const entirePathDataWithKey = `${entirePathData}.${key}`;
   const value = _.get(entireFormData, entirePathDataWithKey);
@@ -119,19 +118,18 @@ export const RenderInput = ({
 
   const doValidate = (test) => {
     let errors = [];
-    if (schema.type === "string") {
+    if (schema.type === INPUT_TYPE_TEXT) {
       if (schema.required === true) {
         if (test.trim() === "") {
           errors.push("Este campo es requerido")
         }
       }
     }
-    if (schema.type === "number") {
+    if (schema.type === INPUT_TYPE_NUMBER) {
       const tempNum = Number(test);
       if (schema.required === true) {
         if (test === "") {
           errors.push("Este campo es requerido")
-          console.log(test)
         } else if (isNaN(tempNum)) {
           errors.push("No es un numero válido");
         } else if (tempNum < 0) {
@@ -145,31 +143,33 @@ export const RenderInput = ({
         }
       }
     }
-    if (schema.type === "textarea") {
+    if (schema.type === INPUT_TYPE_TEXTAREA) {
       if (schema.required === true) {
         if (test.trim() === "") {
           errors.push("Este campo es requerido")
         }
       }
     }
-    if (schema.type.includes("checkbox")) {
-      if (!typeof test === "boolean") {
-        errors.push("Este campo no es válido (reportar)")
+    if (schema.type.includes(INPUT_TYPE_CHECKBOX)) {
+      if (schema.required === true) {
+        if (test === false) {
+          errors.push("Asegurese de marcar esta casilla")
+        }
       }
     }
-    if (schema.type === "file") {
+    if (schema.type === INPUT_TYPE_FILE) {
       if (schema.required === true) {
         if (test === null) {
           errors.push("Este campo debe de llevar un archivo")
         }
       }
     }
-    if (schema.type === "date") {
+    if (schema.type === INPUT_TYPE_DATE) {
       if (!isValidDate()) {
         errors.push("Fecha no válida (reportar)")
       }
     }
-    if (schema.type === "date-range") {
+    if (schema.type === INPUT_TYPE_DATE_RANGE) {
       let dates = test;
       dates = dates.split("__");
       if (dates.length === 2) {
@@ -183,21 +183,21 @@ export const RenderInput = ({
         errors.push("Campo no válido (reportar)")
       }
     }
-    if (schema.type === "subject") {
+    if (schema.type === INPUT_TYPE_SUBJECT) {
       if (schema.required === true) {
         if (test.trim() === "") {
           errors.push("Este campo es requerido")
         }
       }
     }
-    if (schema.type === "description") {
+    if (schema.type === INPUT_TYPE_DESCRIPTION) {
       if (schema.required === true) {
         if (test.trim() === "") {
           errors.push("Este campo es requerido")
         }
       }
     }
-    if (schema.type.includes("catalog")) {
+    if (schema.type.includes(CATALOGUES_PREFIX)) {
       if (schema.catalogue==="RC-100") {
         // console.log(schema)
         // console.log(test)
@@ -213,8 +213,9 @@ export const RenderInput = ({
 
   const handleChange = (e) => {
     hdlChg({ e, params: { sensitive: schema.sensitive, origin }, ...utilHdlChg })
-    const errors = doValidate(e.target.value);
-    if ((typeof schema.type === 'string') && !(schema.type.includes('catalog'))) {
+    const value = schema.type.includes(INPUT_TYPE_CHECKBOX) ? e.target.checked : e.target.value
+    const errors = doValidate(value);
+    if ((typeof schema.type.includes(INPUT_TYPE_CHECKBOX)) && !(schema.type.includes(CATALOGUES_PREFIX))) {
       hdlIsVal({ errors, entirePathDataWithKey, entireIsValid, setIsValid });
     }
   };
@@ -297,7 +298,7 @@ export const RenderInput = ({
     return false;
   };
 
-  if (schema.type === "string") {
+  if (schema.type === INPUT_TYPE_TEXT) {
     return (
       <Col lg={schema.grid || 12} className={`preview-input-container`}>
         <label className={`${schema.required?"label-required":""}`}>{schema.label}{schema.required ? "*" : ""}</label>
@@ -309,6 +310,7 @@ export const RenderInput = ({
             name={schema.key} 
             defaultValue={value}
             onChange={handleChange}
+            placeholder={schema.placeholder}
           />
         </div>
         <div className="preview-input-err-msg">
@@ -317,7 +319,7 @@ export const RenderInput = ({
       </Col>
     )
   }
-  if (schema.type === "number") {
+  if (schema.type === INPUT_TYPE_NUMBER) {
     return (
       <Col lg={schema.grid || 12} className={`preview-input-container`}>
         <label className={`${schema.required?"label-required":""}`}>{schema.label}{schema.required ? "*" : ""}</label>
@@ -329,6 +331,7 @@ export const RenderInput = ({
             name={schema.key}
             defaultValue={value}
             onChange={handleChange}
+            placeholder={schema.placeholder}
           />
         </div>
         <div className={`preview-input-err-msg`}>
@@ -337,7 +340,7 @@ export const RenderInput = ({
       </Col>
     )
   }
-  if (schema.type === "textarea") {
+  if (schema.type === INPUT_TYPE_TEXTAREA) {
     return (
       <Col lg={schema.grid || 12} className={`preview-input-container`}>
         <label className={`${schema.required?"label-required":""}`} >{schema.label}{schema.required ? "*" : ""}</label>
@@ -350,6 +353,7 @@ export const RenderInput = ({
             name={schema.key}
             defaultValue={value}
             onChange={handleChange}
+            placeholder={schema.placeholder}
           />
         </div>
         <div className={`preview-input-err-msg`}>
@@ -358,12 +362,12 @@ export const RenderInput = ({
       </Col>
     )
   }
-  if (schema.type === "checkbox") {
+  if (schema.type === INPUT_TYPE_CHECKBOX) {
     return (
       <Col lg={schema.grid || 12} className={`preview-input-container`}>
         <div className={`form-check ${returnValidClass("container")}`}>
-          <input className="form-check-input" type="checkbox" id={`${entirePathDataWithKey}-${idx}`} name={schema.key} defaultChecked={value} value={value} onChange={handleChange} />
-          <label className={`${schema.required?"label-required":""} form-check-label`} htmlFor={`${entirePathDataWithKey}-${idx}`}>
+          <input className="form-check-input" type="checkbox" id={origin} name={schema.key} defaultChecked={value} value={value} onChange={handleChange} />
+          <label className={`${schema.required?"label-required":""} form-check-label`} htmlFor={origin}>
             {schema.label}{schema.required ? "*" : ""}
           </label>
         </div>
@@ -373,7 +377,7 @@ export const RenderInput = ({
       </Col>
     )
   }
-  if (schema.type === "checkbox-conditional") {
+  if (schema.type === INPUT_TYPE_CHECKBOX_CONDITIONAL) {
     return (
       <>
         <Col lg={schema.grid || 12} className={`preview-input-container`}>
@@ -388,29 +392,28 @@ export const RenderInput = ({
           </div>
         </Col>
         <div></div>
-          <ConditionalInputs
-            parentValue={value}
-            parentOrigin={origin}
-            conditionals={schema.conditionals}
-            pathData={entirePathDataWithKey}
-            entireSchema={entireSchema}
-            entireFormData={entireFormData}
-            entireIsValid={entireIsValid}
-            entirePathSchema={entirePathSchema}
-            entirePathData={entirePathData}
-            attachments={attachments}
-            setAttachments={setAttachments}
-            tryToNext={tryToNext}
-            activeStep={activeStep}
-            setSchemaState={setSchemaState}
-            setFormData={setFormData}
-            setIsValid={setIsValid}
-            />
+        <ConditionalInputs
+          entireSchema={entireSchema}
+          entirePathSchema={entirePathSchema}
+          setSchemaState={setSchemaState}
+          entireFormData={entireFormData}
+          entirePathData={entirePathData}
+          setFormData={setFormData}
+          entireIsValid={entireIsValid}
+          setIsValid={setIsValid}
+          conditionals={schema.conditionals}
+          parentValue={value}
+          parentOrigin={origin}
+          attachments={attachments}
+          setAttachments={setAttachments}
+          tryToNext={tryToNext}
+          activeStep={activeStep}
+        />
           <div></div>
       </>
     )
   }
-  if (schema.type === "file") {
+  if (schema.type === INPUT_TYPE_FILE) {
     return (
       <Col lg={schema.grid || 12} className={`preview-input-container`} onDrop={hdlDropAttch} onDragOver={hdlDragOvAttch}>
         <label className={`${schema.required?"label-required":""}`}>
@@ -447,7 +450,7 @@ export const RenderInput = ({
       </Col>
     )
   }
-  if (schema.type === "date") {
+  if (schema.type === INPUT_TYPE_DATE) {
     const initialDate = new Date();
     return (
       <Col lg={schema.grid || 12} className={`preview-input-container`}>
@@ -471,7 +474,7 @@ export const RenderInput = ({
       </Col>
     )
   }
-  if (schema.type === "date-range") {
+  if (schema.type === INPUT_TYPE_DATE_RANGE) {
     const initialDate = new Date();
     return (
       <>
@@ -550,7 +553,7 @@ export const RenderInput = ({
       </>
     )
   }
-  if (schema.type === "subject") {
+  if (schema.type === INPUT_TYPE_SUBJECT) {
     return (
       <Col lg={schema.grid || 12} className={`preview-input-container`}>
         <label className={`${schema.required?"label-required":""}`}>{schema.label}{schema.required ? "*" : ""}</label>
@@ -561,7 +564,8 @@ export const RenderInput = ({
             className={`${returnValidClass()}`} 
             name={schema.key} 
             defaultValue={value} 
-            onChange={handleChange} 
+            onChange={handleChange}
+            placeholder={schema.placeholder}
           />
         </div>
         <div className={`preview-input-err-msg`}>
@@ -570,7 +574,7 @@ export const RenderInput = ({
       </Col>
     )
   }
-  if (schema.type === "description") {
+  if (schema.type === INPUT_TYPE_DESCRIPTION) {
     return (
       <Col lg={schema.grid || 12} className={`preview-input-container`}>
         <label className={`${schema.required?"label-required":""}`}>{schema.label}{schema.required ? "*" : ""}</label>
@@ -582,6 +586,7 @@ export const RenderInput = ({
             name={schema.key} 
             defaultValue={value} 
             onChange={handleChange}
+            placeholder={schema.placeholder}
           />
         </div>
         <div className={`preview-input-err-msg`}>
@@ -590,31 +595,29 @@ export const RenderInput = ({
       </Col>
     )
   }
-  if (schema.type === "catalog-select" || schema.type === "catalog-radio") {
+  if (schema.type === INPUT_TYPE_CATALOGUE_SELECT || schema.type === INPUT_TYPE_CATALOGUE_RADIO || schema.type === INPUT_TYPE_CATALOGUE_RADIO_DESCRIPTION) {
     return (
       <>
         <div></div>
-        <label className={`${schema.required?"label-required":""}`}>{schema.label}{schema.required ? "*" : ""}</label>
-        <CatalogueInput
-          schema={schema}
-          scope={schema}
-          valid={valid}
-          value={value}
-          idx={idx}
-          origin={origin}
-          handleValidate={handleValidate}
-          returnValidClass={returnValidClass}
-          ReturnErrorMesages={ReturnErrorMesages}
-          pathSchema={entirePathSchema}
-          pathData={entirePathData}
-          entirePathDataWithKey={entirePathDataWithKey}
-          colsLg={colsLg}
-          entireSchema={entireSchema}
-          entireFormData={entireFormData}
-          setSchemaState={setSchemaState}
-          setFormData={setFormData}
-          tryToNext={tryNext}
-        />
+        <label className={`${schema.required?"label-required":""} ${schema.type.includes(INPUT_TYPE_CATALOGUE_SELECT)?"m-0":""}`}>{schema.label}{schema.required ? "*" : ""}</label>
+        <div className={`catalogue-container p-0 t-col-${schema.grid || 12} ${(schema.type.includes(INPUT_TYPE_CATALOGUE_RADIO)&&schema.grid!==12)?"row-gap":""}`}>
+          <CatalogueInput
+            schema={schema}
+            scope={schema}
+            value={value}
+            valid={valid}
+            origin={origin}
+            pathSchema={entirePathSchema}
+            pathData={entirePathData}
+            entireSchema={entireSchema}
+            entireFormData={entireFormData}
+            setSchemaState={setSchemaState}
+            setFormData={setFormData}
+            tryToNext={tryNext}
+            handleValidate={handleValidate}
+            returnValidClass={returnValidClass}
+          />
+        </div>
         <div className="preview-input-err-msg">
           <ReturnErrorMesages />
         </div>
@@ -622,59 +625,55 @@ export const RenderInput = ({
       </>
     )
   }
-  if (schema.type === "catalog-select-conditional" || schema.type === "catalog-radio-conditional") {
+  if (schema.type === INPUT_TYPE_CATALOGUE_SELECT_CONDITIONAL || schema.type === INPUT_TYPE_CATALOGUE_RADIO_CONDITIONAL || schema.type === INPUT_TYPE_CATALOGUE_RADIO_DESCRIPTION_CONDITIONAL) {
     return (
       <>
         <div></div>
-        <label className={`${schema.required?"label-required":""}`}>{schema.label}{schema.required ? "*" : ""}</label>
+        <label className={`${schema.required?"label-required":""} ${schema.type.includes(INPUT_TYPE_CATALOGUE_SELECT)?"m-0":""}`}>{schema.label}{schema.required ? "*" : ""}</label>
+        <div className={`catalogue-container p-0 t-col-${schema.grid || 12}  ${(schema.type.includes(INPUT_TYPE_CATALOGUE_RADIO)&&schema.grid!==12)?"row-gap":""}`}>
         <CatalogueInput
-          schema={schema}
-          scope={schema}
-          valid={valid}
-          value={value}
-          idx={idx}
-          origin={origin}
-          handleValidate={handleValidate}
-          returnValidClass={returnValidClass}
-          ReturnErrorMesages={ReturnErrorMesages}
-          pathSchema={entirePathSchema}
-          pathData={entirePathData}
-          entirePathDataWithKey={entirePathDataWithKey}
-          colsLg={colsLg}
-          entireSchema={entireSchema}
-          entireFormData={entireFormData}
-          setSchemaState={setSchemaState}
-          setFormData={setFormData}
-          tryToNext={tryNext}
-        />
+            schema={schema}
+            scope={schema}
+            value={value}
+            valid={valid}
+            origin={origin}
+            pathSchema={entirePathSchema}
+            pathData={entirePathData}
+            entireSchema={entireSchema}
+            entireFormData={entireFormData}
+            setSchemaState={setSchemaState}
+            setFormData={setFormData}
+            tryToNext={tryNext}
+            handleValidate={handleValidate}
+            returnValidClass={returnValidClass}
+          />
+        </div>
         <div className="preview-input-err-msg">
           <ReturnErrorMesages />
         </div>
         <ConditionalInputs
+          entireSchema={entireSchema}
+          entirePathSchema={entirePathSchema}
+          setSchemaState={setSchemaState}
+          entireFormData={entireFormData}
+          entirePathData={entirePathData}
+          setFormData={setFormData}
+          entireIsValid={entireIsValid}
+          setIsValid={setIsValid}
+          conditionals={schema.conditionals}
           parentValue={value}
           parentOrigin={origin}
-          conditionals={schema.conditionals}
-          pathData={entirePathDataWithKey}
-          entireSchema={entireSchema}
-          entireFormData={entireFormData}
-          entireIsValid={entireIsValid}
-          entirePathSchema={entirePathSchema}
-          entirePathData={entirePathData}
           attachments={attachments}
           setAttachments={setAttachments}
           tryToNext={tryToNext}
           activeStep={activeStep}
-          colsLg={12}
-          setSchemaState={setSchemaState}
-          setFormData={setFormData}
-          setIsValid={setIsValid}
         />
         <div></div>
       </>
 
     )
   }
-  if (schema.type === "catalog-error") {
+  if (schema.type === INPUT_TYPE_CATALOGUE_ERROR) {
     return (
       <></>
     )
@@ -695,21 +694,10 @@ export const PreviewForm = ({
 }) => {
 
   const [activeStep, setActiveStep] = useState(0);
-  const [rerender, setRerender] = useState(false);
   const [allowStepClick, setAllowStepClick] = useState(stepClick);
   const [tryToNext, setTryToNext] = useState(null);
   const [attachments, setAttachments] = useState(null);
   const formRef = useRef(null)
-
-  useEffect(() => {
-    setRerender(true);
-  }, [activeStep]);
-
-  useEffect(() => {
-    if (rerender) {
-      setRerender(false);
-    }
-  }, [rerender]);
 
   useEffect(() => {
     const newTryToNext = steps.map(item => false);
@@ -760,7 +748,7 @@ export const PreviewForm = ({
         console.log(error);
       }
     } else {
-      setAllowStepClick(true);
+      // setAllowStepClick(true);
     }
   }
 
@@ -812,65 +800,79 @@ export const PreviewForm = ({
 
   return (
     <div className="mt-20" ref={formRef}>
-      <Container fluid="md" className="dyTheme1 dyBorder1 p-5">
+      <Container fluid="md" className={`dyTheme1 dyBorder1 p-5`}>
 
-        <div className="form-preview-header mb-30 ">
-          <div className="form-preview-header-name">
-            <h3>{steps[activeStep].title || "Step sin nombre"}</h3>
-          </div>
-          <div className="form-preview-header-steper">
-            <CDBStepper
-              direction="horizontal"
-              md="2"
-              className="stepWrapper"
-              currentStepNumber={0}
-              stepColor=""
-              steps={[...steps.map((step, index) => index)]}>
-              {schemaState.map((step, index) => (
-                <CDBStep
-                  key={index + 1}
-                  id={index + 1}
-                  name={steps[index]?.title || "Sin Nombre"}
-                  handleClick={allowStepClick ? () => setActiveStep(index) : () => { }}
-                  active={activeStep + 1}
-                  activeBgColor='#009ed7'
-                  activeTextColor='#009ed7'
-                  incompleteBgColor='#ffaf00'
-                  incompleteTextColor='#ffefc0'
-                  completeBgColor='#44cb67'
-                  completeTextColor='white'
-                />
-              ))}
-            </CDBStepper>
-          </div>
-        </div>
         <div className={`form-preview`} onSubmit={(e) => handleSubmit(e)}>
           {
-            !rerender && schemaState &&
+            schemaState &&
             <div className="form-preview-inputs animation">
-              <Row className="pr-3 pl-1">
-                {
-                  schemaState[activeStep].map((sch, idx) => (
-                    <RenderInput
-                      key={`form-input-${idx}`}
-                      entireSchema={schemaState}
-                      entireFormData={formData}
-                      entireIsValid={isValid}
-                      entirePathSchema={`${activeStep}.${idx}`}
-                      entirePathData={`${activeStep}.${idx}`}
-                      setSchemaState={setSchemaState}
-                      setFormData={setFormData}
-                      setIsValid={setIsValid}
-                      tryToNext={tryToNext}
-                      activeStep={activeStep}
-                      idx={idx}
-                      attachments={attachments}
-                      setAttachments={setAttachments}
-                      origin={`stepers::${activeStep}::form::json-schema::${idx}`}
-                    />
-                  ))
-                }
-              </Row>
+
+              <Tab.Container activeKey={activeStep} >
+
+                <div className="form-preview-header-steper">
+                  <Nav>
+                    <CDBStepper
+                      direction="horizontal"
+                      md="2"
+                      currentStepNumber={0}
+                      stepColor=""
+                      steps={[...steps.map((step, index) => index)]}>
+                      {schemaState.map((step, index) => (
+                          <CDBStep
+                            key={index + 1}
+                            id={index + 1}
+                            name={steps[index]?.title || "Sin Nombre"}
+                            handleClick={allowStepClick ? () => setActiveStep(index) : () => { }}
+                            active={activeStep + 1}
+                            activeBgColor='#009ed7'
+                            activeTextColor='#009ed7'
+                            incompleteBgColor='#ffaf00'
+                            incompleteTextColor='#ffefc0'
+                            completeBgColor='#44cb67'
+                            completeTextColor='white'
+                            children={<Nav.Link eventKey={index}></Nav.Link>}
+                          />
+                      ))}
+                    </CDBStepper>
+
+                  </Nav>
+                </div>
+
+                <Tab.Content>
+                  {schemaState.map((step, idxStep) => (
+                    <Tab.Pane eventKey={idxStep} >
+                      <div className="form-preview-header mb-30 ">
+                        <div className="form-preview-header-name">
+                          <h3>{steps[idxStep].title || "Step sin nombre"}</h3>
+                        </div>
+                      </div>
+                      <Row>
+                        {step.map((input, idxInput)=>(
+                          <RenderInput
+                            key={`form-input-${idxStep}-${idxInput}`}
+                            entireSchema={schemaState}
+                            entireFormData={formData}
+                            entireIsValid={isValid}
+                            entirePathSchema={`${idxStep}.${idxInput}`}
+                            entirePathData={`${idxStep}.${idxInput}`}
+                            setSchemaState={setSchemaState}
+                            setFormData={setFormData}
+                            setIsValid={setIsValid}
+                            tryToNext={tryToNext}
+                            activeStep={idxStep}
+                            idx={idxInput}
+                            attachments={attachments}
+                            setAttachments={setAttachments}
+                            origin={`stepers::${idxInput}::form::json-schema::${idxInput}`}
+                          />
+                        ))}
+                      </Row>
+                    </Tab.Pane>
+                  ))} 
+                </Tab.Content>
+
+              </Tab.Container>
+
             </div>
           }
           <pre>
@@ -894,20 +896,18 @@ export const PreviewForm = ({
             }
             {
               activeStep === steps.length - 1
-                ? <>
-                  <Button
+                ? <Button
                     style={{ backgroundColor: "#152235" }}
                     className='btn-send'
                     onClick={handleSubmit}>
                     Enviar
                   </Button>
-                </>
                 : <Button
-                  style={{ backgroundColor: "#009ED7" }}
-                  className='btn-form'
-                  onClick={handleValidStep}>
-                  Siguiente
-                </Button>
+                    style={{ backgroundColor: "#009ED7" }}
+                    className='btn-form'
+                    onClick={handleValidStep}>
+                    Siguiente
+                  </Button>
             }
           </div>
         }

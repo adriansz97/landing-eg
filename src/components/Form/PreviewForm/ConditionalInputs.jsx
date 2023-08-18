@@ -11,12 +11,9 @@ export const ConditionalInputs = ({
   parentValue, 
   parentOrigin,
   attachments, 
-  setAttachments, 
-  tryToSend,
+  setAttachments,
   tryToNext,
   activeStep,
-  land,
-  colsLg,
 }) => {
   
   const [currentConditionals, setCurrentConditionals] = useState([]);
@@ -66,23 +63,18 @@ export const ConditionalInputs = ({
         currentConditionals.map((sch,idx) => (
           <RenderInput
             key={`${parentOrigin}::conditionals::${currentConditionalsIdx}::nestChildren::${idx}`}
-            idx={idx}
-            tryToSend={tryToSend}
             entireSchema={entireSchema}
             entirePathSchema={`${entirePathSchema}.conditionals.${currentConditionalsIdx}.nestChildren.${idx}`}
+            setSchemaState={setSchemaState}
             entireFormData={entireFormData}
             entirePathData={`${entirePathData}.conditionals.${idx}`}
+            setFormData={setFormData}
             entireIsValid={entireIsValid}
+            setIsValid={setIsValid}
             attachments={attachments}
             setAttachments={setAttachments}
             tryToNext={tryToNext}
             activeStep={activeStep}
-            land={land}
-            colsLg={colsLg}
-
-            setSchemaState={setSchemaState}
-            setFormData={setFormData}
-            setIsValid={setIsValid}
             origin={`${parentOrigin}::conditionals::${currentConditionalsIdx}::nestChildren::${idx}`}
           />
         ))

@@ -7,10 +7,8 @@ import { catalogByPart } from "../../../apis";
 import { MCButton } from "../../MainComponents/Button/Button";
 import Icon from "../../Icon/Icon";
 import { hdlSchm, hdlChg } from "./PreviewForm";
-import { MCInput } from "../../MainComponents/Input/Input";
 import { MCSelect } from "../../MainComponents/Select/Select";
-import { MCTooltip } from "../../MainComponents/Tooltip/Tooltip";
-
+import { INPUT_TYPE_CATALOGUE_RADIO, INPUT_TYPE_CATALOGUE_RADIO_CONDITIONAL, INPUT_TYPE_CATALOGUE_RADIO_DESCRIPTION, INPUT_TYPE_CATALOGUE_RADIO_DESCRIPTION_CONDITIONAL, INPUT_TYPE_CATALOGUE_SELECT, INPUT_TYPE_CATALOGUE_SELECT_CONDITIONAL } from "../consts";
 
 const ModalExamples = ({ itemExamples, setShowExampleModal, styleDark }) => {
   const {gTheme} = useSelector(state=>state.theme)
@@ -41,43 +39,38 @@ const ModalExamples = ({ itemExamples, setShowExampleModal, styleDark }) => {
 const CatalogueRadioInput = ({ 
   scope,
   pathData,
+  type,
   nestNum,
-  grid,
   returnValidClass,
   showErrorLastChild,
-  getDescritionAndExamples,
+  GetDescritionAndExamples,
   handleKeyChange,
   selectedKey,
   isSelected,
   orderChildren,
   styleDark,
 }) => {
-  if (typeof grid === "number" && grid!==12) {
+  if (type===INPUT_TYPE_CATALOGUE_RADIO || type===INPUT_TYPE_CATALOGUE_RADIO_CONDITIONAL) {
     return (
-      // <Row className="p-0">
-        // <Col lg={ grid || 12} className="p-0">
-        <div>
-          {
-            scope.children &&
-            orderChildren(scope.children).map((item, idxx) => {
-              if (item.is_active) {
-                return (
-                      <div role="button" className={`container-checkbox p-3 m-2 ${styleDark} ${isSelected(selectedKey === item.key)}`} key={idxx} onClick={(e) => (selectedKey !== item.key) ? handleKeyChange(item.key) : ()=>{} } >
-                        <div key={item.key} className="form-check">
-                          <input className={`form-check-input  ${showErrorLastChild ? returnValidClass() : ""}`} id={`${pathData}-${nestNum}-${idxx}`} type="radio" value={item.key} name={item.path} checked={selectedKey === item.key} onChange={(e) => handleKeyChange(e.target.value)} />
-                          <label role="button" className={`form-check-label mb-1 ${styleDark} ${isSelected(selectedKey === item.key)}`} htmlFor={`${pathData}-${nestNum}-${idxx}`}>{item.label}</label>
-                          { getDescritionAndExamples(item) }
-                        </div>
-                      </div>
-                )
-              } else {
-                return <></>;
-              }
-            })
+      <div className="container-checkbox2">
+      {
+        scope.children &&
+        orderChildren(scope.children).map((item, idxx) => {
+          if (item.is_active) {
+            return (
+              <div role="button" className={`p-3 m-2 ${styleDark} ${isSelected(selectedKey === item.key)}`} key={idxx} onClick={(e) => (selectedKey !== item.key) ? handleKeyChange(item.key) : ()=>{} } >
+                <div key={item.key} className="form-check">
+                  <input className={`form-check-input  ${showErrorLastChild ? returnValidClass() : ""}`} id={`${pathData}-${nestNum}-${idxx}`} type="radio" value={item.key} name={item.path} checked={selectedKey === item.key} onChange={(e) => handleKeyChange(e.target.value)} />
+                  <label role="button" className={`form-check-label mb-1 ${styleDark} ${isSelected(selectedKey === item.key)}`} htmlFor={`${pathData}-${nestNum}-${idxx}`}>{item.label}</label>
+                </div>
+              </div>
+            )
+          } else {
+            return <></>;
           }
-        </div>
-        // </Col>
-      // </Row>
+        })
+      }
+      </div>
     )
   } else {
     return (
@@ -91,7 +84,10 @@ const CatalogueRadioInput = ({
                 <div key={item.key} className="form-check">
                   <input className={`form-check-input  ${showErrorLastChild ? returnValidClass() : ""}`} id={`${pathData}-${nestNum}-${idxx}`} type="radio" value={item.key} name={item.path} checked={selectedKey === item.key} onChange={(e) => handleKeyChange(e.target.value)} />
                   <label role="button" className={`form-check-label mb-1 ${styleDark} ${isSelected(selectedKey === item.key)}`} htmlFor={`${pathData}-${nestNum}-${idxx}`}>{item.label}</label>
-                  { getDescritionAndExamples(item) }
+                  {
+                    (type===INPUT_TYPE_CATALOGUE_RADIO_DESCRIPTION || type===INPUT_TYPE_CATALOGUE_RADIO_DESCRIPTION_CONDITIONAL) &&
+                    <GetDescritionAndExamples item={item} />
+                  }
                 </div>
               </div>
             )
@@ -111,18 +107,18 @@ export const CatalogueInput = ({
   scope,
   value,
   valid,
-  path = "",
   origin,
   pathSchema,
   pathData,
-  nestNum = 0,
-  handleValidate,
-  returnValidClass,
-  tryToNext,
   entireSchema,
   entireFormData,
   setSchemaState,
   setFormData,
+  tryToNext,
+  handleValidate,
+  returnValidClass,
+  path = "",
+  nestNum = 0,
   forEdition = false,
 }) => {
 
@@ -173,9 +169,9 @@ export const CatalogueInput = ({
       handleStartData();
     } else {
       if (!scope.selected && scope.children && scope.lastChild) {
-        handleValidate(false);
+        // handleValidate(false);
       } else if (scope.selected && !scope.children && scope.lastChild) {
-        handleValidate(true); 
+        // handleValidate(true); 
       }
       setSelectedKey(scope.selected);
     }
@@ -315,7 +311,7 @@ export const CatalogueInput = ({
     setShowExampleModal(true)
   };
 
-  const getDescritionAndExamples = (item) => {
+  const GetDescritionAndExamples = ({ item }) => {
     const description = item.description ? item.description : null;
     const examples = item.examples ? item.examples : null;
 
@@ -337,14 +333,26 @@ export const CatalogueInput = ({
     <components.Option {...props}>
       <div>
         <div>{props.data.label}</div>
-        {getDescritionAndExamples(props.data)}
+        <GetDescritionAndExamples item={props.data} />
       </div>
     </components.Option>
   );
 
-  if (typeof type==='string' && (type==="catalog-select" || type==="catalog-select-conditional")) {
+
+  if (type===INPUT_TYPE_CATALOGUE_SELECT || type===INPUT_TYPE_CATALOGUE_SELECT_CONDITIONAL) {
     return (
       <>
+        {
+          forEdition && showEditLabelModal &&
+          <EditCatalogueModal 
+            objSelection={getOptions().find(item=>item.value===selectedKey)}
+            catalogue={catalogue} 
+            is_own={isOwn}
+            onHide={()=>setShowEditLabelModal(false)}
+            path={value} 
+            nestNum={nestNum} 
+          /> 
+        }
         {
           showExampleModal &&
           <ModalExamples 
@@ -353,12 +361,12 @@ export const CatalogueInput = ({
             styleDark={styleDark}
           />
         }
-        <Col lg="12" className={`preview-input-container`}>
-          <div className={`preview-input-container-inp ${nestNum!==0?"py-3":""} ${(isLastChild&&tryToNext&&valid.length>0)?"pb-0":isLastChild?"pb-3":"pb-0"}`}>
+        <div className={`preview-input-container py-2 ${(isLastChild&&tryToNext&&valid.length>0)?"pb-0":""}`}>
+          <div className={`preview-input-container-inp`}>
             {
               scope.children &&
-              <div className={`catalog-select-container ${showErrorLastChild ? returnValidClass("container") : ""}`}>
-                <div className="catalog-select-for-edition">
+              <div className={` ${showErrorLastChild ? returnValidClass("container") : ""}`}>
+                <div className="catalog-for-edition">
                   <MCSelect 
                     menuPortalTarget={document.body}
                     placeholder={ <div>Seleccione una opción</div> }
@@ -377,11 +385,7 @@ export const CatalogueInput = ({
               </div>
             }
           </div>
-          {
-            !isLastChild &&
-            <hr className="mb-0" />
-          }
-        </Col>
+        </div>
         {
           (scope?.next && selectedKey) && !rerenderChild &&
             <CatalogueInput
@@ -407,7 +411,7 @@ export const CatalogueInput = ({
       </>
     )
   }
-  if (typeof type==='string' && (type==="catalog-radio" || type==="catalog-radio-conditional")) {
+  if (type===INPUT_TYPE_CATALOGUE_RADIO || type===INPUT_TYPE_CATALOGUE_RADIO_DESCRIPTION || type===INPUT_TYPE_CATALOGUE_RADIO_CONDITIONAL || type===INPUT_TYPE_CATALOGUE_RADIO_DESCRIPTION_CONDITIONAL) {
     return (
       <>
         {
@@ -418,16 +422,17 @@ export const CatalogueInput = ({
             styleDark={styleDark}
           />
         }
-        <Col lg={grid || 12} className={`preview-input-container p-0`}>
-          <div className={`preview-input-container-inp ${nestNum!==0?"pt-3":""} ${showErrorLastChild ? returnValidClass("container") : ""} ${(isLastChild&&tryToNext&&valid.length>0)?"pb-0":isLastChild?"pb-3":"pb-0"}`}>
+        <div className={`preview-input-container p-0 ${showErrorLastChild ? returnValidClass("container"):""} ${(schema.type.includes(INPUT_TYPE_CATALOGUE_RADIO)&&grid!==12)?"dyBorder1 rounded":""}`}>
+          <div className={`preview-input-container-inp ${(isLastChild&&tryToNext&&valid.length>0)?"pb-0":""}`}>
             <CatalogueRadioInput 
               scope={scope}
               pathData={pathData}
+              type={type}
               nestNum={nestNum}
               grid={grid}
               returnValidClass={returnValidClass}
               showErrorLastChild={showErrorLastChild}
-              getDescritionAndExamples={getDescritionAndExamples}
+              GetDescritionAndExamples={GetDescritionAndExamples}
               handleKeyChange={handleKeyChange}
               selectedKey={selectedKey}
               isSelected={isSelected}
@@ -437,9 +442,9 @@ export const CatalogueInput = ({
           </div>
           {
             !isLastChild && grid === 12 &&
-            <hr className="mb-0" />
+            <hr className="my-2" />
           }
-        </Col>
+        </div>
         {
           (scope?.next && selectedKey) && !rerenderChild &&
           <CatalogueInput

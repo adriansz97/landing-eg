@@ -44,7 +44,7 @@
   }
   .is-invalid-container {
     background-color: rgba(216,27,96,0.3);
-    border: 2px solid rgb(216,27,96);
+    border: 2px solid rgb(216,27,96) !important;
   }
   // header del preview donde esta el steper y el titulo del step
   .form-preview-header {
@@ -75,6 +75,9 @@
       font-weight: 600;
       font-size: 1em;
       margin-bottom: 0.5em !important;
+      &.m-0 {
+        margin: 0!important;
+      }
       &.dark-mode {
         color: $color-coolGray;
       }
@@ -258,6 +261,56 @@
     box-shadow: #a0d4fa 0px 0px 6px 2px;
   }
 }
+
+.container-checkbox2 {
+  // background-color: #f3f7fa;
+  // border-radius: 15px;
+  // border: 1px solid #d8dfe3;
+  display: flex;
+  flex-wrap: wrap;
+  &.dark-mode {
+    // background-color: #242836;
+    // border: 1px solid #363742;
+    input[type="radio"] {
+      border: 1px solid #8aa1ac;
+    }
+    a.selected {
+      color: #fff;
+    }
+    &.selected {
+      // background-color: rgba(92, 102, 110, 0.7);
+      // border: 1px solid #fff;
+      // box-shadow: rgb(255, 255, 255) 0px 0px 6px 1px;
+    }
+  }
+  &.selected {
+    // background-color: rgb(232, 245, 253); 
+    // border: 1px solid #a0d4fa;
+    // box-shadow: #a0d4fa 0px 0px 6px 2px;
+  }
+}
+.catalogue-container {
+  display: grid;
+  padding: 0;
+  column-gap: 16px;
+  &.t-col-4 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  &.t-col-6 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  &.t-col-12 {
+    grid-template-columns: 1fr;
+  }
+  &.col-gap {
+    column-gap: 16px;
+  }
+  &.row-gap {
+    row-gap: 16px;
+  }
+}
+
+
 
 a.dark-mode {
   color: $color-coolGray !important;

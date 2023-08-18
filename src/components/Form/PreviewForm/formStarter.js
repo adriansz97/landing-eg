@@ -1,5 +1,56 @@
 import _ from "lodash";
 import { catalogByPart } from "../../../apis";
+import { INPUT_TYPE_CATALOGUE_ERROR, INPUT_TYPE_CHECKBOX, INPUT_TYPE_CHECKBOX_CONDITIONAL, INPUT_TYPE_DATE_RANGE, INPUT_TYPE_FILE, INPUT_TYPE_TEXT } from "../consts";
+
+// fill answered catalogues
+
+const fillSelections = async ({ input, data, catalogue, is_own, nestNum = 0, pathForSchema = "" }) => {
+  const newInput = _.cloneDeep(input);
+  const splitedAnsr = data.split("::");
+  const slicedAnsr = splitedAnsr.slice(0, ((2 * (nestNum))));
+  const slicedAnsrKey = splitedAnsr.slice((nestNum * 2), ((2 * (nestNum + 1))));
+  const selected = slicedAnsrKey.length === 2 ? slicedAnsrKey[slicedAnsrKey.length - 1] : "";
+  const joined = slicedAnsr.join("::");
+  const resp = await catalogByPart({ is_own, catalogue, path: joined ? joined : "/" });
+  if (resp.error) return "error";
+  if (Array.isArray(resp.data) && resp.data.length > 0) {
+    const newResp = resp.data.map(item => {
+      const itemWithoutChilds = { ...item };
+      delete itemWithoutChilds.childs;
+      return itemWithoutChilds;
+    })
+    _.set(newInput, `${pathForSchema ? pathForSchema + "." : ""}children`, newResp);
+    _.set(newInput, `${pathForSchema ? pathForSchema + "." : ""}selected`, selected);
+  }
+  if (selected) {
+    return await fillSelections({ input: newInput, data, catalogue, is_own, nestNum: nestNum + 1, pathForSchema: `${pathForSchema ? pathForSchema + ".next" : "next"}` })
+  } else {
+    return newInput;
+  }
+}
+
+export const fillIfIsCatalogue = async(inputsSchema, inputsData) => {
+  const newInputs = inputsSchema.map(async (inp, idx) => {
+    if ("catalogue" in inp && "isOwn" in inp) {
+      const filledInput = await fillSelections({
+        input: inp,
+        data: inputsData[idx][inp.catalogue],
+        catalogue: inp.catalogue,
+        is_own: inp.isOwn
+      });
+      if (filledInput === "error") {
+        return returnCatalogueInputError(inp)
+      } else {
+        return filledInput;
+      }
+    }
+    return inp;
+  })
+  const newInputsSolved = await Promise.all(newInputs);
+  return newInputsSolved;
+}
+
+// form
 
 const checkCatalogues = async(inputs) => {
   const newInputs = inputs.map(async(inp,idx) => {
@@ -94,7 +145,7 @@ export const returnFormData = (inputs, path) => {
         "origin": newPath,
       }
     }
-    if (input.type === "date-range") {
+    if (input.type === INPUT_TYPE_DATE_RANGE) {
       let today = new Date().toJSON();
       return {
         [input.key]: `${today}__${today}`,
@@ -102,21 +153,21 @@ export const returnFormData = (inputs, path) => {
         "origin": newPath,
       }
     }
-    if (input.type === "file") {
+    if (input.type === INPUT_TYPE_FILE) {
       return {
         [input.key]: null,
         "sensitive": input.sensitive || false,
         "origin": newPath,
       }
     }
-    if (input.type === "checkbox") {
+    if (input.type === INPUT_TYPE_CHECKBOX) {
       return {
         [input.key]: false,
         "sensitive": input.sensitive || false,
         "origin": newPath,
       }
     }
-    if (input.type === "checkbox-conditional") {
+    if (input.type === INPUT_TYPE_CHECKBOX_CONDITIONAL) {
       return {
         [input.key]: false,
         "sensitive": input.sensitive || false,
@@ -155,19 +206,19 @@ export const returnFormData = (inputs, path) => {
 export const returnIsValid = (inputs) => {
   const newInputs = inputs.map( input => {
     const key = input.catalogue ? input.catalogue : input.key;
-    if (input.type === "file" && input.required) {
+    if (input.type === INPUT_TYPE_FILE && input.required) {
       return {
         [key]: ["Este campo es requerido"]
       }
     }
-    if (input.type === "checkbox") {
+    if (input.type === INPUT_TYPE_CHECKBOX && input.required) {
       return {
-        [key]: []
+        [key]: ["Asegurese de marcar esta casilla"]
       }
     }
-    if (input.type === "checkbox-conditional") {
+    if (input.type === INPUT_TYPE_CHECKBOX_CONDITIONAL && input.required) {
       return {
-        [key]: [],
+        [key]: ["Asegurese de marcar esta casilla"],
         "conditionals": checkConditionals(input.conditionals, false, "", "valid")
       }
     }
@@ -204,7 +255,7 @@ export const returnIsValid = (inputs) => {
 const returnCatalogueInputError = (inp) => ({
   key: `C::${inp.isOwn}::${inp.catalogue}`,
   catalogue: inp.catalogue,
-  type: "catalog-error",
+  type: INPUT_TYPE_CATALOGUE_ERROR,
   label: `Catalogue with error (${inp.catalogue})`,
   required: false,
   sensitive: false,
@@ -261,9 +312,9 @@ export const formStarter = async( formLoaded, target = 'normal' ) => {
       [
         {
           "key": "ingrese_etiqueta",
-          "type": "string",
+          "type": INPUT_TYPE_TEXT,
           "label": "Ingrese etiqueta",
-          "placeholder": "tempPlaceholder",
+          "placeholder": "Texto de apoyo",
           "required": false,
           "sensitive": false,
           "grid": 4
